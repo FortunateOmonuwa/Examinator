@@ -31,3 +31,6 @@ jobs:
       - name: Run tests
         working-directory: examinator/src/backend
         run: npm test
+
+      - name: Check code formatting
+        run: npm run prettier -- --check .
