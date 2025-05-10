@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Install dependencies at the backend level
+      - name: Install dependencies
+        working-directory: examinator/src/backend
+        run: npm install
+
+      # Lint the code at the backend level
+      - name: Lint code
+        working-directory: examinator/src/backend
+        run: npm run lint
+
+      # Run tests using Jest at the backend level
+      - name: Run tests
+        working-directory: examinator/src/backend
+        run: npm test
