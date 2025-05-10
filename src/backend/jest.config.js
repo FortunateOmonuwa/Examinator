@@ -1,9 +1,6 @@
 export default {
   roots: ["../backend/tests"],
   testEnvironment: "node",
-  moduleFileExtensions: ["js", "ts", "json", "mjs"],
-  transform: {
-    "^.+\\.(js|ts)$": "ts-jest",
-  },
+  moduleFileExtensions: ["js", "json", "mjs"],
   transformIgnorePatterns: ["/node_modules/(?!(@prisma/client)/)"],
 };
