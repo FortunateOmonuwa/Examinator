@@ -19,16 +19,16 @@ jobs:
 
       # Install dependencies at the backend level
       - name: Install dependencies
-        working-directory: ./examinator/src/backend
+        working-directory: src/backend
         run: npm install
       # Lint the code at the backend level
       - name: Lint code
-        working-directory: ./examinator/src/backend
+        working-directory: src/backend
         run: npm run lint
 
       # Run tests using Jest at the backend level
       - name: Run tests
-        working-directory: ./examinator/src/backend
+        working-directory: src/backend
         run: npm test
 
       - name: Check code formatting
