@@ -29,7 +29,7 @@ jobs:
       # Run tests using Jest at the backend level
       - name: Run tests
         working-directory: src/backend
-        run: npm test
+        run: cross-env NODE_OPTIONS='--experimental-vm-modules' jest src/backend/tests
 
       - name: Check code formatting
         run: npm run prettier -- --check .
