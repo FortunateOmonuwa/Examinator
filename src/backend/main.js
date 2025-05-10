@@ -15,7 +15,7 @@ app.use("/api/admin", AdminRouter);
 app.use("/api/examiner", ExaminerRouter);
 
 app.get("/", (req, res) => {
-  return res.send("Working");
+  return res.send("Workingss");
 });
 try {
   app.listen(port, () => {
