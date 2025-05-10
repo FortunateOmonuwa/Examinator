@@ -1,4 +1,5 @@
-import { Role } from "@prisma/client";
+import pkg from "@prisma/client";
+const { Role } = pkg;
 
 class Examiner {
   constructor({ name, email, password }) {
