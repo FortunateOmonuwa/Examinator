@@ -21,7 +21,6 @@ jobs:
       - name: Install dependencies
         working-directory: ./examinator/src/backend
         run: npm install
-
       # Lint the code at the backend level
       - name: Lint code
         working-directory: ./examinator/src/backend
