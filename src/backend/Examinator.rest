@@ -1,0 +1,26 @@
+GET http://localhost:5001
+###
+
+POST http://localhost:5001/api/admin/register
+Content-Type: application/json
+
+{
+    "email": "",
+    "password": ""
+}
+
+###
+
+POST http://localhost:5001/api/examiner/register
+Content-Type: application/json
+
+{
+    "firstname": "",
+    "lastname": "",
+    "email": "",
+    "password": ""
+}
+
+###
+
+GET http://localhost:5001/api/examiner/profile/2
