@@ -63,7 +63,7 @@ async function createExaminer(
   data = {
     firstname: 'John',
     lastname: 'Doe',
-    email: 'examiner@example.com',
+    email: 'examinertest@example.com',
     password: 'Password123#',
   },
 ) {

@@ -7,12 +7,12 @@
   "scripts": {
     "start": "node main.js",
     "dev": "nodemon main.js",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "lint": "eslint .",
-    "prettier": "prettier --write .",
-    "prettier:check": "prettier --check ."
+    "test": "vitest run --config ./configs/vitest.config.js",
+    "test:watch": "vitest --config ./configs/vitest.config.js",
+    "test:coverage": "vitest run --coverage ./configs/vitest.config.js",
+    "lint": "eslint . --config ./configs/eslint.config.js",
+    "prettier": "prettier . --write --config ./configs/.prettierrc",
+    "prettier:check": "prettier . --check --config ./configs/.prettierrc"
   },
   "keywords": [],
   "author": "",
