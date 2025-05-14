@@ -65,7 +65,7 @@ async function createExaminer(
     lastname: "Doe",
     email: "examiner@example.com",
     password: "Password123#",
-  }
+  },
 ) {
   return await request(app)
     .post("/api/examiner")
