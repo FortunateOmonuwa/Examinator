@@ -9,27 +9,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      # Install dependencies at the backend level
       - name: Install dependencies
         working-directory: src/backend
         run: npm install
-      # Lint the code at the backend level
+
       - name: Lint code
         working-directory: src/backend
         run: npm run lint
 
-      # Run tests using Vitest at the backend level
+      # - name: Generate Prisma client
+      #   working-directory: src/backend
+      #   run: npx prisma generate
+
       - name: Run tests
         working-directory: src/backend
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run test
 
       - name: Check code formatting
+        working-directory: src/backend
         run: npm run prettier -- --check .
