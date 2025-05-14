@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix src/frontend\" \"npm run dev --prefix src/backend\""
   },

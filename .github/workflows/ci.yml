@@ -26,10 +26,10 @@ jobs:
         working-directory: src/backend
         run: npm run lint
 
-      # Run tests using Jest at the backend level
+      # Run tests using Vitest at the backend level
       - name: Run tests
         working-directory: src/backend
-        run: cross-env NODE_OPTIONS='--experimental-vm-modules' jest src/backend/tests
+        run: npm run test
 
       - name: Check code formatting
         run: npm run prettier -- --check .
