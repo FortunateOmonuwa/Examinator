@@ -8,7 +8,7 @@ class Response {
   }
 
   static Successful({
-    message = "Operation successful",
+    message = 'Operation successful',
     body = null,
     resultCode = 200,
   } = {}) {
@@ -22,7 +22,7 @@ class Response {
   }
 
   static Unsuccessful({
-    message = "Operation failed",
+    message = 'Operation failed',
     error = null,
     resultCode = 400,
   } = {}) {

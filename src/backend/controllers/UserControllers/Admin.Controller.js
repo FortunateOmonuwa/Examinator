@@ -1,5 +1,5 @@
-import { RegisterAdmin } from "../../imports/ServicesImports.js";
-import Response from "../../utilities/Response.js";
+import { RegisterAdmin } from '../../imports/ServicesImports.js';
+import Response from '../../utilities/Response.js';
 
 const RegisterAdminAsync = async (req, res) => {
   const { body } = req;
