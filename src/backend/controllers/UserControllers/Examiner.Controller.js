@@ -1,6 +1,7 @@
 import {
   RegisterExaminer,
   GetExaminerDetails,
+  DeleteExaminer,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
 
@@ -19,12 +20,13 @@ const RegisterExaminerAsync = async (req, res) => {
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });
     } else {
-      return res.status(400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (e) {
-    return Response.Unsuccessful({
-      error: e.message,
-      resultCode: 500,
+    return res.status(500).json({
+      response: Response.Unsuccessful(),
     });
   }
 };
@@ -33,17 +35,34 @@ const GetExaminerAsync = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const response = await GetExaminerDetails(Number(id));
+    const response = await GetExaminerDetails(id);
     if (response.isSuccessful) {
       return res.status(response.resultCode).json({ response: response });
     } else {
       return res.status(response.resultCode).json({ response: response });
     }
   } catch (e) {
-    return Response.Unsuccessful({
-      error: e.message,
-      resultCode: 500,
+    return res.status(500).json({
+      response: Response.Unsuccessful(),
     });
   }
 };
-export { RegisterExaminerAsync, GetExaminerAsync };
+
+const DeleteExaminerAsync = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await DeleteExaminer(id);
+    if (response.isSuccessful) {
+      return res.status(response.resultCode).json({ response: response });
+    } else {
+      return res.status(response.resultCode).json({ response: response });
+    }
+  } catch (e) {
+    return res.status(500).json({
+      response: Response.Unsuccessful(),
+    });
+  }
+};
+
+export { RegisterExaminerAsync, GetExaminerAsync, DeleteExaminerAsync };

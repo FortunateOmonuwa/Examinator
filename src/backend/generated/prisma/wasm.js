@@ -147,15 +147,28 @@ exports.Prisma.ExamScalarFieldEnum = {
   description: 'description',
   link: 'link',
   creatorId: 'creatorId',
-  isAvailable: 'isAvailable',
+  enforceTimeLimit: 'enforceTimeLimit',
+  stipulatedTime: 'stipulatedTime',
   dateCreated: 'dateCreated',
   dateUpdated: 'dateUpdated'
+};
+
+exports.Prisma.StudentExamScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  examId: 'examId',
+  status: 'status',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  timeSpent: 'timeSpent',
+  score: 'score'
 };
 
 exports.Prisma.QuestionScalarFieldEnum = {
   id: 'id',
   text: 'text',
-  examId: 'examId'
+  examId: 'examId',
+  required: 'required'
 };
 
 exports.Prisma.OptionScalarFieldEnum = {
@@ -193,11 +206,18 @@ exports.Role = exports.$Enums.Role = {
   EXAMINER: 'EXAMINER'
 };
 
+exports.ExamStatus = exports.$Enums.ExamStatus = {
+  NOT_STARTED: 'NOT_STARTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+};
+
 exports.Prisma.ModelName = {
   Student: 'Student',
   Examiner: 'Examiner',
   UserProfile: 'UserProfile',
   Exam: 'Exam',
+  StudentExam: 'StudentExam',
   Question: 'Question',
   Option: 'Option',
   Response: 'Response'

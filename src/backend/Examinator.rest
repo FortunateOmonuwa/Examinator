@@ -5,22 +5,26 @@ POST http://localhost:5001/api/admin/register
 Content-Type: application/json
 
 {
-    "email": "",
-    "password": ""
+    "email": "test@gmail.com",
+    "password": "nrongerjngoenrger"
 }
 
 ###
 
-POST http://localhost:5001/api/examiner/register
+POST http://localhost:5001/api/examiner
 Content-Type: application/json
 
 {
-    "firstname": "",
-    "lastname": "",
-    "email": "",
-    "password": ""
+    "firstname": "Jackson",
+    "lastname": "Hayes",
+    "email": "jackson@email.com",
+    "password": "trutrutrutrutrutru133#"
 }
 
 ###
 
-GET http://localhost:5001/api/examiner/profile/2
+GET http://localhost:5001/api/examiner/182146a5-3cc9-4841-9e03-29ff298b6e3e
+
+
+###
+DELETE  http://localhost:5001/api/examiner/182146a5-3cc9-4841-9e03-29ff298b6e3e

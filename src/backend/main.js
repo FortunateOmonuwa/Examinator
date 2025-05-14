@@ -14,9 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/admin", AdminRouter);
 app.use("/api/examiner", ExaminerRouter);
 
-app.get("/", (req, res) => {
-  return res.send("Workingss");
-});
 try {
   app.listen(port, () => {
     console.log(`App is listening on ${port}`);

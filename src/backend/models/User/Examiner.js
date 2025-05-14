@@ -6,7 +6,7 @@ class Examiner {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.role = Role.EXAMINER;
+    this.role = "EXAMINER";
   }
 }
 

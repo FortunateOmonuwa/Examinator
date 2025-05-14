@@ -2,6 +2,12 @@ import { RegisterAdminAsync } from "../controllers/UserControllers/Admin.Control
 import {
   RegisterExaminerAsync,
   GetExaminerAsync,
+  DeleteExaminerAsync,
 } from "../controllers/UserControllers/Examiner.Controller.js";
 
-export { RegisterAdminAsync, RegisterExaminerAsync, GetExaminerAsync };
+export {
+  RegisterAdminAsync,
+  RegisterExaminerAsync,
+  GetExaminerAsync,
+  DeleteExaminerAsync,
+};
