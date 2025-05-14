@@ -1,4 +1,4 @@
-import { database } from "../../imports/UtilityImports.js";
+import { database } from '../../imports/UtilityImports.js';
 const checkIfUserExists = async (email) => {
   try {
     const user = await database.UserProfile.findUnique({
@@ -13,7 +13,7 @@ const checkIfUserExists = async (email) => {
       return false;
     }
   } catch (error) {
-    console.error("Error querying database:", error);
+    console.error('Error querying database:', error);
     throw error;
   }
 };

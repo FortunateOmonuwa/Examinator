@@ -1,4 +1,4 @@
-import { Student } from "../../imports/ModelImports.js";
+import { Student } from '../../imports/ModelImports.js';
 import {
   CreateHash,
   Response,
@@ -6,7 +6,7 @@ import {
   nameRegex,
   emailRegex,
   passwordRegex,
-} from "../../imports/UtilityImports.js";
+} from '../../imports/UtilityImports.js';
 
 const RegisterStudent = ({ firstname, lastname, email, password }) => {
   const newStudent = new Student({

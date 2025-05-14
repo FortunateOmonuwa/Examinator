@@ -1,10 +1,10 @@
-import { RegisterAdmin } from "../functionalities/User/Admin.Service.js";
+import { RegisterAdmin } from '../functionalities/User/Admin.Service.js';
 import {
   RegisterExaminer,
   GetExaminerDetails,
   DeleteExaminer,
-} from "../functionalities/User/Examiner.Service.js";
-import { RegisterStudent } from "../functionalities/User/Student.Service.js";
+} from '../functionalities/User/Examiner.Service.js';
+import { RegisterStudent } from '../functionalities/User/Student.Service.js';
 
 export {
   RegisterAdmin,

@@ -1,4 +1,4 @@
-import { bcrypt } from "../imports/PackageImports.js";
+import { bcrypt } from '../imports/PackageImports.js';
 
 const CreateHash = (passsword) => {
   const hash = bcrypt.hashSync(passsword, 10);

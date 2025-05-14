@@ -3,7 +3,7 @@ class Student {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.role = "STUDENT";
+    this.role = 'STUDENT';
   }
 }
 

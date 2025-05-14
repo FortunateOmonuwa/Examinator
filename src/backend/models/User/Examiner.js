@@ -1,4 +1,4 @@
-import pkg from "@prisma/client";
+import pkg from '@prisma/client';
 const { Role } = pkg;
 
 class Examiner {
@@ -6,7 +6,7 @@ class Examiner {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.role = "EXAMINER";
+    this.role = 'EXAMINER';
   }
 }
 

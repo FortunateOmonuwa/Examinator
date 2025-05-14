@@ -1,18 +1,18 @@
-import { express, dotenv, port } from "./imports/PackageImports.js";
-import { AdminRouter } from "./imports/RouteImports.js";
-import { ExaminerRouter } from "./imports/RouteImports.js";
+import { express, dotenv, port } from './imports/PackageImports.js';
+import { AdminRouter } from './imports/RouteImports.js';
+import { ExaminerRouter } from './imports/RouteImports.js';
 const app = express();
 dotenv.config();
 
-process.once("exit", () => {
-  console.log("App exiting...");
+process.once('exit', () => {
+  console.log('App exiting...');
 });
 
 //MiddleWare
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/admin", AdminRouter);
-app.use("/api/examiner", ExaminerRouter);
+app.use('/api/admin', AdminRouter);
+app.use('/api/examiner', ExaminerRouter);
 
 try {
   app.listen(port, () => {
