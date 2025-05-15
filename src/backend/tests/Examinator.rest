@@ -28,3 +28,32 @@ GET http://localhost:5001/api/examiner/182146a5-3cc9-4841-9e03-29ff298b6e3e
 
 ###
 DELETE  http://localhost:5001/api/examiner/182146a5-3cc9-4841-9e03-29ff298b6e3e
+
+
+###
+POST http://localhost:5001/api/exam/16aa027d-1c37-4d50-b34e-eb92aae0ae2c
+Content-Type: application/json
+
+{
+    "exam": {
+        "title": "Mathematics",
+        "description": "Mathematics exam",
+        "stipulatedTime": 60,
+        "enforceTimeLimit": true,
+        "questions": [
+            {
+                "text": "What is 2 + 2?",
+                "options": [
+                    {
+                        "text": "4",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "5",
+                        "isCorrect": false
+                    }
+                ]
+            }
+        ]
+    }
+}
