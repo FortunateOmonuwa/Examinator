@@ -37,6 +37,10 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run test
 
+      - name: format code
+        working-directory: src/backend
+        run: npm run prettier
+
       - name: Check code formatting
         working-directory: src/backend
         run: npm run prettier:check
