@@ -11,17 +11,17 @@ datasource db {
 model Student {
   id           String        @id @default(uuid()) @db.Uuid
   name         String
-  responses    Response[]    @relation("Student-Responses")
   profile      UserProfile   @relation(fields: [profileId], references: [id])
   profileId    String        @unique @db.Uuid
   studentExams StudentExam[]
+  examAttempts ExamAttempt[] @relation("Student-Attempts")
 }
 
 model Examiner {
   id        String      @id @default(uuid()) @db.Uuid
   name      String
   exams     Exam[]      @relation("Exams")
-  profile   UserProfile @relation(fields: [profileId], references: [id])
+  profile   UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId String      @unique @db.Uuid
 }
 
@@ -40,22 +40,25 @@ model Exam {
   id               String        @id @default(uuid()) @db.Uuid
   title            String
   description      String
+  subject          String        @default("General Knowledge")
   link             String
   creatorId        String        @db.Uuid
-  creator          Examiner      @relation("Exams", fields: [creatorId], references: [id])
+  creator          Examiner      @relation("Exams", fields: [creatorId], references: [id], onDelete: NoAction)
   questions        Question[]    @relation("Questions")
   enforceTimeLimit Boolean       @default(false)
   stipulatedTime   Int
   dateCreated      DateTime      @default(now())
   dateUpdated      DateTime      @default(now())
+  isPublic         Boolean       @default(false)
   studentExams     StudentExam[]
+  examAttempts     ExamAttempt[] @relation("Exam")
 }
 
 model StudentExam {
   id          String     @id @default(uuid()) @db.Uuid
-  student     Student    @relation(fields: [studentId], references: [id])
+  student     Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId   String     @db.Uuid
-  exam        Exam       @relation(fields: [examId], references: [id])
+  exam        Exam       @relation(fields: [examId], references: [id], onDelete: Cascade)
   examId      String     @db.Uuid
   status      ExamStatus @default(NOT_STARTED)
   startedAt   DateTime?
@@ -67,33 +70,47 @@ model StudentExam {
 }
 
 model Question {
-  id       String     @id @default(uuid()) @db.Uuid
+  id       String   @id @default(uuid()) @db.Uuid
   text     String
-  examId   String     @db.Uuid
-  exam     Exam       @relation("Questions", fields: [examId], references: [id])
-  options  Option[]   @relation("Options")
-  Response Response[] @relation("Question-Responses")
+  examId   String   @db.Uuid
+  exam     Exam     @relation("Questions", fields: [examId], references: [id], onDelete: Cascade)
+  options  Option[] @relation("Options")
+  answers  Answer[] @relation("Question-Answers")
   required Boolean
 }
 
 model Option {
-  id         String     @id @default(uuid()) @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
   text       String
-  questionId String     @db.Uuid
-  question   Question   @relation("Options", fields: [questionId], references: [id])
+  questionId String   @db.Uuid
+  question   Question @relation("Options", fields: [questionId], references: [id], onDelete: Cascade)
   isCorrect  Boolean
-  Response   Response[] @relation("Responses")
+  answers    Answer[]
 }
 
-model Response {
-  id          String   @id @default(uuid()) @db.Uuid
-  studentId   String   @db.Uuid
-  student     Student  @relation("Student-Responses", fields: [studentId], references: [id])
-  questionId  String   @db.Uuid
-  question    Question @relation("Question-Responses", fields: [questionId], references: [id])
-  options     Option[] @relation("Responses")
-  textAnswer  String?
-  submittedAt DateTime @default(now())
+model ExamAttempt {
+  id            String    @id @default(uuid()) @db.Uuid
+  studentId     String?   @db.Uuid
+  student       Student?  @relation("Student-Attempts", fields: [studentId], references: [id])
+  examId        String    @db.Uuid
+  exam          Exam      @relation("Exam", fields: [examId], references: [id], onDelete: Cascade)
+  answers       Answer[]  @relation("Attempt-Answers")
+  startTime     DateTime?
+  submittedAt   DateTime  @default(now())
+  totalScore    Float?
+  responderEmal String?
+  responderName String?
+}
+
+model Answer {
+  id         String      @id @default(uuid()) @db.Uuid
+  attemptId  String      @db.Uuid
+  attempt    ExamAttempt @relation("Attempt-Answers", fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String      @db.Uuid
+  question   Question    @relation("Question-Answers", fields: [questionId], references: [id], onDelete: Cascade)
+  options    Option[]
+  textAnswer String[]
+  score      Float?
 }
 
 enum Role {

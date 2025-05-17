@@ -1,12 +1,13 @@
-import { database } from '../../imports/UtilityImports.js';
-import { Exam, Question, Option } from '../../imports/ModelImports.js';
-import Response from '../../utilities/Response.js';
-import { checkExaminerId } from '../User/User.Service.js';
+import { database } from "../../imports/UtilityImports.js";
+import { Exam, Question, Option } from "../../imports/ModelImports.js";
+import Response from "../../utilities/Response.js";
+import { checkExaminerId } from "../User/User.Service.js";
 
 const CreateExam = async ({ examinerId, exam = {} }) => {
   const {
     title,
     description,
+    subject,
     stipulatedTime,
     enforceTimeLimit = false,
     questions,
@@ -15,7 +16,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
   const checkId = await checkExaminerId(examinerId);
   if (!checkId) {
     return Response.Unsuccessful({
-      message: 'Profile does not exist',
+      message: "Profile does not exist",
     });
   }
 
@@ -26,22 +27,22 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
     questions.length === 0
   ) {
     return Response.Unsuccessful({
-      message: 'Missing required fields',
+      message: "Missing required fields",
       resultCode: 400,
     });
   }
   for (const q of questions) {
     if (!q.text || !Array.isArray(q.options) || q.options.length === 0) {
       return Response.Unsuccessful({
-        message: 'Invalid question data',
+        message: "Invalid question data",
         resultCode: 400,
       });
     }
 
     for (const opt of q.options) {
-      if (!opt.text || typeof opt.isCorrect !== 'boolean') {
+      if (!opt.text || typeof opt.isCorrect !== "boolean") {
         return Response.Unsuccessful({
-          message: 'Invalid option data',
+          message: "Invalid option data",
           resultCode: 400,
         });
       }
@@ -53,7 +54,8 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
       data: {
         title,
         description,
-        link: '',
+        subject,
+        link: "",
         creatorId: examinerId,
         stipulatedTime,
         enforceTimeLimit,
@@ -73,11 +75,11 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
     });
 
     return Response.Successful({
-      message: 'Exam created successfully',
+      message: "Exam created successfully",
     });
   } catch (error) {
     return Response.Unsuccessful({
-      message: 'An internal server error occurred',
+      message: "An internal server error occurred",
       resultCode: 500,
     });
   } finally {

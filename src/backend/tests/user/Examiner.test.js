@@ -1,9 +1,9 @@
-import { describe, it, expect, afterAll, beforeAll } from 'vitest';
-import request from 'supertest';
-import app from '../../main.js';
+import { describe, it, expect, afterAll, beforeAll } from "vitest";
+import request from "supertest";
+import app from "../../main.js";
 
-describe('POST /api/examiner', () => {
-  it('should register a new examiner successfully with valid input', async () => {
+describe("POST /api/examiner", () => {
+  it("should register a new examiner successfully with valid input", async () => {
     const response = await createExaminer();
 
     expect(response.status).toBe(200);
@@ -16,21 +16,21 @@ describe('POST /api/examiner', () => {
     expect(deleteRes.status).toBe(200);
   });
 
-  it('should return 400 for missing fields', async () => {
+  it("should return 400 for missing fields", async () => {
     const response = await createExaminer({
-      firstname: '',
-      lastname: '',
-      email: '',
-      password: '',
+      firstname: "",
+      lastname: "",
+      email: "",
+      password: "",
     });
 
     expect(response.status).toBe(400);
     expect(response.body.response.isSuccessful).toBe(false);
   });
 
-  it('should return 400 for invalid email format', async () => {
+  it("should return 400 for invalid email format", async () => {
     const response = await createExaminer({
-      email: 'invalid-email',
+      email: "invalid-email",
     });
 
     expect(response.status).toBe(400);
@@ -38,8 +38,8 @@ describe('POST /api/examiner', () => {
   });
 });
 
-describe('GET /api/examiner/:id', () => {
-  it('it should return 200 for an examiner detail', async () => {
+describe("GET /api/examiner/:id", () => {
+  it("it should return 200 for an examiner detail", async () => {
     const res = await createExaminer();
     expect(res.status).toBe(200);
     expect(res.body.response.isSuccessful).toBe(true);
@@ -61,24 +61,25 @@ describe('GET /api/examiner/:id', () => {
 //____________________________________________________________________________
 async function createExaminer(
   data = {
-    firstname: 'John',
-    lastname: 'Doe',
-    email: 'examinertest@example.com',
-    password: 'Password123#',
-  },
+    firstname: "John",
+    lastname: "Doe",
+    email: "examinertest123@example.com",
+    password: "Password123#",
+  }
 ) {
   return await request(app)
-    .post('/api/examiner')
+    .post("/api/examiner")
     .send(data)
-    .set('Content-Type', 'application/json');
+    .set("Content-Type", "application/json");
 }
 
 async function getExaminer(id) {
   return await request(app)
     .get(`/api/examiner/${id}`)
-    .set('Accept', 'application/json');
+    .set("Accept", "application/json");
 }
 
 async function deleteExaminer(id) {
   return await request(app).delete(`/api/examiner/${id}`);
 }
+export { createExaminer, getExaminer, deleteExaminer };
