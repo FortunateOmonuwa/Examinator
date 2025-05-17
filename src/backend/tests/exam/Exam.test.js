@@ -1,6 +1,7 @@
 import { describe, it, expect, afterAll, beforeAll } from "vitest";
 import request from "supertest";
 import app from "../../main.js";
+
 //import { createExaminer, deleteExaminer } from "../user/Examiner.test.js";
 
 describe("POST /api/exam/:examinerId", () => {
@@ -9,8 +10,18 @@ describe("POST /api/exam/:examinerId", () => {
     expect(examRes.status).toBe(200);
     expect(examRes.body.response.isSuccessful).toBe(true);
 
-    // const deleteExamRes = await deleteExam(examinerId);
-    // expect(deleteExamRes.status).toBe(200);
+    const examId = examRes.body.response.body.id;
+    console.log(examRes.body.response.body);
+    expect(examId).toBeDefined();
+
+    const getExamRes = await getExam(examId);
+    expect(getExamRes.status).toBe(200);
+    expect(getExamRes.body.response.isSuccessful).toBe(true);
+    expect(getExamRes.body.response.body).not.toBeNull();
+    expect(getExamRes.body.response.body.id).toBe(examId);
+
+    const deleteExamRes = await deleteExam(examId);
+    expect(deleteExamRes.status).toBe(200);
   });
 });
 
@@ -66,6 +77,10 @@ async function createExam(examinerId) {
     .set("Content-Type", "application/json");
 }
 
-// async function deleteExam(examinerId) {
-//   return await request(app).delete(`/api/exam/${examinerId}`);
-// }
+async function deleteExam(examinerId) {
+  return await request(app).delete(`/api/exam/${examinerId}`);
+}
+
+async function getExam(examinerId) {
+  return await request(app).get(`/api/exam/${examinerId}`);
+}

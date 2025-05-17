@@ -76,6 +76,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
 
     return Response.Successful({
       message: "Exam created successfully",
+      body: newExam,
     });
   } catch (error) {
     return Response.Unsuccessful({
@@ -87,4 +88,75 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
   }
 };
 
-export { CreateExam };
+const DeleteExam = async (examId) => {
+  if (!examId) {
+    return Response.Unsuccessful({
+      message: "Exam ID is required",
+      resultCode: 400,
+    });
+  }
+
+  try {
+    const deletedExam = await database.Exam.delete({
+      where: {
+        id: examId,
+      },
+    });
+
+    return Response.Successful({
+      message: "Exam deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting exam:", error);
+
+    if (error.code === "P2025") {
+      return Response.Unsuccessful({
+        message: "Exam not found",
+        resultCode: 404,
+      });
+    }
+
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
+const GetExamByID = async (examId) => {
+  try {
+    const exam = await database.Exam.findUnique({
+      where: {
+        id: examId,
+      },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+      },
+    });
+
+    if (exam) {
+      return Response.Successful({
+        message: "Exam retrieved successfully",
+        body: exam,
+      });
+    }
+
+    return Response.Unsuccessful({
+      message: "Failed to retrieve exam",
+    });
+  } catch (error) {
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+export { CreateExam, DeleteExam, GetExamByID };
