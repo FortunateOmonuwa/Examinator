@@ -1,0 +1,26 @@
+.my-exams-page {
+  .exam-item {
+    transition: background-color $transition-normal;
+    
+    &:hover {
+      background-color: #f9fafb;
+    }
+    
+    .action-buttons {
+      button, a {
+        transition: all $transition-normal;
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+  
+  .empty-state {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: $shadow;
+    padding: 2rem;
+  }
+}

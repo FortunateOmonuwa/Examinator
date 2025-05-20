@@ -1,0 +1,41 @@
+.site-footer {
+  .footer-brand {
+    h2 {
+      background: linear-gradient(to right, #9333ea, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  
+  .footer-links {
+    ul {
+      li {
+        a {
+          position: relative;
+          transition: all $transition-fast;
+          
+          &:hover {
+            padding-left: 5px;
+          }
+        }
+      }
+    }
+  }
+  
+  .footer-newsletter {
+    form {
+      input {
+        transition: all $transition-fast;
+        
+        &:focus {
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+        }
+      }
+      
+      button {
+        transition: all $transition-fast;
+      }
+    }
+  }
+}

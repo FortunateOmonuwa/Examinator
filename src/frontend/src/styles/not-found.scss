@@ -1,0 +1,29 @@
+.not-found-page {
+  h1 {
+    font-size: 8rem;
+    font-weight: 800;
+    color: #9333ea;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    letter-spacing: -0.05em;
+  }
+  
+  h2 {
+    font-weight: 700;
+    color: #111827;
+  }
+  
+  p {
+    color: #6b7280;
+    max-width: 24rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  a {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+}

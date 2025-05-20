@@ -1,0 +1,43 @@
+// Primary colors
+$primary-color: #9333ea; // purple-600
+$primary-hover: #7e22ce; // purple-700
+$primary-light: #f3e8ff; // purple-100
+
+// Secondary colors
+$secondary-color: #f3f4f6; // gray-100
+$secondary-dark: #9ca3af; // gray-400
+
+// Text colors
+$text-color: #111827; // gray-900
+$text-light: #6b7280; // gray-500
+$text-lighter: #9ca3af; // gray-400
+
+// Border colors
+$border-color: #e5e7eb; // gray-200
+$border-dark: #d1d5db; // gray-300
+
+// Status colors
+$success-color: #10b981; // green-500
+$success-light: #d1fae5; // green-100
+$error-color: #ef4444; // red-500
+$error-light: #fee2e2; // red-100
+$warning-color: #f59e0b; // amber-500
+$warning-light: #fef3c7; // amber-100
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-normal: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// Breakpoints (matching Tailwind defaults)
+$screen-sm: 640px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+$screen-2xl: 1536px;

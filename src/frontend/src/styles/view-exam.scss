@@ -1,0 +1,37 @@
+.view-exam {
+  .exam-header {
+    h1 {
+      font-weight: 700;
+    }
+  }
+  
+  .exam-details {
+    .subject-tag {
+      background-color: rgba(147, 51, 234, 0.1);
+    }
+    
+    .time-info {
+      color: #6b7280;
+    }
+  }
+  
+  .questions-section {
+    .question-card {
+      transition: box-shadow 0.2s ease;
+      
+      &:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+      
+      .options-list {
+        .option-item {
+          padding: 0.5rem 0;
+          
+          &:not(:last-child) {
+            border-bottom: 1px solid #f3f4f6;
+          }
+        }
+      }
+    }
+  }
+}

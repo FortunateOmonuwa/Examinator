@@ -1,0 +1,77 @@
+.home-page {
+  .hero-section {
+    background-image: linear-gradient(to right bottom, #f9fafb, #f3f4f6);
+    
+    .hero-content {
+      h1 {
+        span {
+          background: linear-gradient(to right, #9333ea, #7e22ce);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+      }
+      
+      .btn-primary {
+        background-color: $primary-color;
+        transition: all $transition-normal;
+        
+        &:hover {
+          background-color: $primary-hover;
+          transform: translateY(-2px);
+        }
+      }
+      
+      .btn-secondary {
+        background-color: white;
+        border: 1px solid $primary-color;
+        color: $primary-color;
+        transition: all $transition-normal;
+        
+        &:hover {
+          background-color: $primary-light;
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+  
+  .features-section {
+    .feature-card {
+      transition: all $transition-normal;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: $shadow-md;
+      }
+    }
+  }
+  
+  .take-exam-section {
+    .btn-primary {
+      background-color: $primary-color;
+      transition: all $transition-normal;
+      
+      &:hover {
+        background-color: $primary-hover;
+      }
+    }
+  }
+  
+  .create-exam-section {
+    .btn-primary {
+      background-color: $primary-color;
+      transition: all $transition-normal;
+      
+      &:hover {
+        background-color: $primary-hover;
+        transform: translateY(-2px);
+      }
+    }
+    
+    .btn-disabled {
+      background-color: $secondary-color;
+      border: 1px solid $border-color;
+      color: $text-lighter;
+    }
+  }
+}

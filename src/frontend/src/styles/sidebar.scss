@@ -1,0 +1,25 @@
+.sidebar {
+  .logo {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    background: linear-gradient(to right, #9333ea, #7e22ce);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  a {
+    transition: all 0.2s ease;
+    
+    &.active {
+      font-weight: 600;
+      
+      svg {
+        color: #9333ea !important;
+      }
+    }
+    
+    &:hover:not(.active) {
+      background-color: #f9fafb;
+    }
+  }
+}
