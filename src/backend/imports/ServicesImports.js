@@ -9,7 +9,12 @@ import {
   CreateExam,
   DeleteExam,
   GetExamByID,
+  GetAllExams,
 } from "../functionalities/Exam/Exam.Service.js";
+import {
+  Login,
+  RefreshAccessToken,
+} from "../functionalities/User/Authentication.Service.js";
 export {
   RegisterAdmin,
   RegisterExaminer,
@@ -19,4 +24,7 @@ export {
   CreateExam,
   DeleteExam,
   GetExamByID,
+  GetAllExams,
+  Login,
+  RefreshAccessToken,
 };

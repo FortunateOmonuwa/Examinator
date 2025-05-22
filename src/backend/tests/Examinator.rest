@@ -15,15 +15,25 @@ POST http://localhost:5001/api/examiner
 Content-Type: application/json
 
 {
-    "firstname": "Jackson",
-    "lastname": "Hayes",
-    "email": "jackson30@email.com",
-    "password": "trutrutrutrutrutru133#"
+    "firstname": "Fortunate",
+    "lastname": "Omonuwa",
+    "email": "fortunateomonuwa@outlook.com",
+    "password": "F0rtun@te"
 }
 
 ###
 
-GET http://localhost:5001/api/examiner/16aa027d-1c37-4d50-b34e-eb92aae0ae2c
+POST http://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "fortunateomonuwa@outlook.com",
+    "password": "F0rtun@te"
+}
+
+###
+
+GET http://localhost:5001/api/examiner/bab36b65-b024-491a-a9ce-e4449290ee67
 
 
 ###

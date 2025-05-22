@@ -8,8 +8,10 @@ import {
   CreateExamAsync,
   DeleteExamAsync,
   GetExamAsync,
+  GetAllExamsAsync,
 } from "../controllers/ExamController/Exam.Controller.js";
 
+import { Login, RefreshAccessToken } from "./ServicesImports.js";
 export {
   RegisterAdminAsync,
   RegisterExaminerAsync,
@@ -18,4 +20,7 @@ export {
   CreateExamAsync,
   DeleteExamAsync,
   GetExamAsync,
+  GetAllExamsAsync,
+  Login,
+  RefreshAccessToken,
 };

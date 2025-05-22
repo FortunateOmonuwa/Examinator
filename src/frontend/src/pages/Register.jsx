@@ -1,48 +1,54 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
-import toast from "react-hot-toast"
-import "../styles/auth.scss"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import toast from "react-hot-toast";
+import "../styles/auth.scss";
 
 const Register = () => {
-  const [firstname, setFirstname] = useState("")
-  const [lastname, setLastname] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { register } = useAuth()
-  const navigate = useNavigate()
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match")
-      return
+      toast.error("Passwords do not match");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      await register(firstname, lastname, email, password)
-      navigate("/")
-      toast.success("Registered successfully!")
+      await register(firstname, lastname, email, password);
+      navigate("/");
+      toast.success("Registered successfully!");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to register")
+      toast.error(
+        error instanceof Error ? error.message : "Failed to register"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 auth-container">
       <div className="max-w-md w-full space-y-8 auth-form">
         <div>
-          <h1 className="text-center text-3xl font-extrabold text-purple-600">Exerminator</h1>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
+          <h1 className="text-center text-3xl font-extrabold text-purple-600">
+            Examinator
+          </h1>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+          </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
@@ -139,7 +145,10 @@ const Register = () => {
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
+              <Link
+                to="/login"
+                className="font-medium text-purple-600 hover:text-purple-500"
+              >
                 Sign in
               </Link>
             </p>
@@ -147,7 +156,7 @@ const Register = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

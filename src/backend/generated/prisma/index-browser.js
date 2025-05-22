@@ -132,6 +132,21 @@ exports.Prisma.ExaminerScalarFieldEnum = {
   profileId: 'profileId'
 };
 
+exports.Prisma.AuthManagerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  refreshToken: 'refreshToken',
+  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
+  isLoggedIn: 'isLoggedIn',
+  lastLoginAt: 'lastLoginAt',
+  lastActivityAt: 'lastActivityAt',
+  loginAttempts: 'loginAttempts',
+  isLocked: 'isLocked',
+  lockedUntil: 'lockedUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserProfileScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -228,6 +243,7 @@ exports.ExamStatus = exports.$Enums.ExamStatus = {
 exports.Prisma.ModelName = {
   Student: 'Student',
   Examiner: 'Examiner',
+  AuthManager: 'AuthManager',
   UserProfile: 'UserProfile',
   Exam: 'Exam',
   StudentExam: 'StudentExam',

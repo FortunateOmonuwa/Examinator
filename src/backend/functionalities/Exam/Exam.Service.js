@@ -159,4 +159,40 @@ const GetExamByID = async (examId) => {
     await database.$disconnect();
   }
 };
-export { CreateExam, DeleteExam, GetExamByID };
+
+const GetAllExams = async (examinerId) => {
+  try {
+    const exams = await database.Exam.findMany({
+      where: {
+        creatorId: examinerId,
+      },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+      },
+    });
+
+    if (exams) {
+      return Response.Successful({
+        message: "Exams retrieved successfully",
+        body: exams,
+      });
+    }
+
+    return Response.Unsuccessful({
+      message: "Failed to retrieve exams",
+    });
+  } catch (error) {
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
+export { CreateExam, DeleteExam, GetExamByID, GetAllExams };

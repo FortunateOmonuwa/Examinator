@@ -25,17 +25,33 @@ model Examiner {
   profileId String @unique @db.Uuid
 }
 
+model AuthManager {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @unique @db.Uuid 
+  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String?
+  refreshTokenExpiresAt DateTime?
+  isLoggedIn Boolean @default(false)
+  lastLoginAt DateTime?
+  lastActivityAt DateTime?
+  loginAttempts Int @default(0) 
+  isLocked Boolean @default(false)
+  lockedUntil DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model UserProfile {
   id String @id @default(uuid()) @db.Uuid
   email String @unique
   passwordHash String
   role Role
+  authManager AuthManager? 
   examiner Examiner?
   student Student?
   dateCreated DateTime @default(now())
-  dateUpdated DateTime @default(now())
+  dateUpdated DateTime @updatedAt 
 }
-
 model Exam {
   id String @id @default(uuid()) @db.Uuid
   title String

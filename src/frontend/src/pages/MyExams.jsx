@@ -1,125 +1,144 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { PlusCircle, Edit, Trash2, Eye, Share2, Globe, Lock } from "lucide-react"
-import { useAuth } from "../contexts/AuthContext"
-import { api } from "../services/api"
-import LoadingSpinner from "../components/LoadingSpinner"
-import toast from "react-hot-toast"
-import "../styles/my-exams.scss"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  PlusCircle,
+  Edit,
+  Trash2,
+  Eye,
+  Share2,
+  Globe,
+  Lock,
+} from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
+import { GetAllExams } from "../services/Exam";
+import LoadingSpinner from "../components/LoadingSpinner";
+import toast from "react-hot-toast";
+import "../styles/my-exams.scss";
 
 const MyExams = () => {
-  const { user } = useAuth()
-  const [exams, setExams] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [shareModalOpen, setShareModalOpen] = useState(false)
-  const [currentExam, setCurrentExam] = useState(null)
-  const [shareEmail, setShareEmail] = useState("")
-  const [shareLoading, setShareLoading] = useState(false)
+  const { user } = useAuth();
+  const [exams, setExams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [currentExam, setCurrentExam] = useState(null);
+  const [shareEmail, setShareEmail] = useState("");
+  const [shareLoading, setShareLoading] = useState(false);
 
   useEffect(() => {
     const fetchExams = async () => {
       try {
-        if (user) {
-          const response = await api.get(`/api/examiner/${user.id}`)
-          if (response.data.response.isSuccessful && response.data.response.body) {
-            setExams(response.data.response.body.exams || [])
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching exams:", error)
-        toast.error("Failed to load exams")
-      } finally {
-        setLoading(false)
-      }
-    }
+        // if (user) {
+        //   const response = await api.get(`/api/examiner/${user.id}`);
+        //   if (
+        //     response.data.response.isSuccessful &&
+        //     response.data.response.body
+        //   ) {
+        //     setExams(response.data.response.body.exams || []);
+        //   }
+        // }
 
-    fetchExams()
-  }, [user])
+        const exams = await GetAllExams("bab36b65-b024-491a-a9ce-e4449290ee67");
+        setExams(exams);
+      } catch (error) {
+        console.error("Error fetching exams:", error);
+        toast.error("Failed to load exams");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExams();
+  }, [user]);
 
   const handleDeleteExam = async (examId) => {
     if (window.confirm("Are you sure you want to delete this exam?")) {
       try {
-        const response = await api.delete(`/api/exam/${examId}`)
+        const response = await api.delete(`/api/exam/${examId}`);
         if (response.data.response.isSuccessful) {
-          setExams(exams.filter((exam) => exam.id !== examId))
-          toast.success("Exam deleted successfully")
+          setExams(exams.filter((exam) => exam.id !== examId));
+          toast.success("Exam deleted successfully");
         } else {
-          toast.error(response.data.response.message || "Failed to delete exam")
+          toast.error(
+            response.data.response.message || "Failed to delete exam"
+          );
         }
       } catch (error) {
-        console.error("Error deleting exam:", error)
-        toast.error("Failed to delete exam")
+        console.error("Error deleting exam:", error);
+        toast.error("Failed to delete exam");
       }
     }
-  }
+  };
 
   const handleTogglePublic = async (exam) => {
     try {
       // In a real implementation, this would call your backend API to update the exam
       // For now, we'll simulate a response
-      const updatedExam = { ...exam, isPublic: !exam.isPublic }
+      const updatedExam = { ...exam, isPublic: !exam.isPublic };
 
       // Update the local state
-      setExams(exams.map((e) => (e.id === exam.id ? updatedExam : e)))
+      setExams(exams.map((e) => (e.id === exam.id ? updatedExam : e)));
 
-      toast.success(`Exam is now ${updatedExam.isPublic ? "public" : "private"}`)
+      toast.success(
+        `Exam is now ${updatedExam.isPublic ? "public" : "private"}`
+      );
 
       // In a real implementation:
       // const response = await api.put(`/api/exam/${exam.id}`, {
       //   exam: { ...exam, isPublic: !exam.isPublic }
       // })
     } catch (error) {
-      console.error("Error updating exam:", error)
-      toast.error("Failed to update exam visibility")
+      console.error("Error updating exam:", error);
+      toast.error("Failed to update exam visibility");
     }
-  }
+  };
 
   const openShareModal = (exam) => {
-    setCurrentExam(exam)
-    setShareModalOpen(true)
-  }
+    setCurrentExam(exam);
+    setShareModalOpen(true);
+  };
 
   const handleShareExam = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!shareEmail.trim()) {
-      toast.error("Please enter an email address")
-      return
+      toast.error("Please enter an email address");
+      return;
     }
 
-    setShareLoading(true)
+    setShareLoading(true);
 
     try {
       // In a real implementation, this would call your backend API
       // For now, we'll simulate a response
       setTimeout(() => {
-        toast.success(`Exam link sent to ${shareEmail}`)
-        setShareModalOpen(false)
-        setShareEmail("")
-        setShareLoading(false)
-      }, 1000)
+        toast.success(`Exam link sent to ${shareEmail}`);
+        setShareModalOpen(false);
+        setShareEmail("");
+        setShareLoading(false);
+      }, 1000);
 
       // In a real implementation:
       // const response = await api.post(`/api/exam/${currentExam.id}/share`, {
       //   email: shareEmail
       // })
     } catch (error) {
-      console.error("Error sharing exam:", error)
-      toast.error("Failed to share exam")
-      setShareLoading(false)
+      console.error("Error sharing exam:", error);
+      toast.error("Failed to share exam");
+      setShareLoading(false);
     }
-  }
+  };
 
   const copyExamLink = (examId) => {
-    const link = `${window.location.origin}/take-exam/${examId}`
-    navigator.clipboard.writeText(link)
-    toast.success("Exam link copied to clipboard")
-  }
+    const link = `${window.location.origin}/take-exam/${examId}`;
+    navigator.clipboard.writeText(link);
+    toast.success("Exam link copied to clipboard");
+  };
 
   if (loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   return (
@@ -137,8 +156,12 @@ const MyExams = () => {
 
       {exams.length === 0 ? (
         <div className="text-center py-12 empty-state">
-          <h3 className="mt-2 text-lg font-medium text-gray-900">No exams found</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by creating a new exam.</p>
+          <h3 className="mt-2 text-lg font-medium text-gray-900">
+            No exams found
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Get started by creating a new exam.
+          </p>
           <div className="mt-6">
             <Link
               to="/create-exam"
@@ -158,7 +181,9 @@ const MyExams = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
                       <div className="flex items-center">
-                        <h3 className="text-lg font-medium text-gray-900">{exam.title}</h3>
+                        <h3 className="text-lg font-medium text-gray-900">
+                          {exam.title}
+                        </h3>
                         {exam.isPublic ? (
                           <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             <Globe className="mr-1 h-3 w-3" />
@@ -171,24 +196,36 @@ const MyExams = () => {
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-gray-500">{exam.description}</p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {exam.description}
+                      </p>
                       <div className="mt-2 flex items-center text-sm text-gray-500">
                         <span className="bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
                           {exam.subject}
                         </span>
-                        <span className="text-xs">Time: {exam.stipulatedTime} minutes</span>
-                        <span className="text-xs ml-2">Questions: {exam.questions?.length || 0}</span>
+                        <span className="text-xs">
+                          Time: {exam.stipulatedTime} minutes
+                        </span>
+                        <span className="text-xs ml-2">
+                          Questions: {exam.questions?.length || 0}
+                        </span>
                       </div>
                     </div>
                     <div className="flex space-x-2 action-buttons">
                       <button
                         onClick={() => handleTogglePublic(exam)}
                         className={`inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white ${
-                          exam.isPublic ? "bg-green-600 hover:bg-green-700" : "bg-gray-600 hover:bg-gray-700"
+                          exam.isPublic
+                            ? "bg-green-600 hover:bg-green-700"
+                            : "bg-gray-600 hover:bg-gray-700"
                         } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500`}
                         title={exam.isPublic ? "Make Private" : "Make Public"}
                       >
-                        {exam.isPublic ? <Lock className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
+                        {exam.isPublic ? (
+                          <Lock className="h-4 w-4" />
+                        ) : (
+                          <Globe className="h-4 w-4" />
+                        )}
                       </button>
                       <button
                         onClick={() => openShareModal(exam)}
@@ -231,10 +268,14 @@ const MyExams = () => {
       {shareModalOpen && currentExam && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Share Exam: {currentExam.title}</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Share Exam: {currentExam.title}
+            </h3>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Exam Link</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Exam Link
+              </label>
               <div className="flex">
                 <input
                   type="text"
@@ -253,7 +294,10 @@ const MyExams = () => {
 
             <form onSubmit={handleShareExam}>
               <div className="mb-4">
-                <label htmlFor="share-email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="share-email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Share via Email
                 </label>
                 <input
@@ -287,7 +331,7 @@ const MyExams = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MyExams
+export default MyExams;
