@@ -32,3 +32,5 @@ node_modules
 .env
 bash.exe.stackdump
 *bash.exe.stackdump
+.rest
+*.rest

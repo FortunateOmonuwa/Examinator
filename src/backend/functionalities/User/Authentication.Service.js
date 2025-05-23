@@ -38,7 +38,7 @@ const Login = async ({ email, password }) => {
     const hasTooManyAttempts = user.authManager?.loginAttempts >= 5;
 
     if (isAccountLocked || hasTooManyAttempts) {
-      await database.authManager.update({
+      await database.AuthManager.update({
         where: { id: user.authManager.id },
         data: {
           isLocked: true,
@@ -65,7 +65,7 @@ const Login = async ({ email, password }) => {
     const isPasswordCorrect = await CompareHash(password, user.passwordHash);
     if (!isPasswordCorrect) {
       if (user.authManager) {
-        await database.authManager.update({
+        await database.AuthManager.update({
           where: { id: user.authManager.id },
           data: {
             loginAttempts: { increment: 1 },
@@ -85,11 +85,11 @@ const Login = async ({ email, password }) => {
 
     let id = user.id;
     let user_Id = user.examiner?.id ?? user.student?.id;
-    const token = await GenerateJWT(user_Id, user.role);
+    const token = await GenerateJWT(user_Id, user.role, id);
     const refreshToken = await Generate64BaeHexString();
     const hashedRefreshToken = CreateHash(refreshToken);
 
-    await database.authManager.upsert({
+    await database.AuthManager.upsert({
       where: {
         userId: id,
       },
@@ -136,10 +136,11 @@ const Login = async ({ email, password }) => {
   }
 };
 
-const GenerateJWT = async (userId, role) => {
+const GenerateJWT = async (userId, role, profileId) => {
   const user = {
     userId,
     role,
+    profileId,
   };
   const token = jwt.sign(user, process.env.JWT_SECRET, {
     expiresIn: "2h",
@@ -149,7 +150,7 @@ const GenerateJWT = async (userId, role) => {
 
 const RefreshAccessToken = async ({ refreshToken }) => {
   const hashedRefreshToken = CreateHash(refreshToken);
-  const authRecord = await prisma.authManager.findFirst({
+  const authRecord = await database.AuthManager.findFirst({
     where: {
       refreshToken: hashedRefreshToken,
       isLoggedIn: true,
@@ -167,7 +168,7 @@ const RefreshAccessToken = async ({ refreshToken }) => {
   }
 
   if (authRecord.refreshTokenExpiresAt < new Date(Date.now())) {
-    await prisma.authManager.update({
+    await database.AuthManager.update({
       where: { id: authRecord.id },
       data: {
         isLoggedIn: false,
@@ -195,4 +196,57 @@ const RefreshAccessToken = async ({ refreshToken }) => {
   });
 };
 
-export { Login, RefreshAccessToken };
+const ConfirmUser = async ({ token }) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await database.UserProfile.findUnique({
+      where: { id: decoded.profileId },
+      include: {
+        authManager: true,
+        examiner: true,
+        student: true,
+      },
+    });
+
+    if (!user) {
+      return Response.Unsuccessful({
+        message: "Unauthorized",
+        resultCode: 401,
+      });
+    }
+
+    return Response.Successful({
+      message: "User retrieved",
+      body: user,
+    });
+  } catch (err) {
+    return Response.Unsuccessful({
+      message: "Invalid token",
+      resultCode: 401,
+    });
+  }
+};
+
+const Logout = async (id) => {
+  try {
+    await database.AuthManager.update({
+      where: { userId: id },
+      data: {
+        isLoggedIn: false,
+        refreshToken: null,
+        refreshTokenExpiresAt: null,
+        loginAttempts: 0,
+      },
+    });
+    return Response.Successful({
+      message: "Logged out",
+    });
+  } catch (err) {
+    return Response.Unsuccessful({
+      message: "Logout failed",
+      resultCode: 500,
+    });
+  }
+};
+
+export { Login, RefreshAccessToken, ConfirmUser, Logout };

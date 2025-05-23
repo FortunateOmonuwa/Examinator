@@ -2,6 +2,7 @@ import {
   CreateExam,
   DeleteExam,
   GetExamByID,
+  GetAllExams,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
 
@@ -61,6 +62,7 @@ const GetAllExamsAsync = async (req, res) => {
 
   try {
     const response = await GetAllExams(id);
+
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });
     } else {

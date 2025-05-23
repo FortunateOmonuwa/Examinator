@@ -1,4 +1,5 @@
 import { express, dotenv, port, corsConfig } from "./imports/PackageImports.js";
+import cookieParser from "cookie-parser";
 import { AdminRouter } from "./imports/RouteImports.js";
 import { ExaminerRouter } from "./imports/RouteImports.js";
 import { ExamRouter } from "./imports/RouteImports.js";
@@ -11,10 +12,11 @@ process.once("exit", () => {
   console.log("App exiting...");
 });
 
-//MiddleWare
 app.use(corsConfig());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 app.use("/api/admin", AdminRouter);
 app.use("/api/examiner", ExaminerRouter);
 app.use("/api/exam", ExamRouter);

@@ -11,7 +11,12 @@ import {
   GetAllExamsAsync,
 } from "../controllers/ExamController/Exam.Controller.js";
 
-import { Login, RefreshAccessToken } from "./ServicesImports.js";
+import {
+  Login,
+  RefreshAccessToken,
+  ConfirmUser,
+  Logout,
+} from "./ServicesImports.js";
 export {
   RegisterAdminAsync,
   RegisterExaminerAsync,
@@ -23,4 +28,6 @@ export {
   GetAllExamsAsync,
   Login,
   RefreshAccessToken,
+  ConfirmUser,
+  Logout,
 };

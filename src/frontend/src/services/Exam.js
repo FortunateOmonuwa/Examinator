@@ -29,10 +29,9 @@ const DeleteExam = async (examId) => {
 
 const GetAllExams = async (examinerId) => {
   try {
-    let req = await api.get(`/api/exam/${examinerId}/exams`);
-    let res = req.response.data.response;
-    console.log("res", res);
-    return res;
+    let response = await api.get(`/api/exam/exams/${examinerId}`);
+
+    return response.data.response.body;
   } catch (error) {
     console.log(error);
   }

@@ -40,7 +40,7 @@ const MyExams = () => {
         //   }
         // }
 
-        const exams = await GetAllExams("bab36b65-b024-491a-a9ce-e4449290ee67");
+        const exams = await GetAllExams(user.userId);
         setExams(exams);
       } catch (error) {
         console.error("Error fetching exams:", error);

@@ -14,6 +14,8 @@ import {
 import {
   Login,
   RefreshAccessToken,
+  ConfirmUser,
+  Logout,
 } from "../functionalities/User/Authentication.Service.js";
 export {
   RegisterAdmin,
@@ -27,4 +29,6 @@ export {
   GetAllExams,
   Login,
   RefreshAccessToken,
+  ConfirmUser,
+  Logout,
 };

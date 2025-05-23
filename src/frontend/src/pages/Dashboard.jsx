@@ -1,58 +1,63 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { PlusCircle, Edit, Trash2, Eye } from "lucide-react"
-import { useAuth } from "../contexts/AuthContext"
-import { api } from "../services/api"
-import LoadingSpinner from "../components/LoadingSpinner"
-import toast from "react-hot-toast"
-import "../styles/dashboard.scss"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { PlusCircle, Edit, Trash2, Eye } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { api } from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
+import toast from "react-hot-toast";
+import "../styles/dashboard.scss";
 
 const Dashboard = () => {
-  const { user } = useAuth()
-  const [exams, setExams] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { user } = useAuth();
+  const [exams, setExams] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchExams = async () => {
       try {
         if (user) {
-          const response = await api.get(`/api/examiner/${user.id}`)
-          if (response.data.response.isSuccessful && response.data.response.body) {
-            setExams(response.data.response.body.exams || [])
+          const response = await api.get(`/api/exam/exams/${user.userId}`);
+          if (
+            response.data.response.isSuccessful &&
+            response.data.response.body
+          ) {
+            setExams(response.data.response.body || []);
           }
         }
       } catch (error) {
-        console.error("Error fetching exams:", error)
-        toast.error("Failed to load exams")
+        console.error("Error fetching exams:", error);
+        toast.error("Failed to load exams");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchExams()
-  }, [user])
+    fetchExams();
+  }, [user]);
 
   const handleDeleteExam = async (examId) => {
     if (window.confirm("Are you sure you want to delete this exam?")) {
       try {
-        const response = await api.delete(`/api/exam/${examId}`)
+        const response = await api.delete(`/api/exam/${examId}`);
         if (response.data.response.isSuccessful) {
-          setExams(exams.filter((exam) => exam.id !== examId))
-          toast.success("Exam deleted successfully")
+          setExams(exams.filter((exam) => exam.id !== examId));
+          toast.success("Exam deleted successfully");
         } else {
-          toast.error(response.data.response.message || "Failed to delete exam")
+          toast.error(
+            response.data.response.message || "Failed to delete exam"
+          );
         }
       } catch (error) {
-        console.error("Error deleting exam:", error)
-        toast.error("Failed to delete exam")
+        console.error("Error deleting exam:", error);
+        toast.error("Failed to delete exam");
       }
     }
-  }
+  };
 
   if (loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   return (
@@ -70,8 +75,12 @@ const Dashboard = () => {
 
       {exams.length === 0 ? (
         <div className="text-center py-12 empty-state">
-          <h3 className="mt-2 text-lg font-medium text-gray-900">No exams found</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by creating a new exam.</p>
+          <h3 className="mt-2 text-lg font-medium text-gray-900">
+            No exams found
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Get started by creating a new exam.
+          </p>
           <div className="mt-6">
             <Link
               to="/create-exam"
@@ -90,13 +99,19 @@ const Dashboard = () => {
                 <div className="px-4 py-4 sm:px-6">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
-                      <h3 className="text-lg font-medium text-gray-900">{exam.title}</h3>
-                      <p className="mt-1 text-sm text-gray-500">{exam.description}</p>
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {exam.title}
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {exam.description}
+                      </p>
                       <div className="mt-2 flex items-center text-sm text-gray-500">
                         <span className="bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded subject-tag">
                           {exam.subject}
                         </span>
-                        <span className="text-xs">Time: {exam.stipulatedTime} minutes</span>
+                        <span className="text-xs">
+                          Time: {exam.stipulatedTime} minutes
+                        </span>
                       </div>
                     </div>
                     <div className="flex space-x-2 action-buttons">
@@ -127,7 +142,7 @@ const Dashboard = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
