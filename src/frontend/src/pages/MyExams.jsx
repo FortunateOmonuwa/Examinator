@@ -132,7 +132,7 @@ const MyExams = () => {
   };
 
   const copyExamLink = (examId) => {
-    const link = `${window.location.origin}/take-exam/${examId}`;
+    const link = `${window.location.origin}/exam/${examId}`;
     navigator.clipboard.writeText(link);
     toast.success("Exam link copied to clipboard");
   };
@@ -145,13 +145,6 @@ const MyExams = () => {
     <div className="my-exams-page">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">My Exams</h1>
-        <Link
-          to="/create-exam"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
-        >
-          <PlusCircle className="mr-2 h-5 w-5" />
-          Create New Exam
-        </Link>
       </div>
 
       {exams.length === 0 ? (
@@ -164,7 +157,7 @@ const MyExams = () => {
           </p>
           <div className="mt-6">
             <Link
-              to="/create-exam"
+              to="/dashboard/create-exam"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               <PlusCircle className="mr-2 h-5 w-5" />
@@ -184,6 +177,7 @@ const MyExams = () => {
                         <h3 className="text-lg font-medium text-gray-900">
                           {exam.title}
                         </h3>
+
                         {exam.isPublic ? (
                           <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             <Globe className="mr-1 h-3 w-3" />
@@ -280,7 +274,7 @@ const MyExams = () => {
                 <input
                   type="text"
                   readOnly
-                  value={`${window.location.origin}/take-exam/${currentExam.id}`}
+                  value={`${window.location.origin}/exam/${currentExam.id}`}
                   className="flex-1 border border-gray-300 rounded-l-md px-3 py-2 bg-gray-50"
                 />
                 <button

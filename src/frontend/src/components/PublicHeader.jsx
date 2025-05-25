@@ -27,7 +27,7 @@ const PublicHeader = () => {
               <Link to="/" className="nav-link">
                 Home
               </Link>
-              <Link to="/take-exam" className="nav-link">
+              <Link to="/exam" className="nav-link">
                 Take Exam
               </Link>
               <Link

@@ -27,7 +27,7 @@ function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="take-exam" element={<TakeExam />} />
-            <Route path="take-exam/:examId" element={<TakeExam />} />
+            <Route path="exam/:examId" element={<TakeExam />} />
             <Route path="about" element={<About />} />
             <Route path="faqs" element={<FAQs />} />
           </Route>
