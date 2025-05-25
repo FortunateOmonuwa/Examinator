@@ -85,6 +85,15 @@ export const ExamStatus: {
 
 export type ExamStatus = (typeof ExamStatus)[keyof typeof ExamStatus]
 
+
+export const QuestionType: {
+  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  MULTICHOICE: 'MULTICHOICE',
+  TEXT: 'TEXT'
+};
+
+export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType]
+
 }
 
 export type Role = $Enums.Role
@@ -94,6 +103,10 @@ export const Role: typeof $Enums.Role
 export type ExamStatus = $Enums.ExamStatus
 
 export const ExamStatus: typeof $Enums.ExamStatus
+
+export type QuestionType = $Enums.QuestionType
+
+export const QuestionType: typeof $Enums.QuestionType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -8842,6 +8855,8 @@ export namespace Prisma {
     text: string | null
     examId: string | null
     required: boolean | null
+    type: $Enums.QuestionType | null
+    expectedAnswer: string | null
   }
 
   export type QuestionMaxAggregateOutputType = {
@@ -8849,6 +8864,8 @@ export namespace Prisma {
     text: string | null
     examId: string | null
     required: boolean | null
+    type: $Enums.QuestionType | null
+    expectedAnswer: string | null
   }
 
   export type QuestionCountAggregateOutputType = {
@@ -8856,6 +8873,8 @@ export namespace Prisma {
     text: number
     examId: number
     required: number
+    type: number
+    expectedAnswer: number
     _all: number
   }
 
@@ -8865,6 +8884,8 @@ export namespace Prisma {
     text?: true
     examId?: true
     required?: true
+    type?: true
+    expectedAnswer?: true
   }
 
   export type QuestionMaxAggregateInputType = {
@@ -8872,6 +8893,8 @@ export namespace Prisma {
     text?: true
     examId?: true
     required?: true
+    type?: true
+    expectedAnswer?: true
   }
 
   export type QuestionCountAggregateInputType = {
@@ -8879,6 +8902,8 @@ export namespace Prisma {
     text?: true
     examId?: true
     required?: true
+    type?: true
+    expectedAnswer?: true
     _all?: true
   }
 
@@ -8959,6 +8984,8 @@ export namespace Prisma {
     text: string
     examId: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer: string | null
     _count: QuestionCountAggregateOutputType | null
     _min: QuestionMinAggregateOutputType | null
     _max: QuestionMaxAggregateOutputType | null
@@ -8983,6 +9010,8 @@ export namespace Prisma {
     text?: boolean
     examId?: boolean
     required?: boolean
+    type?: boolean
+    expectedAnswer?: boolean
     exam?: boolean | ExamDefaultArgs<ExtArgs>
     options?: boolean | Question$optionsArgs<ExtArgs>
     answers?: boolean | Question$answersArgs<ExtArgs>
@@ -8994,6 +9023,8 @@ export namespace Prisma {
     text?: boolean
     examId?: boolean
     required?: boolean
+    type?: boolean
+    expectedAnswer?: boolean
     exam?: boolean | ExamDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["question"]>
 
@@ -9002,6 +9033,8 @@ export namespace Prisma {
     text?: boolean
     examId?: boolean
     required?: boolean
+    type?: boolean
+    expectedAnswer?: boolean
     exam?: boolean | ExamDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["question"]>
 
@@ -9010,9 +9043,11 @@ export namespace Prisma {
     text?: boolean
     examId?: boolean
     required?: boolean
+    type?: boolean
+    expectedAnswer?: boolean
   }
 
-  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "text" | "examId" | "required", ExtArgs["result"]["question"]>
+  export type QuestionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "text" | "examId" | "required" | "type" | "expectedAnswer", ExtArgs["result"]["question"]>
   export type QuestionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     exam?: boolean | ExamDefaultArgs<ExtArgs>
     options?: boolean | Question$optionsArgs<ExtArgs>
@@ -9038,6 +9073,8 @@ export namespace Prisma {
       text: string
       examId: string
       required: boolean
+      type: $Enums.QuestionType
+      expectedAnswer: string | null
     }, ExtArgs["result"]["question"]>
     composites: {}
   }
@@ -9468,6 +9505,8 @@ export namespace Prisma {
     readonly text: FieldRef<"Question", 'String'>
     readonly examId: FieldRef<"Question", 'String'>
     readonly required: FieldRef<"Question", 'Boolean'>
+    readonly type: FieldRef<"Question", 'QuestionType'>
+    readonly expectedAnswer: FieldRef<"Question", 'String'>
   }
     
 
@@ -13416,7 +13455,9 @@ export namespace Prisma {
     id: 'id',
     text: 'text',
     examId: 'examId',
-    required: 'required'
+    required: 'required',
+    type: 'type',
+    expectedAnswer: 'expectedAnswer'
   };
 
   export type QuestionScalarFieldEnum = (typeof QuestionScalarFieldEnum)[keyof typeof QuestionScalarFieldEnum]
@@ -13574,6 +13615,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'QuestionType'
+   */
+  export type EnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuestionType'>
+    
+
+
+  /**
+   * Reference to a field of type 'QuestionType[]'
+   */
+  export type ListEnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuestionType[]'>
     
   /**
    * Deep Input Types
@@ -14017,6 +14072,8 @@ export namespace Prisma {
     text?: StringFilter<"Question"> | string
     examId?: UuidFilter<"Question"> | string
     required?: BoolFilter<"Question"> | boolean
+    type?: EnumQuestionTypeFilter<"Question"> | $Enums.QuestionType
+    expectedAnswer?: StringNullableFilter<"Question"> | string | null
     exam?: XOR<ExamScalarRelationFilter, ExamWhereInput>
     options?: OptionListRelationFilter
     answers?: AnswerListRelationFilter
@@ -14027,6 +14084,8 @@ export namespace Prisma {
     text?: SortOrder
     examId?: SortOrder
     required?: SortOrder
+    type?: SortOrder
+    expectedAnswer?: SortOrderInput | SortOrder
     exam?: ExamOrderByWithRelationInput
     options?: OptionOrderByRelationAggregateInput
     answers?: AnswerOrderByRelationAggregateInput
@@ -14040,6 +14099,8 @@ export namespace Prisma {
     text?: StringFilter<"Question"> | string
     examId?: UuidFilter<"Question"> | string
     required?: BoolFilter<"Question"> | boolean
+    type?: EnumQuestionTypeFilter<"Question"> | $Enums.QuestionType
+    expectedAnswer?: StringNullableFilter<"Question"> | string | null
     exam?: XOR<ExamScalarRelationFilter, ExamWhereInput>
     options?: OptionListRelationFilter
     answers?: AnswerListRelationFilter
@@ -14050,6 +14111,8 @@ export namespace Prisma {
     text?: SortOrder
     examId?: SortOrder
     required?: SortOrder
+    type?: SortOrder
+    expectedAnswer?: SortOrderInput | SortOrder
     _count?: QuestionCountOrderByAggregateInput
     _max?: QuestionMaxOrderByAggregateInput
     _min?: QuestionMinOrderByAggregateInput
@@ -14063,6 +14126,8 @@ export namespace Prisma {
     text?: StringWithAggregatesFilter<"Question"> | string
     examId?: UuidWithAggregatesFilter<"Question"> | string
     required?: BoolWithAggregatesFilter<"Question"> | boolean
+    type?: EnumQuestionTypeWithAggregatesFilter<"Question"> | $Enums.QuestionType
+    expectedAnswer?: StringNullableWithAggregatesFilter<"Question"> | string | null
   }
 
   export type OptionWhereInput = {
@@ -14720,6 +14785,8 @@ export namespace Prisma {
     id?: string
     text: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     exam: ExamCreateNestedOneWithoutQuestionsInput
     options?: OptionCreateNestedManyWithoutQuestionInput
     answers?: AnswerCreateNestedManyWithoutQuestionInput
@@ -14730,6 +14797,8 @@ export namespace Prisma {
     text: string
     examId: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     options?: OptionUncheckedCreateNestedManyWithoutQuestionInput
     answers?: AnswerUncheckedCreateNestedManyWithoutQuestionInput
   }
@@ -14738,6 +14807,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     exam?: ExamUpdateOneRequiredWithoutQuestionsNestedInput
     options?: OptionUpdateManyWithoutQuestionNestedInput
     answers?: AnswerUpdateManyWithoutQuestionNestedInput
@@ -14748,6 +14819,8 @@ export namespace Prisma {
     text?: StringFieldUpdateOperationsInput | string
     examId?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     options?: OptionUncheckedUpdateManyWithoutQuestionNestedInput
     answers?: AnswerUncheckedUpdateManyWithoutQuestionNestedInput
   }
@@ -14757,12 +14830,16 @@ export namespace Prisma {
     text: string
     examId: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
   }
 
   export type QuestionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type QuestionUncheckedUpdateManyInput = {
@@ -14770,6 +14847,8 @@ export namespace Prisma {
     text?: StringFieldUpdateOperationsInput | string
     examId?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OptionCreateInput = {
@@ -15499,6 +15578,13 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type EnumQuestionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeFilter<$PrismaModel> | $Enums.QuestionType
+  }
+
   export type OptionListRelationFilter = {
     every?: OptionWhereInput
     some?: OptionWhereInput
@@ -15524,6 +15610,8 @@ export namespace Prisma {
     text?: SortOrder
     examId?: SortOrder
     required?: SortOrder
+    type?: SortOrder
+    expectedAnswer?: SortOrder
   }
 
   export type QuestionMaxOrderByAggregateInput = {
@@ -15531,6 +15619,8 @@ export namespace Prisma {
     text?: SortOrder
     examId?: SortOrder
     required?: SortOrder
+    type?: SortOrder
+    expectedAnswer?: SortOrder
   }
 
   export type QuestionMinOrderByAggregateInput = {
@@ -15538,6 +15628,18 @@ export namespace Prisma {
     text?: SortOrder
     examId?: SortOrder
     required?: SortOrder
+    type?: SortOrder
+    expectedAnswer?: SortOrder
+  }
+
+  export type EnumQuestionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeWithAggregatesFilter<$PrismaModel> | $Enums.QuestionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQuestionTypeFilter<$PrismaModel>
+    _max?: NestedEnumQuestionTypeFilter<$PrismaModel>
   }
 
   export type QuestionScalarRelationFilter = {
@@ -16187,6 +16289,10 @@ export namespace Prisma {
     connect?: AnswerWhereUniqueInput | AnswerWhereUniqueInput[]
   }
 
+  export type EnumQuestionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.QuestionType
+  }
+
   export type ExamUpdateOneRequiredWithoutQuestionsNestedInput = {
     create?: XOR<ExamCreateWithoutQuestionsInput, ExamUncheckedCreateWithoutQuestionsInput>
     connectOrCreate?: ExamCreateOrConnectWithoutQuestionsInput
@@ -16708,6 +16814,23 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumQuestionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeFilter<$PrismaModel> | $Enums.QuestionType
+  }
+
+  export type NestedEnumQuestionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeWithAggregatesFilter<$PrismaModel> | $Enums.QuestionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQuestionTypeFilter<$PrismaModel>
+    _max?: NestedEnumQuestionTypeFilter<$PrismaModel>
   }
 
   export type NestedUuidNullableFilter<$PrismaModel = never> = {
@@ -17289,6 +17412,8 @@ export namespace Prisma {
     id?: string
     text: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     options?: OptionCreateNestedManyWithoutQuestionInput
     answers?: AnswerCreateNestedManyWithoutQuestionInput
   }
@@ -17297,6 +17422,8 @@ export namespace Prisma {
     id?: string
     text: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     options?: OptionUncheckedCreateNestedManyWithoutQuestionInput
     answers?: AnswerUncheckedCreateNestedManyWithoutQuestionInput
   }
@@ -17420,6 +17547,8 @@ export namespace Prisma {
     text?: StringFilter<"Question"> | string
     examId?: UuidFilter<"Question"> | string
     required?: BoolFilter<"Question"> | boolean
+    type?: EnumQuestionTypeFilter<"Question"> | $Enums.QuestionType
+    expectedAnswer?: StringNullableFilter<"Question"> | string | null
   }
 
   export type StudentExamUpsertWithWhereUniqueWithoutExamInput = {
@@ -17765,6 +17894,8 @@ export namespace Prisma {
     id?: string
     text: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     exam: ExamCreateNestedOneWithoutQuestionsInput
     answers?: AnswerCreateNestedManyWithoutQuestionInput
   }
@@ -17774,6 +17905,8 @@ export namespace Prisma {
     text: string
     examId: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     answers?: AnswerUncheckedCreateNestedManyWithoutQuestionInput
   }
 
@@ -17818,6 +17951,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     exam?: ExamUpdateOneRequiredWithoutQuestionsNestedInput
     answers?: AnswerUpdateManyWithoutQuestionNestedInput
   }
@@ -17827,6 +17962,8 @@ export namespace Prisma {
     text?: StringFieldUpdateOperationsInput | string
     examId?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     answers?: AnswerUncheckedUpdateManyWithoutQuestionNestedInput
   }
 
@@ -18043,6 +18180,8 @@ export namespace Prisma {
     id?: string
     text: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     exam: ExamCreateNestedOneWithoutQuestionsInput
     options?: OptionCreateNestedManyWithoutQuestionInput
   }
@@ -18052,6 +18191,8 @@ export namespace Prisma {
     text: string
     examId: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
     options?: OptionUncheckedCreateNestedManyWithoutQuestionInput
   }
 
@@ -18127,6 +18268,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     exam?: ExamUpdateOneRequiredWithoutQuestionsNestedInput
     options?: OptionUpdateManyWithoutQuestionNestedInput
   }
@@ -18136,6 +18279,8 @@ export namespace Prisma {
     text?: StringFieldUpdateOperationsInput | string
     examId?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     options?: OptionUncheckedUpdateManyWithoutQuestionNestedInput
   }
 
@@ -18299,6 +18444,8 @@ export namespace Prisma {
     id?: string
     text: string
     required: boolean
+    type: $Enums.QuestionType
+    expectedAnswer?: string | null
   }
 
   export type StudentExamCreateManyExamInput = {
@@ -18325,6 +18472,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     options?: OptionUpdateManyWithoutQuestionNestedInput
     answers?: AnswerUpdateManyWithoutQuestionNestedInput
   }
@@ -18333,6 +18482,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
     options?: OptionUncheckedUpdateManyWithoutQuestionNestedInput
     answers?: AnswerUncheckedUpdateManyWithoutQuestionNestedInput
   }
@@ -18341,6 +18492,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     text?: StringFieldUpdateOperationsInput | string
     required?: BoolFieldUpdateOperationsInput | boolean
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
+    expectedAnswer?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StudentExamUpdateWithoutExamInput = {

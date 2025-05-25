@@ -11,6 +11,6 @@ const router = express.Router();
 router.use("/login", LoginAsync);
 router.use("/refresh", RefreshAccessTokenAsync);
 router.use("/confirm", ConfirmUserAsync);
-router.use("/logout", LogoutAsync);
+router.use("/logout/:id", LogoutAsync);
 
 export { router as AuthRouter };

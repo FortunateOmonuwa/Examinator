@@ -109,8 +109,7 @@ const ConfirmUserAsync = async (req, res) => {
   }
 };
 const LogoutAsync = (req, res) => {
-  const { body } = req;
-  const { id } = body;
+  const { id } = req.params;
   Logout(id);
   res.clearCookie("accessToken", {
     httpOnly: true,

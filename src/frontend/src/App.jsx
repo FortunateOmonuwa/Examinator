@@ -86,7 +86,7 @@ function App() {
             />
           </Route>
 
-          <Route
+          {/* <Route
             path="/create-exam"
             element={
               <Layout>
@@ -95,7 +95,7 @@ function App() {
                 </ProtectedRoute>
               </Layout>
             }
-          />
+          /> */}
 
           <Route path="*" element={<NotFound />} />
         </Routes>

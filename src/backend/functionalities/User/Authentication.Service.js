@@ -229,6 +229,8 @@ const ConfirmUser = async ({ token }) => {
 
 const Logout = async (id) => {
   try {
+    //the id expected here is the user profile id which is a foreign key field on the AuthManager table.
+    //if you check the data being returned on the login controller, you'll find that the user profile id is being sent to the frontend ad "id"
     await database.AuthManager.update({
       where: { userId: id },
       data: {

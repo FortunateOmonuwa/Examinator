@@ -32,11 +32,43 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
     });
   }
   for (const q of questions) {
-    if (!q.text || !Array.isArray(q.options) || q.options.length === 0) {
+    if (
+      !q.text ||
+      (q.type !== "text" &&
+        q.type !== "singlechoice" &&
+        q.type !== "multichoice")
+    ) {
       return Response.Unsuccessful({
         message: "Invalid question data",
         resultCode: 400,
       });
+    }
+
+    if (q.type === "text") {
+      q.options = [];
+    }
+    if (q.type === "singlechoice" || q.type === "multichoice") {
+      if (!Array.isArray(q.options) || q.options.length < 2) {
+        return Response.Unsuccessful({
+          message: "Each question must have at least two options",
+          resultCode: 400,
+        });
+      }
+
+      let hasCorrectOption = false;
+      for (const opt of q.options) {
+        if (opt.isCorrect) {
+          hasCorrectOption = true;
+          break;
+        }
+      }
+
+      if (!hasCorrectOption) {
+        return Response.Unsuccessful({
+          message: "Each question must have a correct answer",
+          resultCode: 400,
+        });
+      }
     }
 
     for (const opt of q.options) {
@@ -63,6 +95,8 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
           create: questions.map((q) => ({
             text: q.text,
             required: q.required ?? false,
+            type: q.type.toUpperCase(),
+            expectedAnswer: q.expectedAnswer,
             options: {
               create: q.options.map((opt) => ({
                 text: opt.text,

@@ -87,13 +87,15 @@ model StudentExam {
 }
 
 model Question {
-  id       String   @id @default(uuid()) @db.Uuid
-  text     String
-  examId   String   @db.Uuid
-  exam     Exam     @relation("Questions", fields: [examId], references: [id], onDelete: Cascade)
-  options  Option[] @relation("Options")
-  answers  Answer[] @relation("Question-Answers")
-  required Boolean
+  id             String       @id @default(uuid()) @db.Uuid
+  text           String
+  examId         String       @db.Uuid
+  exam           Exam         @relation("Questions", fields: [examId], references: [id], onDelete: Cascade)
+  options        Option[]     @relation("Options")
+  answers        Answer[]     @relation("Question-Answers")
+  required       Boolean
+  type           QuestionType
+  expectedAnswer String?
 }
 
 model Option {
@@ -140,4 +142,10 @@ enum ExamStatus {
   NOT_STARTED
   IN_PROGRESS
   COMPLETED
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTICHOICE
+  TEXT
 }

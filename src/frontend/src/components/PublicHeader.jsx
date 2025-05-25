@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Menu, X, User } from "lucide-react"
-import { useAuth } from "../contexts/AuthContext"
-import "../styles/public-header.scss"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, User } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import "../styles/public-header.scss";
 
 const PublicHeader = () => {
-  const { user } = useAuth()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const navigate = useNavigate()
+  const { user } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
-  }
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
   return (
     <header className="public-header bg-white shadow-sm">
@@ -21,7 +21,7 @@ const PublicHeader = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-purple-600">Exerminator</h1>
+              <h1 className="text-xl font-bold text-purple-600">Examinator</h1>
             </Link>
             <nav className="hidden md:ml-10 md:flex md:space-x-8">
               <Link to="/" className="nav-link">
@@ -30,7 +30,10 @@ const PublicHeader = () => {
               <Link to="/take-exam" className="nav-link">
                 Take Exam
               </Link>
-              <Link to={user ? "/create-exam" : "/register"} className="nav-link">
+              <Link
+                to={user ? "/dashboard/create-exam" : "/register"}
+                className="nav-link"
+              >
                 Create Exam
               </Link>
               <Link to="/about" className="nav-link">
@@ -52,7 +55,10 @@ const PublicHeader = () => {
               </button>
             ) : (
               <div className="flex space-x-4">
-                <Link to="/login" className="text-sm px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100">
+                <Link
+                  to="/login"
+                  className="text-sm px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+                >
                   Login
                 </Link>
                 <Link
@@ -69,7 +75,11 @@ const PublicHeader = () => {
               onClick={toggleMobileMenu}
             >
               <span className="sr-only">Open main menu</span>
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -144,7 +154,7 @@ const PublicHeader = () => {
         </div>
       )}
     </header>
-  )
-}
+  );
+};
 
-export default PublicHeader
+export default PublicHeader;

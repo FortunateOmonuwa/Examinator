@@ -47,7 +47,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await api.post("/api/auth/logout"); // backend should clear cookie
+    console.log(user);
+    await api.post(`/api/auth/logout/${user.id}`);
     setUser(null);
   };
 

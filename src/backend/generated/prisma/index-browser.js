@@ -185,7 +185,9 @@ exports.Prisma.QuestionScalarFieldEnum = {
   id: 'id',
   text: 'text',
   examId: 'examId',
-  required: 'required'
+  required: 'required',
+  type: 'type',
+  expectedAnswer: 'expectedAnswer'
 };
 
 exports.Prisma.OptionScalarFieldEnum = {
@@ -238,6 +240,12 @@ exports.ExamStatus = exports.$Enums.ExamStatus = {
   NOT_STARTED: 'NOT_STARTED',
   IN_PROGRESS: 'IN_PROGRESS',
   COMPLETED: 'COMPLETED'
+};
+
+exports.QuestionType = exports.$Enums.QuestionType = {
+  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  MULTICHOICE: 'MULTICHOICE',
+  TEXT: 'TEXT'
 };
 
 exports.Prisma.ModelName = {

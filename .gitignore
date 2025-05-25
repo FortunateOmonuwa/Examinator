@@ -34,3 +34,5 @@ bash.exe.stackdump
 *bash.exe.stackdump
 .rest
 *.rest
+Examinator.rest
+src/backend/tests/Examinator.rest
