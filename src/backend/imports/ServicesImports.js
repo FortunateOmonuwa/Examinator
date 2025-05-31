@@ -12,6 +12,11 @@ import {
   GetAllExams,
 } from "../functionalities/Exam/Exam.Service.js";
 import {
+  CreateExamAttempt,
+  GetExamAttempts,
+  GetExamAttemptById,
+} from "../functionalities/ExamAttempt/ExamAttempt.Service.js";
+import {
   Login,
   RefreshAccessToken,
   ConfirmUser,
@@ -27,6 +32,9 @@ export {
   DeleteExam,
   GetExamByID,
   GetAllExams,
+  CreateExamAttempt,
+  GetExamAttempts,
+  GetExamAttemptById,
   Login,
   RefreshAccessToken,
   ConfirmUser,

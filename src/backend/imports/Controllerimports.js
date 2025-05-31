@@ -10,6 +10,11 @@ import {
   GetExamAsync,
   GetAllExamsAsync,
 } from "../controllers/ExamController/Exam.Controller.js";
+import {
+  CreateExamAttemptAsync,
+  GetExamAttemptsAsync,
+  GetExamAttemptByIdAsync,
+} from "../controllers/ExamAttemptController/ExamAttempt.Controller.js";
 
 import {
   Login,
@@ -26,6 +31,9 @@ export {
   DeleteExamAsync,
   GetExamAsync,
   GetAllExamsAsync,
+  CreateExamAttemptAsync,
+  GetExamAttemptsAsync,
+  GetExamAttemptByIdAsync,
   Login,
   RefreshAccessToken,
   ConfirmUser,

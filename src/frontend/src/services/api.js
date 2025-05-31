@@ -38,4 +38,34 @@ const api = axios.create({
 //   }
 // );
 
+// Exam Attempt Services
+export const examAttemptService = {
+  submitExamAttempt: async (attemptData) => {
+    try {
+      const response = await api.post("/api/exam/submit", attemptData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  getExamAttempts: async (examId) => {
+    try {
+      const response = await api.get(`/api/exam/attempts/${examId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  getExamAttemptById: async (attemptId) => {
+    try {
+      const response = await api.get(`/api/exam/attempt/${attemptId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+};
+
 export { api };

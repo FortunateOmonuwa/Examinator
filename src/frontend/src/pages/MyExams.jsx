@@ -10,6 +10,7 @@ import {
   Share2,
   Globe,
   Lock,
+  Users,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api } from "../services/api";
@@ -228,6 +229,13 @@ const MyExams = () => {
                       >
                         <Share2 className="h-4 w-4" aria-hidden="true" />
                       </button>
+                      <Link
+                        to={`/dashboard/exam-attempts/${exam.id}`}
+                        className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        title="View Attempts"
+                      >
+                        <Users className="h-4 w-4" aria-hidden="true" />
+                      </Link>
                       <Link
                         to={`/dashboard/exams/${exam.id}`}
                         className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"

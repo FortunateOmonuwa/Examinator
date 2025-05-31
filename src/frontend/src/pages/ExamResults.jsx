@@ -57,25 +57,17 @@ const ExamResults = () => {
         correctOptionIndex,
         typeof correctOptionIndex
       );
+
+      // Convert userAnswer to number for proper comparison (same as ExamSession.jsx)
+      const userAnswerNum = Number(userAnswer);
+      const isCorrect = userAnswerNum === correctOptionIndex;
+
       console.log(
         "Comparison:",
-        userAnswer,
-        "===",
-        correctOptionIndex,
+        `${userAnswer} (${typeof userAnswer}) -> ${userAnswerNum} === ${correctOptionIndex}`,
         "->",
-        userAnswer === correctOptionIndex
+        isCorrect
       );
-      console.log(
-        "Loose comparison:",
-        userAnswer,
-        "==",
-        correctOptionIndex,
-        "->",
-        userAnswer == correctOptionIndex
-      );
-
-      // Use loose equality to handle string vs number comparison
-      const isCorrect = userAnswer == correctOptionIndex;
       console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
       return isCorrect;
     } else if (question.type === "MULTICHOICE") {

@@ -20,6 +20,8 @@ import NotFound from "./pages/NotFound";
 import ExamLayout from "./components/ExamLayout";
 import ExamSession from "./pages/ExamSession";
 import ExamResults from "./pages/ExamResults";
+import ExamAttempts from "./pages/ExamAttempts";
+import ExamAttemptDetail from "./pages/ExamAttemptDetail";
 
 function App() {
   return (
@@ -87,18 +89,24 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="exam-attempts/:examId"
+              element={
+                <ProtectedRoute>
+                  <ExamAttempts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="exam-attempt/:attemptId"
+              element={
+                <ProtectedRoute>
+                  <ExamAttemptDetail />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
-          {/* <Route
-            path="/create-exam"
-            element={
-              <Layout>
-                <ProtectedRoute>
-                  <CreateExam />
-                </ProtectedRoute>
-              </Layout>
-            }
-          /> */}
           <Route path="/exam-session/:examId" element={<ExamLayout />}>
             <Route index element={<ExamSession />} />
           </Route>
