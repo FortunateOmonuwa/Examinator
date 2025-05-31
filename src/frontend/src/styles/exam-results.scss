@@ -1,0 +1,62 @@
+.exam-results-container {
+    min-height: 100vh;
+    background-color: #f9fafb;
+    padding: 2rem 0;
+
+    .score-display {
+        animation: scoreReveal 1s ease-out;
+    }
+
+    .answer-card {
+        transition: all $transition-normal;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: $shadow-md;
+        }
+
+        &.correct {
+            border-left: 4px solid $success-color;
+        }
+
+        &.incorrect {
+            border-left: 4px solid $error-color;
+        }
+    }
+
+    .toggle-button {
+        transition: all $transition-normal;
+
+        &:hover {
+            transform: translateY(-1px);
+        }
+    }
+
+    // Ensure the answers section is properly visible
+    .answers-section {
+        margin-top: 2rem;
+        animation: slideDown 0.3s ease-out;
+    }
+}
+
+@keyframes scoreReveal {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
