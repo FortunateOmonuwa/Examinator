@@ -24,12 +24,12 @@ const PublicHeader = () => {
               <h1 className="text-xl font-bold text-purple-600">Examinator</h1>
             </Link>
             <nav className="hidden md:ml-10 md:flex md:space-x-8">
-              <Link to="/" className="nav-link">
+              {/* <Link to="/" className="nav-link">
                 Home
               </Link>
               <Link to="/exam" className="nav-link">
                 Take Exam
-              </Link>
+              </Link> */}
               <Link
                 to={user ? "/dashboard/create-exam" : "/register"}
                 className="nav-link"

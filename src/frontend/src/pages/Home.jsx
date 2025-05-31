@@ -36,7 +36,11 @@ const Home = () => {
                   Take an Exam
                 </Link>
                 <Link
-                  to={user ? "/create-exam" : "/register"}
+                  to={
+                    user && user.role === "EXAMINER"
+                      ? "/dashboard/create-exam"
+                      : "/register"
+                  }
                   className="btn-secondary px-6 py-3 rounded-md font-medium text-center"
                 >
                   Create an Exam
