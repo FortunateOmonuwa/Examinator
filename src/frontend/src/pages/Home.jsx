@@ -6,8 +6,8 @@ import { useAuth } from "../contexts/AuthContext";
 import "../styles/home.scss";
 
 // Import images
-import heroImage from "../images/home2.jpg";
-import takeExamImage from "../images/home.jpg";
+import takeExamImage from "../images/home2.jpg";
+import heroImage from "../images/home.jpg";
 import createExamImage from "../images/home3.jpg";
 
 const Home = () => {
