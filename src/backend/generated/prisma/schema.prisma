@@ -145,7 +145,7 @@ enum ExamStatus {
 }
 
 enum QuestionType {
-  SINGLE_CHOICE
+  SINGLECHOICE
   MULTICHOICE
   TEXT
 }

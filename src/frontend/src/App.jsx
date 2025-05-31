@@ -17,6 +17,9 @@ import ViewExam from "./pages/ViewExam";
 import EditExam from "./pages/EditExam";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import ExamLayout from "./components/ExamLayout";
+import ExamSession from "./pages/ExamSession";
+import ExamResults from "./pages/ExamResults";
 
 function App() {
   return (
@@ -96,7 +99,12 @@ function App() {
               </Layout>
             }
           /> */}
-
+          <Route path="/exam-session/:examId" element={<ExamLayout />}>
+            <Route index element={<ExamSession />} />
+          </Route>
+          <Route path="/exam-results/:examId" element={<ExamLayout />}>
+            <Route index element={<ExamResults />} />
+          </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

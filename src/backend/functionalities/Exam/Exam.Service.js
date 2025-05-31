@@ -31,6 +31,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
       resultCode: 400,
     });
   }
+
   for (const q of questions) {
     if (
       !q.text ||

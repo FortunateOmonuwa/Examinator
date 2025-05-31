@@ -243,7 +243,7 @@ exports.ExamStatus = exports.$Enums.ExamStatus = {
 };
 
 exports.QuestionType = exports.$Enums.QuestionType = {
-  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  SINGLECHOICE: 'SINGLECHOICE',
   MULTICHOICE: 'MULTICHOICE',
   TEXT: 'TEXT'
 };

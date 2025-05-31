@@ -13,6 +13,7 @@ const CreateExamAsync = async (req, res) => {
 
   try {
     const response = await CreateExam({ examinerId, exam });
+
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });
     } else {

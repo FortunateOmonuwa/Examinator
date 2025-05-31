@@ -87,7 +87,7 @@ export type ExamStatus = (typeof ExamStatus)[keyof typeof ExamStatus]
 
 
 export const QuestionType: {
-  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  SINGLECHOICE: 'SINGLECHOICE',
   MULTICHOICE: 'MULTICHOICE',
   TEXT: 'TEXT'
 };
