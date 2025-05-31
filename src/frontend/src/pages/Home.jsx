@@ -5,6 +5,11 @@ import { BookOpen, CheckCircle, Clock, Award } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/home.scss";
 
+// Import images
+import heroImage from "../images/home2.jpg";
+import takeExamImage from "../images/home.jpg";
+import createExamImage from "../images/home3.jpg";
+
 const Home = () => {
   const { user } = useAuth();
 
@@ -40,9 +45,9 @@ const Home = () => {
             </div>
             <div className="hero-image hidden md:block">
               <img
-                src="../images/home2.jpg"
+                src={heroImage}
                 alt="Examinator Platform"
-                className="w-full h-auto max-w-md mx-auto"
+                className="w-full h-80 object-cover rounded-lg shadow-lg"
               />
             </div>
           </div>
@@ -102,41 +107,60 @@ const Home = () => {
       {/* Take Exam Section */}
       <section className="take-exam-section py-16">
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-              Take an Exam
-            </h2>
-            <p className="text-gray-600 mb-6 text-center">
-              Enter an exam link that was shared with you or search for public
-              exams by subject.
-            </p>
-            <div className="mb-6">
-              <label
-                htmlFor="exam-link"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Exam Link
-              </label>
-              <div className="flex">
-                <input
-                  type="text"
-                  id="exam-link"
-                  className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Paste your exam link here"
-                />
-                <button className="bg-purple-600 text-white px-4 py-2 rounded-r-md hover:bg-purple-700 transition-colors">
-                  Go
-                </button>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="take-exam-image hidden md:block">
+              <img
+                src={takeExamImage}
+                alt="Take an Exam"
+                className="w-full h-80 object-cover rounded-lg shadow-lg"
+              />
             </div>
-            <div className="text-center">
-              <p className="text-gray-600 mb-4">Or</p>
-              <Link
-                to="/take-exam"
-                className="text-purple-600 font-medium hover:text-purple-700"
-              >
-                Browse Public Exams
-              </Link>
+            <div className="take-exam-content">
+              <div className="bg-white rounded-lg shadow-lg p-8">
+                {/* Mobile image */}
+                <div className="md:hidden mb-6">
+                  <img
+                    src={takeExamImage}
+                    alt="Take an Exam"
+                    className="w-full h-48 object-cover rounded-lg shadow-lg"
+                  />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Take an Exam
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Enter an exam link that was shared with you or search for
+                  public exams by subject.
+                </p>
+                <div className="mb-6">
+                  <label
+                    htmlFor="exam-link"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Exam Link
+                  </label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      id="exam-link"
+                      className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Paste your exam link here"
+                    />
+                    <button className="bg-purple-600 text-white px-4 py-2 rounded-r-md hover:bg-purple-700 transition-colors">
+                      Go
+                    </button>
+                  </div>
+                </div>
+                <div className="text-center">
+                  <p className="text-gray-600 mb-4">Or</p>
+                  <Link
+                    to="/take-exam"
+                    className="text-purple-600 font-medium hover:text-purple-700"
+                  >
+                    Browse Public Exams
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -146,14 +170,15 @@ const Home = () => {
       <section className="create-exam-section bg-purple-50 py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div className="hidden md:block">
-              <img
-                src="/images/create-exam.png"
-                alt="Create Exam"
-                className="w-full h-auto max-w-md mx-auto"
-              />
-            </div>
-            <div>
+            <div className="create-exam-content">
+              {/* Mobile image */}
+              <div className="md:hidden mb-6">
+                <img
+                  src={createExamImage}
+                  alt="Create Exam"
+                  className="w-full h-48 object-cover rounded-lg shadow-lg"
+                />
+              </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Create Your Own Exams
               </h2>
@@ -176,6 +201,13 @@ const Home = () => {
                   Register as Student (Coming Soon)
                 </button>
               </div>
+            </div>
+            <div className="create-exam-image hidden md:block">
+              <img
+                src={createExamImage}
+                alt="Create Exam"
+                className="w-full h-80 object-cover rounded-lg shadow-lg"
+              />
             </div>
           </div>
         </div>

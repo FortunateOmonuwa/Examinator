@@ -1,6 +1,6 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -12,6 +12,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden; // Prevent horizontal scroll
+}
+
+* {
+  box-sizing: border-box;
 }
 
 // Custom variables
@@ -25,11 +30,20 @@ $success-color: #10b981; // green-500
 $error-color: #ef4444; // red-500
 
 // Import component styles
-@import 'auth';
-@import 'sidebar';
-@import 'dashboard';
-@import 'exam-form';
-@import 'view-exam';
-@import 'profile';
-@import 'loading-spinner';
-@import 'not-found';
+@import "auth";
+@import "sidebar";
+@import "dashboard";
+@import "exam-form";
+@import "view-exam";
+@import "profile";
+@import "loading-spinner";
+@import "not-found";
+@import "footer";
+@import "public-header";
+@import "home";
+@import "about";
+@import "faqs";
+@import "take-exam";
+@import "my-exams";
+@import "exam-session";
+@import "exam-results";

@@ -1,7 +1,20 @@
+@import "variables";
+
 .home-page {
   .hero-section {
     background-image: linear-gradient(to right bottom, #f9fafb, #f3f4f6);
-    
+
+    .hero-image {
+      img {
+        transition: all $transition-normal;
+        min-height: 320px;
+
+        &:hover {
+          transform: scale(1.02);
+        }
+      }
+    }
+
     .hero-content {
       h1 {
         span {
@@ -10,23 +23,23 @@
           -webkit-text-fill-color: transparent;
         }
       }
-      
+
       .btn-primary {
         background-color: $primary-color;
         transition: all $transition-normal;
-        
+
         &:hover {
           background-color: $primary-hover;
           transform: translateY(-2px);
         }
       }
-      
+
       .btn-secondary {
         background-color: white;
         border: 1px solid $primary-color;
         color: $primary-color;
         transition: all $transition-normal;
-        
+
         &:hover {
           background-color: $primary-light;
           transform: translateY(-2px);
@@ -34,44 +47,101 @@
       }
     }
   }
-  
+
   .features-section {
     .feature-card {
       transition: all $transition-normal;
-      
+
       &:hover {
         transform: translateY(-5px);
         box-shadow: $shadow-md;
       }
     }
   }
-  
+
   .take-exam-section {
+    background-color: #f8fafc;
+
+    .take-exam-image {
+      img {
+        transition: all $transition-normal;
+        min-height: 320px;
+
+        &:hover {
+          transform: scale(1.02);
+        }
+      }
+    }
+
+    .take-exam-content {
+      .bg-white {
+        transition: all $transition-normal;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: $shadow-lg;
+        }
+      }
+    }
+
     .btn-primary {
       background-color: $primary-color;
       transition: all $transition-normal;
-      
+
       &:hover {
         background-color: $primary-hover;
       }
     }
   }
-  
+
   .create-exam-section {
+    .create-exam-image {
+      img {
+        transition: all $transition-normal;
+        min-height: 320px;
+
+        &:hover {
+          transform: scale(1.02);
+        }
+      }
+    }
+
     .btn-primary {
       background-color: $primary-color;
       transition: all $transition-normal;
-      
+
       &:hover {
         background-color: $primary-hover;
         transform: translateY(-2px);
       }
     }
-    
+
     .btn-disabled {
       background-color: $secondary-color;
       border: 1px solid $border-color;
       color: $text-lighter;
+    }
+  }
+
+  // Mobile image styles
+  .md\\:hidden {
+    img {
+      transition: all $transition-normal;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .hero-section,
+    .take-exam-section,
+    .create-exam-section {
+      .grid {
+        gap: 1.5rem;
+      }
     }
   }
 }

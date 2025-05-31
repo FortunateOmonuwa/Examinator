@@ -1,4 +1,9 @@
+@import "variables";
+
 .site-footer {
+  width: 100%;
+  box-sizing: border-box;
+
   .footer-brand {
     h2 {
       background: linear-gradient(to right, #9333ea, #c084fc);
@@ -6,14 +11,14 @@
       -webkit-text-fill-color: transparent;
     }
   }
-  
+
   .footer-links {
     ul {
       li {
         a {
           position: relative;
           transition: all $transition-fast;
-          
+
           &:hover {
             padding-left: 5px;
           }
@@ -21,20 +26,29 @@
       }
     }
   }
-  
+
   .footer-newsletter {
+    width: 100%;
+    min-width: 0;
+
     form {
+      width: 100%;
+      max-width: 100%;
+
       input {
         transition: all $transition-fast;
-        
+        min-width: 0;
+        width: 100%;
+
         &:focus {
           border-color: $primary-color;
           box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
         }
       }
-      
+
       button {
         transition: all $transition-fast;
+        flex-shrink: 0;
       }
     }
   }
