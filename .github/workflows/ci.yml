@@ -35,6 +35,8 @@ jobs:
         working-directory: src/backend
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         run: npm run test
 
       - name: format code
