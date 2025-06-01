@@ -21,10 +21,16 @@ const ExamSession = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [examStartTime, setExamStartTime] = useState(null);
   const timerRef = useRef(null);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   useEffect(() => {
     if (!email) {
       toast.error("Email is required to take the exam");
+      navigate("/take-exam");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
       navigate("/take-exam");
       return;
     }
@@ -40,9 +46,8 @@ const ExamSession = () => {
           setExam(examData);
           setExamStartTime(new Date());
 
-          // Initialize time remaining if time limit is enforced
           if (examData.enforceTimeLimit && examData.stipulatedTime) {
-            setTimeRemaining(examData.stipulatedTime * 60); // Convert minutes to seconds
+            setTimeRemaining(examData.stipulatedTime * 60);
           }
         } else {
           toast.error("Exam not found or is not available");
@@ -135,8 +140,6 @@ const ExamSession = () => {
           correctAnswers++;
         }
       } else if (question.type === "TEXT") {
-        // For text questions, mark as correct if they provided an answer
-        // In a real implementation, this would need manual grading
         if (userAnswer && userAnswer.trim()) {
           correctAnswers++;
         }
@@ -149,6 +152,27 @@ const ExamSession = () => {
       score: Math.round((correctAnswers / totalQuestions) * 100),
     };
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+
+      e.returnValue = "Your exam will be automatically submitted.";
+    };
+
+    const handlePopState = async () => {
+      await handleSubmitExam(true);
+      window.location.href = `/exam/result/${examId}`;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
 
   const handleSubmitExam = async (isAutoSubmit = false) => {
     if (isSubmitting) return;
@@ -179,7 +203,7 @@ const ExamSession = () => {
       const examAttemptData = {
         examId: exam.id,
         responderEmail: email,
-        responderName: email.split("@")[0], // Use email prefix as name for now
+        responderName: email.split("@")[0],
         startTime: examStartTime,
         submittedAt: new Date(),
         answers: exam.questions.map((question, index) => {

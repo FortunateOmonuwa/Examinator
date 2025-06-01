@@ -124,15 +124,19 @@ const TakeExam = () => {
 
   const handleDirectExamLink = () => {
     if (!searchTerm.trim()) {
-      toast.error("Please enter an exam link");
+      toast.error("Please enter an exam link or exam ID");
       return;
     }
 
-    const examIdMatch = searchTerm.match(/\/take-exam\/([a-zA-Z0-9-_]+)/);
-    if (examIdMatch && examIdMatch[1]) {
-      navigate(`/take-exam/${examIdMatch[1]}`);
+    const fullLinkMatch = searchTerm.match(/\/exam\/([a-zA-Z0-9-]+)/);
+    const isUUIDOnly = /^[a-zA-Z0-9-]{36}$/.test(searchTerm);
+
+    if (fullLinkMatch && fullLinkMatch[1]) {
+      navigate(`/exam/${fullLinkMatch[1]}`);
+    } else if (isUUIDOnly) {
+      navigate(`/exam/${searchTerm}`);
     } else {
-      toast.error("Invalid exam link format");
+      toast.error("Invalid exam link or ID format");
     }
   };
 
