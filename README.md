@@ -11,31 +11,6 @@ A comprehensive platform for educators to create, manage, and evaluate exams wit
 - **Examiner Registration**: Easy registration process for educators to join the platform
 - **Responsive Design**: Modern, mobile-friendly interface built with React and Tailwind CSS
 
-## 🏗️ Project Structure
-
-```
-Examinator/
-├── src/
-│   ├── backend/                 # Node.js/Express backend
-│   │   ├── controllers/         # API controllers
-│   │   ├── routes/             # API routes
-│   │   ├── models/             # Data models
-│   │   ├── functionalities/    # Business logic
-│   │   ├── utilities/          # Helper utilities
-│   │   ├── prisma/             # Database schema and migrations
-│   │   └── main.js             # Backend entry point
-│   └── frontend/               # React frontend
-│       ├── src/
-│       │   ├── components/     # Reusable React components
-│       │   ├── pages/          # Page components
-│       │   ├── services/       # API service layer
-│       │   └── assets/         # Static assets
-│       ├── configs/            # Configuration files
-│       └── package.json        # Frontend dependencies
-├── package.json                # Root package.json for scripts
-└── README.md                   # This file
-```
-
 ## 🛠️ Technology Stack
 
 ### Backend
