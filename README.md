@@ -82,7 +82,7 @@ Install dependencies for both frontend and backend:
 ```bash
 npm install
 cd src/backend && npm install
-cd ../frontend && npm install
+cd ../frontend && pnpm install
 cd ../..
 ```
 
@@ -122,7 +122,7 @@ This will start:
 
 ## 📚 API Documentation
 
-### Authentication Endpoints
+### Examiner/Admin Endpoints
 
 - `POST /api/admin/register` - Register admin user
 - `POST /api/examiner` - Register examiner
@@ -134,6 +134,18 @@ This will start:
 - `POST /api/exam/:examinerId` - Create new exam
 - `GET /api/exam/:id` - Get exam details
 - `DELETE /api/exam/:id` - Delete exam
+- `GET /api/exam/exams/:examinerId` - Get all exams created by examiner
+- `POST /api/exam/submit` - Submit exam attempt
+- `GET /api/exam/attempts/:examId` - Get all exam attempts for an exam
+- `GET /api/exam/attempt/:attemptId` - Get exam attempt details
+
+### Authentication
+
+- `POST /api/auth/login` - Login
+- `POST /api/auth/refresh` - Refresh access token
+- `GET /api/auth/confirm` - Confirm user
+- `POST /api/auth/logout/:id` - Logout
+- `POST /api/auth/logout/:id` - Logout
 
 ## 🧪 Testing
 
@@ -188,6 +200,9 @@ The application uses PostgreSQL with Prisma ORM. Key entities include:
 - **Question** - Exam questions
 - **Option** - Question options
 - **ExamAttempt** - Student exam attempts
+- **Answer** - Student answers
+- **AuthManager** - Authentication and authorization management
+- **StudentExam** - Mapping between students and exams
 
 ## 🚀 Deployment
 
@@ -207,7 +222,7 @@ The application uses PostgreSQL with Prisma ORM. Key entities include:
    npm run build
    ```
 
-2. Deploy the `dist` folder to your hosting platform
+2. Deploy the build artifacts to your hosting platform (Netlify, Vercel, etc.)
 
 ## 🤝 Contributing
 
@@ -280,8 +295,6 @@ This project is licensed under the ISC License.
 
 ## 📞 Support
 
-For support and questions, please open an issue in the repository or contact the development team.
+For support and questions, please open an issue in the repository or send a mail to <fortunateomonuwa@outlook.com>.
 
 ---
-
-**Examinator** - Empowering educators to create, manage, and evaluate exams with ease.
