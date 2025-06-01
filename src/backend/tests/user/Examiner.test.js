@@ -8,11 +8,18 @@ describe("POST /api/examiner", () => {
     const testData = {
       firstname: "John",
       lastname: "Doe",
-      email: `examinertest${Date.now()}@example.com`,
+      email: `examinertest${Date.now()}.${Math.random().toString(36).substring(7)}@example.com`,
       password: "Password123#",
     };
 
     const response = await createExaminer(testData);
+
+    // Debug output for CI
+    if (response.status !== 200) {
+      // console.log("Examiner creation failed in CI:");
+      // console.log("Status:", response.status);
+      // console.log("Response:", JSON.stringify(response.body, null, 2));
+    }
 
     expect(response.status).toBe(200);
     expect(response.body.response.isSuccessful).toBe(true);
@@ -25,6 +32,13 @@ describe("POST /api/examiner", () => {
       .post("/api/auth/login")
       .send({ email: testData.email, password: testData.password })
       .set("Content-Type", "application/json");
+
+    // Debug output for CI
+    if (loginResponse.status !== 200) {
+      // console.log("Login failed in CI:");
+      // console.log("Status:", loginResponse.status);
+      // console.log("Response:", JSON.stringify(loginResponse.body, null, 2));
+    }
 
     expect(loginResponse.status).toBe(200);
     expect(loginResponse.body.response.isSuccessful).toBe(true);
