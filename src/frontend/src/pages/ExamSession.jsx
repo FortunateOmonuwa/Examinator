@@ -113,9 +113,9 @@ const ExamSession = () => {
         );
         // Convert userAnswer to number for proper comparison
         const userAnswerNum = Number(userAnswer);
-        console.log(
-          `Question ${index + 1}: User answer: ${userAnswer} (${typeof userAnswer}), Correct index: ${correctOptionIndex}, Match: ${userAnswerNum === correctOptionIndex}`
-        );
+        // console.log(
+        //   `Question ${index + 1}: User answer: ${userAnswer} (${typeof userAnswer}), Correct index: ${correctOptionIndex}, Match: ${userAnswerNum === correctOptionIndex}`
+        // );
 
         if (userAnswerNum === correctOptionIndex) {
           correctAnswers++;

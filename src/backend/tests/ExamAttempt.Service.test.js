@@ -1,242 +1,303 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import request from "supertest";
+import app from "../main.js";
+import { getAuthToken, deleteTestExaminer } from "./utils/setup.js";
 
-// Mock the imports first
-vi.mock("../imports/UtilityImports.js", () => ({
-  database: {
-    Exam: {
-      findUnique: vi.fn(),
-    },
-    ExamAttempt: {
-      create: vi.fn(),
-      findMany: vi.fn(),
-      findUnique: vi.fn(),
-    },
-    $disconnect: vi.fn(),
-  },
-}));
+describe("ExamAttempt API", () => {
+  describe("POST /api/exam-attempt/submit", () => {
+    it("should create exam attempt successfully with valid exam", async () => {
+      // First create an exam to submit attempt for
+      const authData = await getAuthToken();
+      const { token, examinerId } = authData;
 
-vi.mock("../utilities/Response.js", () => ({
-  default: {
-    Successful: vi.fn((data) => ({ isSuccessful: true, ...data })),
-    Unsuccessful: vi.fn((data) => ({ isSuccessful: false, ...data })),
-  },
-}));
-
-// Import after mocking
-import {
-  CreateExamAttempt,
-  GetExamAttempts,
-  GetExamAttemptById,
-} from "../functionalities/ExamAttempt/ExamAttempt.Service.js";
-import { database } from "../imports/UtilityImports.js";
-
-describe("ExamAttempt Service", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  describe("CreateExamAttempt", () => {
-    const validExamAttemptData = {
-      examId: "exam-123",
-      responderEmail: "test@example.com",
-      responderName: "Test User",
-      startTime: new Date(),
-      submittedAt: new Date(),
-      answers: [
-        {
-          questionId: "question-1",
-          answer: "0",
-          questionType: "SINGLECHOICE",
-        },
-      ],
-      totalScore: 85,
-    };
-
-    const mockExam = {
-      id: "exam-123",
-      title: "Test Exam",
-      questions: [
-        {
-          id: "question-1",
-          type: "SINGLECHOICE",
-          options: [
-            { id: "option-1", text: "Option A", isCorrect: true },
-            { id: "option-2", text: "Option B", isCorrect: false },
-          ],
-        },
-      ],
-    };
-
-    it("should create exam attempt successfully", async () => {
-      database.Exam.findUnique.mockResolvedValue(mockExam);
-      database.ExamAttempt.create.mockResolvedValue({
-        id: "attempt-123",
-        ...validExamAttemptData,
-      });
-
-      const result = await CreateExamAttempt(validExamAttemptData);
-
-      expect(result.isSuccessful).toBe(true);
-      expect(database.Exam.findUnique).toHaveBeenCalledWith({
-        where: { id: "exam-123" },
-        include: {
-          questions: {
-            include: {
-              options: true,
-            },
+      // Create a test exam
+      const examRes = await request(app)
+        .post(`/api/exam/${examinerId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          exam: {
+            title: "Test Exam for Attempt",
+            description: "Test exam description",
+            stipulatedTime: 60,
+            enforceTimeLimit: true,
+            questions: [
+              {
+                text: "What is 2 + 2?",
+                type: "singlechoice",
+                options: [
+                  { text: "3", isCorrect: false },
+                  { text: "4", isCorrect: true },
+                  { text: "5", isCorrect: false },
+                ],
+              },
+            ],
           },
-        },
-      });
-      expect(database.ExamAttempt.create).toHaveBeenCalled();
+        })
+        .set("Content-Type", "application/json");
+
+      expect(examRes.status).toBe(200);
+      const examId = examRes.body.response.body.id;
+
+      // Get exam details to access questions
+      const examDetailsRes = await request(app).get(`/api/exam/${examId}`);
+
+      expect(examDetailsRes.status).toBe(200);
+      const questions = examDetailsRes.body.response.body.questions;
+
+      // Submit exam attempt
+      const attemptData = {
+        examId: examId,
+        responderEmail: "student@example.com",
+        responderName: "Test Student",
+        answers: [
+          {
+            questionId: questions[0].id,
+            answer: "1", // Index of correct answer
+            questionType: "SINGLECHOICE",
+          },
+        ],
+        totalScore: 100,
+      };
+
+      const attemptRes = await request(app)
+        .post("/api/exam-attempt/submit")
+        .send(attemptData)
+        .set("Content-Type", "application/json");
+
+      expect(attemptRes.status).toBe(201);
+      expect(attemptRes.body.response.isSuccessful).toBe(true);
+      expect(attemptRes.body.response.body.examId).toBe(examId);
+
+      // Clean up
+      await request(app)
+        .delete(`/api/exam/${examId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      await deleteTestExaminer(examinerId, token);
     });
 
     it("should return error for missing required fields", async () => {
       const invalidData = {
-        examId: "exam-123",
+        examId: "550e8400-e29b-41d4-a716-446655440000",
         // Missing responderEmail and answers
       };
 
-      const result = await CreateExamAttempt(invalidData);
+      const attemptRes = await request(app)
+        .post("/api/exam-attempt/submit")
+        .send(invalidData)
+        .set("Content-Type", "application/json");
 
-      expect(result.isSuccessful).toBe(false);
-      expect(result.resultCode).toBe(400);
-      expect(result.message).toContain("Missing required fields");
+      expect(attemptRes.status).toBe(400);
+      expect(attemptRes.body.response.isSuccessful).toBe(false);
+      expect(attemptRes.body.response.message).toContain(
+        "Missing required fields"
+      );
     });
 
     it("should return error when exam not found", async () => {
-      database.Exam.findUnique.mockResolvedValue(null);
+      const attemptData = {
+        examId: "550e8400-e29b-41d4-a716-446655440000", // Non-existent exam
+        responderEmail: "student@example.com",
+        responderName: "Test Student",
+        answers: [
+          {
+            questionId: "550e8400-e29b-41d4-a716-446655440001",
+            answer: "1",
+            questionType: "SINGLECHOICE",
+          },
+        ],
+        totalScore: 100,
+      };
 
-      const result = await CreateExamAttempt(validExamAttemptData);
+      const attemptRes = await request(app)
+        .post("/api/exam-attempt/submit")
+        .send(attemptData)
+        .set("Content-Type", "application/json");
 
-      expect(result.isSuccessful).toBe(false);
-      expect(result.resultCode).toBe(404);
-      expect(result.message).toBe("Exam not found");
-    });
-
-    it("should handle database errors", async () => {
-      database.Exam.findUnique.mockRejectedValue(new Error("Database error"));
-
-      const result = await CreateExamAttempt(validExamAttemptData);
-
-      expect(result.isSuccessful).toBe(false);
-      expect(result.resultCode).toBe(500);
-      expect(result.message).toContain("internal server error");
+      expect(attemptRes.status).toBe(404);
+      expect(attemptRes.body.response.isSuccessful).toBe(false);
+      expect(attemptRes.body.response.message).toBe("Exam not found");
     });
   });
 
-  describe("GetExamAttempts", () => {
-    const examId = "exam-123";
-    const mockAttempts = [
-      {
-        id: "attempt-1",
-        examId,
-        responderEmal: "user1@example.com",
-        totalScore: 85,
-      },
-      {
-        id: "attempt-2",
-        examId,
-        responderEmal: "user2@example.com",
-        totalScore: 92,
-      },
-    ];
-
+  describe("GET /api/exam-attempt/exam/:examId", () => {
     it("should retrieve exam attempts successfully", async () => {
-      database.ExamAttempt.findMany.mockResolvedValue(mockAttempts);
+      // Create exam and submit attempts first
+      const authData = await getAuthToken();
+      const { token, examinerId } = authData;
 
-      const result = await GetExamAttempts(examId);
-
-      expect(result.isSuccessful).toBe(true);
-      expect(result.body).toEqual(mockAttempts);
-      expect(database.ExamAttempt.findMany).toHaveBeenCalledWith({
-        where: { examId },
-        include: {
-          answers: {
-            include: {
-              options: true,
-              question: true,
-            },
+      // Create a test exam
+      const examRes = await request(app)
+        .post(`/api/exam/${examinerId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          exam: {
+            title: "Test Exam for Attempts",
+            description: "Test exam description",
+            stipulatedTime: 60,
+            enforceTimeLimit: true,
+            questions: [
+              {
+                text: "What is 3 + 3?",
+                type: "singlechoice",
+                options: [
+                  { text: "5", isCorrect: false },
+                  { text: "6", isCorrect: true },
+                  { text: "7", isCorrect: false },
+                ],
+              },
+            ],
           },
-        },
-        orderBy: {
-          submittedAt: "desc",
-        },
-      });
-    });
+        })
+        .set("Content-Type", "application/json");
 
-    it("should handle database errors", async () => {
-      database.ExamAttempt.findMany.mockRejectedValue(
-        new Error("Database error")
-      );
+      expect(examRes.status).toBe(200);
+      const examId = examRes.body.response.body.id;
 
-      const result = await GetExamAttempts(examId);
+      // Get exam details to access questions
+      const examDetailsRes = await request(app).get(`/api/exam/${examId}`);
 
-      expect(result.isSuccessful).toBe(false);
-      expect(result.resultCode).toBe(500);
+      expect(examDetailsRes.status).toBe(200);
+      const questions = examDetailsRes.body.response.body.questions;
+
+      // Submit an exam attempt
+      const attemptData = {
+        examId: examId,
+        responderEmail: "student1@example.com",
+        responderName: "Test Student 1",
+        answers: [
+          {
+            questionId: questions[0].id,
+            answer: "1",
+            questionType: "SINGLECHOICE",
+          },
+        ],
+        totalScore: 100,
+      };
+
+      const attemptRes = await request(app)
+        .post("/api/exam-attempt/submit")
+        .send(attemptData)
+        .set("Content-Type", "application/json");
+
+      expect(attemptRes.status).toBe(201);
+
+      // Get exam attempts (requires authentication)
+      const getAttemptsRes = await request(app)
+        .get(`/api/exam-attempt/exam/${examId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(getAttemptsRes.status).toBe(200);
+      expect(getAttemptsRes.body.response.isSuccessful).toBe(true);
+      expect(Array.isArray(getAttemptsRes.body.response.body)).toBe(true);
+      expect(getAttemptsRes.body.response.body.length).toBeGreaterThan(0);
+
+      // Clean up
+      await request(app)
+        .delete(`/api/exam/${examId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      await deleteTestExaminer(examinerId, token);
     });
   });
 
-  describe("GetExamAttemptById", () => {
-    const attemptId = "attempt-123";
-    const mockAttempt = {
-      id: attemptId,
-      examId: "exam-123",
-      responderEmal: "test@example.com",
-      totalScore: 85,
-    };
-
+  describe("GET /api/exam-attempt/:attemptId", () => {
     it("should retrieve exam attempt by ID successfully", async () => {
-      database.ExamAttempt.findUnique.mockResolvedValue(mockAttempt);
+      // Create exam and submit attempt first
+      const authData = await getAuthToken();
+      const { token, examinerId } = authData;
 
-      const result = await GetExamAttemptById(attemptId);
-
-      expect(result.isSuccessful).toBe(true);
-      expect(result.body).toEqual(mockAttempt);
-      expect(database.ExamAttempt.findUnique).toHaveBeenCalledWith({
-        where: { id: attemptId },
-        include: {
-          answers: {
-            include: {
-              options: true,
-              question: true,
-            },
-          },
+      // Create a test exam
+      const examRes = await request(app)
+        .post(`/api/exam/${examinerId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
           exam: {
-            include: {
-              questions: {
-                include: {
-                  options: true,
-                },
+            title: "Test Exam for Attempt Detail",
+            description: "Test exam description",
+            stipulatedTime: 60,
+            enforceTimeLimit: true,
+            questions: [
+              {
+                text: "What is 4 + 4?",
+                type: "singlechoice",
+                options: [
+                  { text: "7", isCorrect: false },
+                  { text: "8", isCorrect: true },
+                  { text: "9", isCorrect: false },
+                ],
               },
-            },
+            ],
           },
-        },
-      });
+        })
+        .set("Content-Type", "application/json");
+
+      expect(examRes.status).toBe(200);
+      const examId = examRes.body.response.body.id;
+
+      // Get exam details to access questions
+      const examDetailsRes = await request(app).get(`/api/exam/${examId}`);
+
+      expect(examDetailsRes.status).toBe(200);
+      const questions = examDetailsRes.body.response.body.questions;
+
+      // Submit an exam attempt
+      const attemptData = {
+        examId: examId,
+        responderEmail: "student2@example.com",
+        responderName: "Test Student 2",
+        answers: [
+          {
+            questionId: questions[0].id,
+            answer: "1",
+            questionType: "SINGLECHOICE",
+          },
+        ],
+        totalScore: 100,
+      };
+
+      const attemptRes = await request(app)
+        .post("/api/exam-attempt/submit")
+        .send(attemptData)
+        .set("Content-Type", "application/json");
+
+      expect(attemptRes.status).toBe(201);
+      const attemptId = attemptRes.body.response.body.id;
+
+      // Get specific exam attempt (requires authentication)
+      const getAttemptRes = await request(app)
+        .get(`/api/exam-attempt/${attemptId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(getAttemptRes.status).toBe(200);
+      expect(getAttemptRes.body.response.isSuccessful).toBe(true);
+      expect(getAttemptRes.body.response.body.id).toBe(attemptId);
+      expect(getAttemptRes.body.response.body.examId).toBe(examId);
+
+      // Clean up
+      await request(app)
+        .delete(`/api/exam/${examId}`)
+        .set("Authorization", `Bearer ${token}`);
+
+      await deleteTestExaminer(examinerId, token);
     });
 
     it("should return error when attempt not found", async () => {
-      database.ExamAttempt.findUnique.mockResolvedValue(null);
+      const authData = await getAuthToken();
+      const { token, examinerId } = authData;
 
-      const result = await GetExamAttemptById(attemptId);
+      const getAttemptRes = await request(app)
+        .get(`/api/exam-attempt/550e8400-e29b-41d4-a716-446655440020`)
+        .set("Authorization", `Bearer ${token}`);
 
-      expect(result.isSuccessful).toBe(false);
-      expect(result.resultCode).toBe(404);
-      expect(result.message).toBe("Exam attempt not found");
-    });
-
-    it("should handle database errors", async () => {
-      database.ExamAttempt.findUnique.mockRejectedValue(
-        new Error("Database error")
+      expect(getAttemptRes.status).toBe(404);
+      expect(getAttemptRes.body.response.isSuccessful).toBe(false);
+      expect(getAttemptRes.body.response.message).toBe(
+        "Exam attempt not found"
       );
 
-      const result = await GetExamAttemptById(attemptId);
-
-      expect(result.isSuccessful).toBe(false);
-      expect(result.resultCode).toBe(500);
+      // Clean up
+      await deleteTestExaminer(examinerId, token);
     });
   });
 });

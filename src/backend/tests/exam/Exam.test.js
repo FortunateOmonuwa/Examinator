@@ -1,17 +1,28 @@
 import { describe, it, expect, afterAll, beforeAll } from "vitest";
 import request from "supertest";
 import app from "../../main.js";
-
-//import { createExaminer, deleteExaminer } from "../user/Examiner.test.js";
+import { getAuthToken, deleteTestExaminer } from "../utils/setup.js";
 
 describe("POST /api/exam/:examinerId", () => {
   it("should create a new exam successfully with valid input", async () => {
-    const examRes = await createExam("bab36b65-b024-491a-a9ce-e4449290ee67");
+    // Get authentication token and examiner ID
+    const authData = await getAuthToken();
+    const { token, examinerId } = authData;
+
+    const examRes = await createExam(examinerId, token);
+
+    // Debug: Log the response if it fails
+    if (examRes.status !== 200) {
+      // console.log("Exam creation failed:");
+      // console.log("Status:", examRes.status);
+      // console.log("Response:", JSON.stringify(examRes.body, null, 2));
+    }
+
     expect(examRes.status).toBe(200);
     expect(examRes.body.response.isSuccessful).toBe(true);
 
     const examId = examRes.body.response.body.id;
-    console.log(examRes.body.response.body);
+    // console.log(examRes.body.response.body);
     expect(examId).toBeDefined();
 
     const getExamRes = await getExam(examId);
@@ -20,16 +31,20 @@ describe("POST /api/exam/:examinerId", () => {
     expect(getExamRes.body.response.body).not.toBeNull();
     expect(getExamRes.body.response.body.id).toBe(examId);
 
-    const deleteExamRes = await deleteExam(examId);
+    const deleteExamRes = await deleteExam(examId, token);
     expect(deleteExamRes.status).toBe(200);
+
+    // Clean up test examiner
+    await deleteTestExaminer(examinerId, token);
   });
 });
 
 //-----------------------------------------------------------
 
-async function createExam(examinerId) {
+async function createExam(examinerId, token) {
   return await request(app)
     .post(`/api/exam/${examinerId}`)
+    .set("Authorization", `Bearer ${token}`)
     .send({
       exam: {
         title: "Mathematics",
@@ -39,6 +54,7 @@ async function createExam(examinerId) {
         questions: [
           {
             text: "What is 2 + 2?",
+            type: "singlechoice",
             options: [
               {
                 text: "4",
@@ -56,6 +72,7 @@ async function createExam(examinerId) {
           },
           {
             text: "What is 2 + 3?",
+            type: "singlechoice",
             options: [
               {
                 text: "4",
@@ -77,10 +94,12 @@ async function createExam(examinerId) {
     .set("Content-Type", "application/json");
 }
 
-async function deleteExam(examinerId) {
-  return await request(app).delete(`/api/exam/${examinerId}`);
+async function deleteExam(examId, token) {
+  return await request(app)
+    .delete(`/api/exam/${examId}`)
+    .set("Authorization", `Bearer ${token}`);
 }
 
-async function getExam(examinerId) {
-  return await request(app).get(`/api/exam/${examinerId}`);
+async function getExam(examId) {
+  return await request(app).get(`/api/exam/${examId}`);
 }

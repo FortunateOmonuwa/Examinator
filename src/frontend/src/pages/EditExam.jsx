@@ -1,41 +1,43 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { Plus, Trash2, ArrowLeft } from "lucide-react"
-import { api } from "../services/api"
-import LoadingSpinner from "../components/LoadingSpinner"
-import toast from "react-hot-toast"
-import "../styles/exam-form.scss"
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Plus, Trash2, ArrowLeft } from "lucide-react";
+import { api } from "../services/api";
+import LoadingSpinner from "../components/LoadingSpinner";
+import toast from "react-hot-toast";
+import "../styles/exam-form.scss";
 
 const EditExam = () => {
-  const { examId } = useParams()
-  const navigate = useNavigate()
-  const [loading, setLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [subject, setSubject] = useState("")
-  const [stipulatedTime, setStipulatedTime] = useState(60)
-  const [enforceTimeLimit, setEnforceTimeLimit] = useState(false)
-  const [isPublic, setIsPublic] = useState(false)
-  const [questions, setQuestions] = useState([])
+  const { examId } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [subject, setSubject] = useState("");
+  const [stipulatedTime, setStipulatedTime] = useState(60);
+  const [enforceTimeLimit, setEnforceTimeLimit] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
+  const [questions, setQuestions] = useState([]);
 
   useEffect(() => {
     const fetchExam = async () => {
       try {
         if (examId) {
-          const response = await api.get(`/api/exam/${examId}`)
-          if (response.data.response.isSuccessful && response.data.response.body) {
-            const exam = response.data.response.body
-            setTitle(exam.title)
-            setDescription(exam.description)
-            setSubject(exam.subject)
-            setStipulatedTime(exam.stipulatedTime)
-            setEnforceTimeLimit(exam.enforceTimeLimit)
-            setIsPublic(exam.isPublic || false)
+          const response = await api.get(`/api/exam/${examId}`);
+          if (
+            response.data.response.isSuccessful &&
+            response.data.response.body
+          ) {
+            const exam = response.data.response.body;
+            setTitle(exam.title);
+            setDescription(exam.description);
+            setSubject(exam.subject);
+            setStipulatedTime(exam.stipulatedTime);
+            setEnforceTimeLimit(exam.enforceTimeLimit);
+            setIsPublic(exam.isPublic || false);
 
-            // Format questions and options with local IDs
             const formattedQuestions = exam.questions.map((q, qIndex) => ({
               id: String(qIndex + 1),
               text: q.text,
@@ -45,28 +47,28 @@ const EditExam = () => {
                 text: o.text,
                 isCorrect: o.isCorrect,
               })),
-            }))
+            }));
 
-            setQuestions(formattedQuestions)
+            setQuestions(formattedQuestions);
           } else {
-            toast.error("Failed to load exam")
-            navigate("/dashboard/my-exams")
+            toast.error("Failed to load exam");
+            navigate("/dashboard/my-exams");
           }
         }
       } catch (error) {
-        console.error("Error fetching exam:", error)
-        toast.error("Failed to load exam")
-        navigate("/dashboard/my-exams")
+        console.error("Error fetching exam:", error);
+        toast.error("Failed to load exam");
+        navigate("/dashboard/my-exams");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchExam()
-  }, [examId, navigate])
+    fetchExam();
+  }, [examId, navigate]);
 
   const addQuestion = () => {
-    const newId = String(questions.length + 1)
+    const newId = String(questions.length + 1);
     setQuestions([
       ...questions,
       {
@@ -78,39 +80,46 @@ const EditExam = () => {
           { id: `${newId}-2`, text: "", isCorrect: false },
         ],
       },
-    ])
-  }
+    ]);
+  };
 
   const removeQuestion = (questionId) => {
     if (questions.length > 1) {
-      setQuestions(questions.filter((q) => q.id !== questionId))
+      setQuestions(questions.filter((q) => q.id !== questionId));
     } else {
-      toast.error("You must have at least one question")
+      toast.error("You must have at least one question");
     }
-  }
+  };
 
   const updateQuestionText = (questionId, text) => {
-    setQuestions(questions.map((q) => (q.id === questionId ? { ...q, text } : q)))
-  }
+    setQuestions(
+      questions.map((q) => (q.id === questionId ? { ...q, text } : q))
+    );
+  };
 
   const updateQuestionRequired = (questionId, required) => {
-    setQuestions(questions.map((q) => (q.id === questionId ? { ...q, required } : q)))
-  }
+    setQuestions(
+      questions.map((q) => (q.id === questionId ? { ...q, required } : q))
+    );
+  };
 
   const addOption = (questionId) => {
     setQuestions(
       questions.map((q) => {
         if (q.id === questionId) {
-          const newOptionId = `${questionId}-${q.options.length + 1}`
+          const newOptionId = `${questionId}-${q.options.length + 1}`;
           return {
             ...q,
-            options: [...q.options, { id: newOptionId, text: "", isCorrect: false }],
-          }
+            options: [
+              ...q.options,
+              { id: newOptionId, text: "", isCorrect: false },
+            ],
+          };
         }
-        return q
-      }),
-    )
-  }
+        return q;
+      })
+    );
+  };
 
   const removeOption = (questionId, optionId) => {
     setQuestions(
@@ -120,15 +129,15 @@ const EditExam = () => {
             return {
               ...q,
               options: q.options.filter((o) => o.id !== optionId),
-            }
+            };
           }
-          toast.error("Each question must have at least two options")
-          return q
+          toast.error("Each question must have at least two options");
+          return q;
         }
-        return q
-      }),
-    )
-  }
+        return q;
+      })
+    );
+  };
 
   const updateOptionText = (questionId, optionId, text) => {
     setQuestions(
@@ -136,13 +145,15 @@ const EditExam = () => {
         if (q.id === questionId) {
           return {
             ...q,
-            options: q.options.map((o) => (o.id === optionId ? { ...o, text } : o)),
-          }
+            options: q.options.map((o) =>
+              o.id === optionId ? { ...o, text } : o
+            ),
+          };
         }
-        return q
-      }),
-    )
-  }
+        return q;
+      })
+    );
+  };
 
   const updateOptionCorrect = (questionId, optionId) => {
     setQuestions(
@@ -154,65 +165,65 @@ const EditExam = () => {
               ...o,
               isCorrect: o.id === optionId,
             })),
-          }
+          };
         }
-        return q
-      }),
-    )
-  }
+        return q;
+      })
+    );
+  };
 
   const validateForm = () => {
     if (!title.trim()) {
-      toast.error("Please enter a title")
-      return false
+      toast.error("Please enter a title");
+      return false;
     }
     if (!description.trim()) {
-      toast.error("Please enter a description")
-      return false
+      toast.error("Please enter a description");
+      return false;
     }
     if (!subject.trim()) {
-      toast.error("Please enter a subject")
-      return false
+      toast.error("Please enter a subject");
+      return false;
     }
 
     for (const question of questions) {
       if (!question.text.trim()) {
-        toast.error("All questions must have text")
-        return false
+        toast.error("All questions must have text");
+        return false;
       }
 
-      let hasCorrectOption = false
+      let hasCorrectOption = false;
       for (const option of question.options) {
         if (!option.text.trim()) {
-          toast.error("All options must have text")
-          return false
+          toast.error("All options must have text");
+          return false;
         }
         if (option.isCorrect) {
-          hasCorrectOption = true
+          hasCorrectOption = true;
         }
       }
 
       if (!hasCorrectOption) {
-        toast.error("Each question must have a correct answer")
-        return false
+        toast.error("Each question must have a correct answer");
+        return false;
       }
     }
 
-    return true
-  }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       if (!examId) {
-        throw new Error("Exam ID is missing")
+        throw new Error("Exam ID is missing");
       }
 
       const formattedQuestions = questions.map((q) => ({
@@ -222,7 +233,7 @@ const EditExam = () => {
           text: o.text,
           isCorrect: o.isCorrect,
         })),
-      }))
+      }));
 
       const examData = {
         exam: {
@@ -234,30 +245,37 @@ const EditExam = () => {
           isPublic,
           questions: formattedQuestions,
         },
+      };
+
+      const response = await api.put(`/api/exam/${examId}`, examData);
+
+      if (!response.data.response.isSuccessful) {
+        throw new Error(
+          response.data.response.message || "Failed to update exam"
+        );
       }
 
-      // In a real implementation, you would update the exam with a PUT request
-      // const response = await api.put(`/api/exam/${examId}`, examData)
-
-      // For now, we'll simulate success
-      toast.success("Exam updated successfully")
-      navigate(`/dashboard/exams/${examId}`)
+      toast.success("Exam updated successfully");
+      navigate(`/dashboard/exams/${examId}`);
     } catch (error) {
-      console.error("Error updating exam:", error)
-      toast.error("Failed to update exam")
+      console.error("Error updating exam:", error);
+      toast.error("Failed to update exam");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
   return (
     <div className="exam-form edit-exam">
       <div className="flex items-center mb-6">
-        <button onClick={() => navigate(-1)} className="mr-4 p-2 rounded-full hover:bg-gray-100">
+        <button
+          onClick={() => navigate(-1)}
+          className="mr-4 p-2 rounded-full hover:bg-gray-100"
+        >
           <ArrowLeft className="h-5 w-5 text-gray-500" />
         </button>
         <h1 className="text-2xl font-bold text-gray-900">Edit Exam</h1>
@@ -267,7 +285,10 @@ const EditExam = () => {
         <div className="bg-white shadow overflow-hidden sm:rounded-lg p-6 exam-details">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Exam Title
               </label>
               <input
@@ -282,7 +303,10 @@ const EditExam = () => {
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Description
               </label>
               <textarea
@@ -297,7 +321,10 @@ const EditExam = () => {
             </div>
 
             <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="subject"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Subject
               </label>
               <input
@@ -312,7 +339,10 @@ const EditExam = () => {
             </div>
 
             <div>
-              <label htmlFor="time" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="time"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Time Limit (minutes)
               </label>
               <input
@@ -336,7 +366,10 @@ const EditExam = () => {
                   onChange={(e) => setEnforceTimeLimit(e.target.checked)}
                   className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                 />
-                <label htmlFor="enforceTimeLimit" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="enforceTimeLimit"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Enforce time limit (automatically submit when time expires)
                 </label>
               </div>
@@ -350,7 +383,10 @@ const EditExam = () => {
                   onChange={(e) => setIsPublic(e.target.checked)}
                   className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                 />
-                <label htmlFor="isPublic" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="isPublic"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Make this exam public (can be discovered by subject search)
                 </label>
               </div>
@@ -372,9 +408,14 @@ const EditExam = () => {
           </div>
 
           {questions.map((question, qIndex) => (
-            <div key={question.id} className="bg-white shadow overflow-hidden sm:rounded-lg p-6 question-card">
+            <div
+              key={question.id}
+              className="bg-white shadow overflow-hidden sm:rounded-lg p-6 question-card"
+            >
               <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Question {qIndex + 1}</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Question {qIndex + 1}
+                </h3>
                 <button
                   type="button"
                   onClick={() => removeQuestion(question.id)}
@@ -386,13 +427,18 @@ const EditExam = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor={`question-${question.id}`} className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor={`question-${question.id}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Question Text
                   </label>
                   <textarea
                     id={`question-${question.id}`}
                     value={question.text}
-                    onChange={(e) => updateQuestionText(question.id, e.target.value)}
+                    onChange={(e) =>
+                      updateQuestionText(question.id, e.target.value)
+                    }
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
                     placeholder="Enter your question here"
                     rows={2}
@@ -404,17 +450,24 @@ const EditExam = () => {
                     id={`required-${question.id}`}
                     type="checkbox"
                     checked={question.required}
-                    onChange={(e) => updateQuestionRequired(question.id, e.target.checked)}
+                    onChange={(e) =>
+                      updateQuestionRequired(question.id, e.target.checked)
+                    }
                     className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                   />
-                  <label htmlFor={`required-${question.id}`} className="ml-2 block text-sm text-gray-700">
+                  <label
+                    htmlFor={`required-${question.id}`}
+                    className="ml-2 block text-sm text-gray-700"
+                  >
                     Required
                   </label>
                 </div>
 
                 <div className="space-y-2 options-container">
                   <div className="flex justify-between items-center">
-                    <label className="block text-sm font-medium text-gray-700">Options</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Options
+                    </label>
                     <button
                       type="button"
                       onClick={() => addOption(question.id)}
@@ -426,19 +479,30 @@ const EditExam = () => {
                   </div>
 
                   {question.options.map((option) => (
-                    <div key={option.id} className="flex items-center space-x-2 option-item">
+                    <div
+                      key={option.id}
+                      className="flex items-center space-x-2 option-item"
+                    >
                       <input
                         type="radio"
                         id={`option-${option.id}`}
                         name={`correct-${question.id}`}
                         checked={option.isCorrect}
-                        onChange={() => updateOptionCorrect(question.id, option.id)}
+                        onChange={() =>
+                          updateOptionCorrect(question.id, option.id)
+                        }
                         className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300"
                       />
                       <input
                         type="text"
                         value={option.text}
-                        onChange={(e) => updateOptionText(question.id, option.id, e.target.value)}
+                        onChange={(e) =>
+                          updateOptionText(
+                            question.id,
+                            option.id,
+                            e.target.value
+                          )
+                        }
                         className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
                         placeholder="Option text"
                       />
@@ -475,7 +539,7 @@ const EditExam = () => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default EditExam
+export default EditExam;

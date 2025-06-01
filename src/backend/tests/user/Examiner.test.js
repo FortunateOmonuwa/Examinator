@@ -1,10 +1,18 @@
 import { describe, it, expect, afterAll, beforeAll } from "vitest";
 import request from "supertest";
 import app from "../../main.js";
+import { getAuthToken, deleteTestExaminer } from "../utils/setup.js";
 
 describe("POST /api/examiner", () => {
   it("should register a new examiner successfully with valid input", async () => {
-    const response = await createExaminer();
+    const testData = {
+      firstname: "John",
+      lastname: "Doe",
+      email: `examinertest${Date.now()}@example.com`,
+      password: "Password123#",
+    };
+
+    const response = await createExaminer(testData);
 
     expect(response.status).toBe(200);
     expect(response.body.response.isSuccessful).toBe(true);
@@ -12,7 +20,29 @@ describe("POST /api/examiner", () => {
     const examinerId = response.body.response.body.id;
     expect(examinerId).toBeDefined();
 
-    const deleteRes = await deleteExaminer(examinerId);
+    // Test login to get token
+    const loginResponse = await request(app)
+      .post("/api/auth/login")
+      .send({ email: testData.email, password: testData.password })
+      .set("Content-Type", "application/json");
+
+    expect(loginResponse.status).toBe(200);
+    expect(loginResponse.body.response.isSuccessful).toBe(true);
+
+    // Extract token from cookies
+    const cookies = loginResponse.headers["set-cookie"];
+    expect(cookies).toBeDefined();
+
+    const accessTokenCookie = cookies.find((cookie) =>
+      cookie.startsWith("accessToken=")
+    );
+    expect(accessTokenCookie).toBeDefined();
+
+    const token = accessTokenCookie.split("accessToken=")[1].split(";")[0];
+    expect(token).toBeDefined();
+
+    // Use auth token for deletion
+    const deleteRes = await deleteTestExaminer(examinerId, token);
     expect(deleteRes.status).toBe(200);
   });
 
@@ -40,20 +70,19 @@ describe("POST /api/examiner", () => {
 
 describe("GET /api/examiner/:id", () => {
   it("it should return 200 for an examiner detail", async () => {
-    const res = await createExaminer();
-    expect(res.status).toBe(200);
-    expect(res.body.response.isSuccessful).toBe(true);
+    // Create examiner and get auth token
+    const authData = await getAuthToken();
+    const { token, examinerId } = authData;
 
-    const id = res.body.response.body.id;
-    expect(id).toBeDefined();
-
-    const examinerResponse = await getExaminer(id);
+    // Get examiner details with authentication
+    const examinerResponse = await getExaminer(examinerId, token);
     expect(examinerResponse.status).toBe(200);
     expect(examinerResponse.body.response.isSuccessful).toBe(true);
     expect(examinerResponse.body.response.body).not.toBeNull();
-    expect(examinerResponse.body.response.body.id).toBe(id);
+    expect(examinerResponse.body.response.body.id).toBe(examinerId);
 
-    const del = await deleteExaminer(id);
+    // Clean up
+    const del = await deleteTestExaminer(examinerId, token);
     expect(del.status).toBe(200);
   });
 });
@@ -63,7 +92,7 @@ async function createExaminer(
   data = {
     firstname: "John",
     lastname: "Doe",
-    email: "examinertest123@example.com",
+    email: `examinertest${Date.now()}@example.com`,
     password: "Password123#",
   }
 ) {
@@ -73,13 +102,16 @@ async function createExaminer(
     .set("Content-Type", "application/json");
 }
 
-async function getExaminer(id) {
+async function getExaminer(id, token) {
   return await request(app)
     .get(`/api/examiner/${id}`)
+    .set("Authorization", `Bearer ${token}`)
     .set("Accept", "application/json");
 }
 
-async function deleteExaminer(id) {
-  return await request(app).delete(`/api/examiner/${id}`);
+async function deleteExaminer(id, token) {
+  return await request(app)
+    .delete(`/api/examiner/${id}`)
+    .set("Authorization", `Bearer ${token}`);
 }
 export { createExaminer, getExaminer, deleteExaminer };

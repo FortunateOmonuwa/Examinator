@@ -220,7 +220,7 @@ const CreateExam = () => {
 
       const response = await api.post(`/api/exam/${user.userId}`, examData);
 
-      console.log("response", response.data);
+      // console.log("response", response.data);
       if (response.data.response.isSuccessful) {
         toast.success("Exam created successfully");
         navigate("/dashboard/my-exams");
@@ -243,7 +243,6 @@ const CreateExam = () => {
               ...q,
               type,
               expectedAnswer: q.expectedAnswer || "",
-              // Reset options if switching to text type (no options needed)
               options:
                 type === "text"
                   ? []
@@ -529,7 +528,6 @@ const CreateExam = () => {
                             if (question.type === "singlechoice") {
                               updateOptionCorrect(question.id, option.id);
                             } else {
-                              // For multichoice, toggle individual option correct
                               setQuestions(
                                 questions.map((q) => {
                                   if (q.id === question.id) {

@@ -18,7 +18,7 @@ const ExamResults = () => {
       const parsedResults = JSON.parse(storedResults);
       if (parsedResults.examId === examId) {
         setResults(parsedResults);
-        console.log("Loaded results:", parsedResults);
+        //console.log("Loaded results:", parsedResults);
       } else {
         navigate("/take-exam");
       }
@@ -42,61 +42,56 @@ const ExamResults = () => {
   };
 
   const isAnswerCorrect = (question, questionIndex, userAnswer) => {
-    console.log(`\n=== Checking Question ${questionIndex + 1} ===`);
-    console.log("Question type:", question.type);
-    console.log("User answer:", userAnswer, typeof userAnswer);
-    console.log("Question options:", question.options);
+    // console.log(`\n=== Checking Question ${questionIndex + 1} ===`);
+    // console.log("Question type:", question.type);
+    // console.log("User answer:", userAnswer, typeof userAnswer);
+    // console.log("Question options:", question.options);
 
-    // Match the uppercase question types from ExamSession.jsx
     if (question.type === "SINGLECHOICE") {
       const correctOptionIndex = question.options.findIndex(
         (opt) => opt.isCorrect
       );
-      console.log(
-        "Correct option index:",
-        correctOptionIndex,
-        typeof correctOptionIndex
-      );
+      // console.log(
+      //   "Correct option index:",
+      //   correctOptionIndex,
+      //   typeof correctOptionIndex
+      // );
 
-      // Convert userAnswer to number for proper comparison (same as ExamSession.jsx)
       const userAnswerNum = Number(userAnswer);
       const isCorrect = userAnswerNum === correctOptionIndex;
 
-      console.log(
-        "Comparison:",
-        `${userAnswer} (${typeof userAnswer}) -> ${userAnswerNum} === ${correctOptionIndex}`,
-        "->",
-        isCorrect
-      );
-      console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
+      // console.log(
+      //   "Comparison:",
+      //   `${userAnswer} (${typeof userAnswer}) -> ${userAnswerNum} === ${correctOptionIndex}`,
+      //   "->",
+      //   isCorrect
+      // );
+      // console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
       return isCorrect;
     } else if (question.type === "MULTICHOICE") {
       const correctOptionIndices = question.options
         .map((opt, idx) => (opt.isCorrect ? idx : -1))
         .filter((idx) => idx !== -1);
 
-      console.log("Correct option indices:", correctOptionIndices);
+      // console.log("Correct option indices:", correctOptionIndices);
 
       const userAnswerArray = userAnswer || [];
-      console.log("User answer array:", userAnswerArray);
+      //console.log("User answer array:", userAnswerArray);
 
-      // Convert user answers to numbers for comparison
       const userAnswerNumbers = userAnswerArray.map((ans) => Number(ans));
       const isCorrect =
         correctOptionIndices.length === userAnswerNumbers.length &&
         correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx));
 
-      console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
+      //console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
       return isCorrect;
     } else if (question.type === "TEXT") {
-      // For text questions, we'll show as correct if they provided an answer
-      // In a real implementation, this would need manual grading
       const isCorrect = userAnswer && userAnswer.trim();
-      console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
+      //console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
       return isCorrect;
     }
 
-    console.log("Unknown question type, returning false");
+    //console.log("Unknown question type, returning false");
     return false;
   };
 
@@ -136,7 +131,6 @@ const ExamResults = () => {
   const toggleAnswers = () => {
     setShowAnswers(!showAnswers);
 
-    // Scroll to answers section when showing
     if (!showAnswers) {
       setTimeout(() => {
         answersRef.current?.scrollIntoView({
@@ -145,7 +139,6 @@ const ExamResults = () => {
         });
       }, 100);
     } else {
-      // Scroll back to top when hiding
       window.scrollTo({
         top: 0,
         behavior: "smooth",

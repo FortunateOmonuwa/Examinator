@@ -149,7 +149,7 @@ const DeleteExam = async (examId) => {
       message: "Exam deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting exam:", error);
+    // console.error("Error deleting exam:", error);
 
     if (error.code === "P2025") {
       return Response.Unsuccessful({

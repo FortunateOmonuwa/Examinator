@@ -41,7 +41,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
 
   const checkUserProfile = await checkIfUserExists(email);
   if (checkUserProfile) {
-    console.log("Profile already exists");
+    // console.log("Profile already exists");
     return Response.Unsuccessful({
       message: `Profile with email: ${email} already exists`,
       resultCode: 400,

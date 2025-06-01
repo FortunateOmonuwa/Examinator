@@ -14,10 +14,12 @@ const CreateExamAttemptAsync = async (req, res) => {
     if (response.isSuccessful) {
       return res.status(201).json({ response: response });
     } else {
-      return res.status(response.resultCode || 400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (error) {
-    console.error("Error in CreateExamAttemptAsync:", error);
+    // console.error("Error in CreateExamAttemptAsync:", error);
     return res.status(500).json({
       response: Response.Unsuccessful({
         message: "An internal server error occurred",
@@ -36,10 +38,12 @@ const GetExamAttemptsAsync = async (req, res) => {
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });
     } else {
-      return res.status(response.resultCode || 400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (error) {
-    console.error("Error in GetExamAttemptsAsync:", error);
+    // console.error("Error in GetExamAttemptsAsync:", error);
     return res.status(500).json({
       response: Response.Unsuccessful({
         message: "An internal server error occurred",
@@ -58,10 +62,12 @@ const GetExamAttemptByIdAsync = async (req, res) => {
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });
     } else {
-      return res.status(response.resultCode || 400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (error) {
-    console.error("Error in GetExamAttemptByIdAsync:", error);
+    // console.error("Error in GetExamAttemptByIdAsync:", error);
     return res.status(500).json({
       response: Response.Unsuccessful({
         message: "An internal server error occurred",
@@ -71,4 +77,8 @@ const GetExamAttemptByIdAsync = async (req, res) => {
   }
 };
 
-export { CreateExamAttemptAsync, GetExamAttemptsAsync, GetExamAttemptByIdAsync };
+export {
+  CreateExamAttemptAsync,
+  GetExamAttemptsAsync,
+  GetExamAttemptByIdAsync,
+};

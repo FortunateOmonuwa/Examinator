@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    console.log(user);
+    // console.log(user);
     await api.post(`/api/auth/logout/${user.id}`);
     setUser(null);
   };
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   //   const login = async (email, password) => {
   //     try {
   //       const response = await api.post("/api/auth/login", { email, password });
-  //       console.log(response);
+  //       // console.log(response);
   //       if (response.data.response.isSuccessful) {
   //         const userData = response.data.response.body;
   //         setUser(userData);

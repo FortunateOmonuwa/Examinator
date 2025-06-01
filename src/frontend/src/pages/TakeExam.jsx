@@ -18,8 +18,8 @@ const TakeExam = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [directExam, setDirectExam] = useState(null);
   const [directExamLoading, setDirectExamLoading] = useState(false);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // If examId is provided in the URL, fetch that specific exam
   useEffect(() => {
     if (examId) {
       setDirectExamLoading(true);
@@ -58,10 +58,6 @@ const TakeExam = () => {
     setHasSearched(true);
 
     try {
-      // In a real implementation, this would call your backend API
-      // const response = await api.get(`/api/public-exams?subject=${subject}`)
-
-      // For now, we'll simulate a response
       setTimeout(() => {
         const mockResults = [
           {
@@ -119,8 +115,10 @@ const TakeExam = () => {
     if (!email.trim()) {
       toast.error("Please enter your email address");
       return;
+    } else if (emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
     }
-    // Redirect to exam session with email parameter
     navigate(`/exam-session/${examId}?email=${encodeURIComponent(email)}`);
   };
 
@@ -130,8 +128,6 @@ const TakeExam = () => {
       return;
     }
 
-    // Extract exam ID from the link
-    // This is a simple implementation - in a real app, you might need more robust parsing
     const examIdMatch = searchTerm.match(/\/take-exam\/([a-zA-Z0-9-_]+)/);
     if (examIdMatch && examIdMatch[1]) {
       navigate(`/take-exam/${examIdMatch[1]}`);
@@ -140,7 +136,6 @@ const TakeExam = () => {
     }
   };
 
-  // If we're loading a direct exam from the URL
   if (examId && directExamLoading) {
     return (
       <div className="take-exam-page py-8">
@@ -154,7 +149,6 @@ const TakeExam = () => {
     );
   }
 
-  // If we have a direct exam from the URL
   if (examId && directExam) {
     return (
       <div className="take-exam-page py-8">

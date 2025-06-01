@@ -18,7 +18,7 @@ const AuthenticateToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("decoded", decoded);
+    // console.log("decoded", decoded);
     const user = await database.UserProfile.findUnique({
       where: { id: decoded.profileId },
       include: {
@@ -51,7 +51,7 @@ const AuthenticateToken = async (req, res, next) => {
 const AuthorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
     const userRole = req.user?.role;
-    console.log("userRole", userRole);
+    // console.log("userRole", userRole);
 
     if (!allowedRoles.includes(userRole)) {
       return res.status(403).json(

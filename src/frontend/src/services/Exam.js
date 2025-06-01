@@ -5,7 +5,7 @@ const CreateExam = async (examinerId, examData) => {
     let response = await api.post(`/api/exam/${examinerId}`, examData);
     return response.data.response;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 
@@ -14,7 +14,7 @@ const GetExamByID = async (examId) => {
     let response = await api.get(`/api/exam/${examId}`);
     return response.data.response;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 
@@ -23,7 +23,7 @@ const DeleteExam = async (examId) => {
     let response = await api.delete(`/api/exam/${examId}`);
     return response.data.response;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 
@@ -33,7 +33,7 @@ const GetAllExams = async (examinerId) => {
 
     return response.data.response.body;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 

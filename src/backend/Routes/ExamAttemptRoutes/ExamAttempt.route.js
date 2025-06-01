@@ -4,16 +4,27 @@ import {
   GetExamAttemptsAsync,
   GetExamAttemptByIdAsync,
 } from "../../controllers/ExamAttemptController/ExamAttempt.Controller.js";
+import {
+  AuthenticateToken,
+  AuthorizeRole,
+} from "../../middleware/AuthMiddleware.js";
 
 const router = express.Router();
 
-// Submit exam attempt (no authentication required for students taking exams)
 router.post("/submit", CreateExamAttemptAsync);
 
-// Get all attempts for a specific exam (requires authentication)
-router.get("/exam/:examId", GetExamAttemptsAsync);
+router.get(
+  "/exam/:examId",
+  AuthenticateToken,
+  AuthorizeRole("EXAMINER", "ADMIN"),
+  GetExamAttemptsAsync
+);
 
-// Get specific exam attempt by ID (requires authentication)
-router.get("/:attemptId", GetExamAttemptByIdAsync);
+router.get(
+  "/:attemptId",
+  AuthenticateToken,
+  AuthorizeRole("EXAMINER", "ADMIN"),
+  GetExamAttemptByIdAsync
+);
 
 export { router as ExamAttemptRouter };

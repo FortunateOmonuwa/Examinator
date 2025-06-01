@@ -73,20 +73,19 @@ const MyExams = () => {
     }
   };
 
+  // Toggle the isPublic state locally
+  // Isn't actually doing anything for now. No endpoint to update exam
   const handleTogglePublic = async (exam) => {
     try {
-      // In a real implementation, this would call your backend API to update the exam
-      // For now, we'll simulate a response
       const updatedExam = { ...exam, isPublic: !exam.isPublic };
 
-      // Update the local state
       setExams(exams.map((e) => (e.id === exam.id ? updatedExam : e)));
 
       toast.success(
         `Exam is now ${updatedExam.isPublic ? "public" : "private"}`
       );
 
-      // In a real implementation:
+      // Supposed request
       // const response = await api.put(`/api/exam/${exam.id}`, {
       //   exam: { ...exam, isPublic: !exam.isPublic }
       // })
@@ -101,6 +100,8 @@ const MyExams = () => {
     setShareModalOpen(true);
   };
 
+  //Share exaam via email
+  //Hasn't been implemented yet. This is just a simulation
   const handleShareExam = async (e) => {
     e.preventDefault();
 
@@ -112,19 +113,31 @@ const MyExams = () => {
     setShareLoading(true);
 
     try {
-      // In a real implementation, this would call your backend API
-      // For now, we'll simulate a response
+      // Simulate sending email
+      // const res = await api.post(`/api/services/send-mail`, {
+      //   email: {
+      //     to: shareEmail,
+      //     subject: `Check out this exam from ${user.name}`,
+      //     body: `Hey there! ${user.name} has shared an exam with you. Click the link below to take the exam: ${window.location.origin}/exam/${currentExam.id}`
+      //   }
+      // })
+
+      // if (res.data.response.isSuccessful) {
+      //   toast.success(`Exam link sent to ${shareEmail}`);
+      //   setShareModalOpen(false);
+      //   setShareEmail("");
+      //   setShareLoading(false);
+      // } else {
+      //   toast.error(res.data.response.message || "Failed to share exam");
+      //   setShareLoading(false);
+      // }
+
       setTimeout(() => {
         toast.success(`Exam link sent to ${shareEmail}`);
         setShareModalOpen(false);
         setShareEmail("");
         setShareLoading(false);
       }, 1000);
-
-      // In a real implementation:
-      // const response = await api.post(`/api/exam/${currentExam.id}/share`, {
-      //   email: shareEmail
-      // })
     } catch (error) {
       console.error("Error sharing exam:", error);
       toast.error("Failed to share exam");

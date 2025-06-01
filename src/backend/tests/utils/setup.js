@@ -1,13 +1,97 @@
 // This file is used to set up the test environment
-import { beforeAll, afterAll } from 'vitest';
+import { beforeAll, afterAll } from "vitest";
+import request from "supertest";
+import app from "../../main.js";
 
 // Global setup
 beforeAll(async () => {
-  console.log('Setting up test environment');
+  // console.log('Setting up test environment');
   // You can add any setup code here, like database initialization
 });
 
 afterAll(async () => {
-  console.log('Tearing down test environment');
+  // console.log("Tearing down test environment");
   // You can add any cleanup code here
 });
+
+// Authentication helper functions
+export async function createTestExaminer(
+  data = {
+    firstname: "Test",
+    lastname: "Examiner",
+    email: `test.examiner.${Date.now()}@example.com`,
+    password: "Password123#",
+  }
+) {
+  const response = await request(app)
+    .post("/api/examiner")
+    .send(data)
+    .set("Content-Type", "application/json");
+
+  return response;
+}
+
+export async function loginTestUser(email, password) {
+  const response = await request(app)
+    .post("/api/auth/login")
+    .send({ email, password })
+    .set("Content-Type", "application/json");
+
+  return response;
+}
+
+export async function getAuthToken(
+  email = `test.examiner.${Date.now()}.${Math.random().toString(36).substring(7)}@example.com`,
+  password = "Password123#"
+) {
+  // Create a test examiner
+  const examinerResponse = await createTestExaminer({
+    firstname: "Test",
+    lastname: "Examiner",
+    email,
+    password,
+  });
+
+  if (!examinerResponse.body.response.isSuccessful) {
+    throw new Error(
+      `Failed to create test examiner: ${examinerResponse.body.response.message}`
+    );
+  }
+
+  // Login to get token
+  const loginResponse = await loginTestUser(email, password);
+
+  if (!loginResponse.body.response.isSuccessful) {
+    throw new Error(
+      `Failed to login test user: ${loginResponse.body.response.message}`
+    );
+  }
+
+  // Extract token from cookies
+  const cookies = loginResponse.headers["set-cookie"];
+  if (!cookies) {
+    throw new Error("No cookies found in login response");
+  }
+
+  const accessTokenCookie = cookies.find((cookie) =>
+    cookie.startsWith("accessToken=")
+  );
+  if (!accessTokenCookie) {
+    throw new Error("No accessToken cookie found");
+  }
+
+  const token = accessTokenCookie.split("accessToken=")[1].split(";")[0];
+
+  return {
+    token: token,
+    user: loginResponse.body.response.body,
+    examinerId: examinerResponse.body.response.body.id,
+  };
+}
+
+export async function deleteTestExaminer(id, token) {
+  return await request(app)
+    .delete(`/api/examiner/${id}`)
+    .set("Authorization", `Bearer ${token}`)
+    .set("Content-Type", "application/json");
+}
