@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix src/frontend\" \"npm run dev --prefix src/backend\""
+    "dev": "concurrently \"npm run dev --prefix src/frontend\" \"npm run dev --prefix src/backend\"",
+    "start": "concurrently \"npm run start --prefix src/frontend\" \"npm run start --prefix src/backend\""
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
