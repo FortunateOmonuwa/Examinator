@@ -4,6 +4,7 @@ import {
   DeleteExamAsync,
   GetExamAsync,
   GetAllExamsAsync,
+  GetPublicExamsAsync,
 } from "../../imports/Controllerimports.js";
 import {
   CreateExamAttemptAsync,
@@ -36,6 +37,9 @@ router.post(
   AuthorizeRole("ADMIN", "EXAMINER"),
   CreateExamAsync
 );
+
+// Get public exams (no authentication required)
+router.get("/public", GetPublicExamsAsync);
 
 router.get("/:id", GetExamAsync);
 router.delete(

@@ -20,6 +20,7 @@ const ExamSession = () => {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [examStartTime, setExamStartTime] = useState(null);
+  const [hasLeftTab, setHasLeftTab] = useState(false);
   const timerRef = useRef(null);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -153,17 +154,56 @@ const ExamSession = () => {
     };
   };
 
+  // Handle page visibility changes (tab switching)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && !hasLeftTab) {
+        // First time leaving tab - show warning and auto-submit
+        setHasLeftTab(true);
+        const confirmSubmit = window.confirm(
+          "You have left the exam tab. For security reasons, your exam will be automatically submitted. Click OK to submit or Cancel to continue (this warning will only appear once)."
+        );
+
+        if (confirmSubmit) {
+          handleSubmitExam(true);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [hasLeftTab]);
+
+  // Handle page unload/navigation away
   useEffect(() => {
     const handleBeforeUnload = (e) => {
+      if (!isSubmitting) {
+        e.preventDefault();
+        e.returnValue =
+          "Your exam will be automatically submitted if you leave this page.";
+      }
+    };
+
+    const handlePopState = (e) => {
       e.preventDefault();
 
-      e.returnValue = "Your exam will be automatically submitted.";
+      const confirmSubmit = window.confirm(
+        "Are you sure you want to leave the exam? Your answers will be automatically submitted."
+      );
+
+      if (confirmSubmit) {
+        handleSubmitExam(true);
+      } else {
+        // Push the current state back to prevent navigation
+        window.history.pushState(null, "", window.location.href);
+      }
     };
 
-    const handlePopState = async () => {
-      await handleSubmitExam(true);
-      window.location.href = `/exam/result/${examId}`;
-    };
+    // Prevent back button navigation
+    window.history.pushState(null, "", window.location.href);
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     window.addEventListener("popstate", handlePopState);
@@ -172,7 +212,7 @@ const ExamSession = () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("popstate", handlePopState);
     };
-  }, []);
+  }, [isSubmitting]);
 
   const handleSubmitExam = async (isAutoSubmit = false) => {
     if (isSubmitting) return;
@@ -271,7 +311,13 @@ const ExamSession = () => {
       localStorage.setItem("examResults", JSON.stringify(examResults));
 
       // Navigate to results page
-      navigate(`/exam-results/${exam.id}`);
+      if (isAutoSubmit) {
+        // For auto-submit, use window.location to ensure navigation happens
+        window.location.href = `/exam-results/${exam.id}`;
+      } else {
+        // For manual submit, use navigate
+        navigate(`/exam-results/${exam.id}`);
+      }
     } catch (error) {
       console.error("Error submitting exam:", error);
       toast.error("Failed to submit exam. Please try again.");

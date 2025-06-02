@@ -109,6 +109,7 @@ export async function getAuthToken(
     token: token,
     user: loginResponse.body.response.body,
     examinerId: examinerResponse.body.response.body.id,
+    userId: loginResponse.body.response.body.userId,
   };
 }
 

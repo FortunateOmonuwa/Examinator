@@ -9,6 +9,7 @@ import {
   DeleteExamAsync,
   GetExamAsync,
   GetAllExamsAsync,
+  GetPublicExamsAsync,
 } from "../controllers/ExamController/Exam.Controller.js";
 import {
   CreateExamAttemptAsync,
@@ -31,6 +32,7 @@ export {
   DeleteExamAsync,
   GetExamAsync,
   GetAllExamsAsync,
+  GetPublicExamsAsync,
   CreateExamAttemptAsync,
   GetExamAttemptsAsync,
   GetExamAttemptByIdAsync,

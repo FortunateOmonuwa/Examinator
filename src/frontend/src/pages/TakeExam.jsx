@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Search, ArrowLeft } from "lucide-react";
-import { api } from "../services/api";
+import { api, publicExamService } from "../services/api";
 import toast from "react-hot-toast";
 import "../styles/take-exam.scss";
 
@@ -35,7 +35,7 @@ const TakeExam = () => {
             toast.error("Exam not found or is not available");
           }
         } catch (error) {
-          console.error("Error fetching exam:", error);
+          // console.error("Error fetching exam:", error);
           toast.error("Failed to load exam");
         } finally {
           setDirectExamLoading(false);
@@ -43,83 +43,97 @@ const TakeExam = () => {
       };
 
       fetchExam();
+    } else {
+      // Load all public exams when not viewing a specific exam
+      const loadPublicExams = async () => {
+        setIsSearching(true);
+        try {
+          const response = await publicExamService.getPublicExams();
+
+          if (response.response && response.response.isSuccessful) {
+            const exams = response.response.body.map((exam) => ({
+              id: exam.id,
+              title: exam.title,
+              description: exam.description,
+              subject: exam.subject,
+              examiner: exam.creator?.name || "Unknown",
+              questions: exam.questions?.length || 0,
+              time: exam.stipulatedTime || 0,
+            }));
+
+            setSearchResults(exams);
+            setHasSearched(true);
+          }
+        } catch (error) {
+          // console.error("Error loading public exams:", error);
+        } finally {
+          setIsSearching(false);
+        }
+      };
+
+      loadPublicExams();
     }
   }, [examId]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
 
-    if (!email.trim()) {
-      toast.error("Please enter your email address");
-      return;
-    }
-
     setIsSearching(true);
     setHasSearched(true);
 
     try {
-      setTimeout(() => {
-        const mockResults = [
-          {
-            id: "1",
-            title: "Introduction to JavaScript",
-            description:
-              "Basic concepts and syntax of JavaScript programming language",
-            subject: "JavaScript",
-            examiner: "John Doe",
-            questions: 15,
-            time: 30,
-          },
-          {
-            id: "2",
-            title: "Advanced CSS Techniques",
-            description:
-              "Learn advanced CSS layouts, animations, and responsive design",
-            subject: "CSS",
-            examiner: "Jane Smith",
-            questions: 20,
-            time: 45,
-          },
-          {
-            id: "3",
-            title: "React Fundamentals",
-            description:
-              "Core concepts of React including components, props, and state",
-            subject: "React",
-            examiner: "Alex Johnson",
-            questions: 25,
-            time: 60,
-          },
-        ].filter(
-          (exam) =>
-            !subject ||
-            exam.subject.toLowerCase().includes(subject.toLowerCase()) ||
-            exam.title.toLowerCase().includes(subject.toLowerCase())
-        );
+      const response = await publicExamService.getPublicExams(
+        subject.trim() || null
+      );
 
-        setSearchResults(mockResults);
-        setIsSearching(false);
+      if (response.response && response.response.isSuccessful) {
+        const exams = response.response.body.map((exam) => ({
+          id: exam.id,
+          title: exam.title,
+          description: exam.description,
+          subject: exam.subject,
+          examiner: exam.creator?.name || "Unknown",
+          questions: exam.questions?.length || 0,
+          time: exam.stipulatedTime || 0,
+        }));
 
-        if (mockResults.length === 0) {
-          toast.error("No exams found matching your criteria");
+        setSearchResults(exams);
+
+        if (exams.length === 0) {
+          toast.error("No public exams found matching your criteria");
         }
-      }, 1000);
+      } else {
+        toast.error("Failed to fetch public exams");
+        setSearchResults([]);
+      }
     } catch (error) {
-      console.error("Error searching for exams:", error);
+      // console.error("Error searching for exams:", error);
       toast.error("Failed to search for exams");
+      setSearchResults([]);
+    } finally {
       setIsSearching(false);
     }
   };
 
-  const handleTakeExam = (examId, email) => {
-    if (!email.trim()) {
-      toast.error("Please enter your email address");
+  const handleTakeExam = (examId) => {
+    // Prompt for email when taking exam
+    const userEmail = prompt(
+      "Please enter your email address to take this exam:"
+    );
+
+    if (!userEmail || !userEmail.trim()) {
+      toast.error("Email is required to take the exam");
       return;
-    } else if (emailRegex.test(email)) {
+    }
+
+    if (!emailRegex.test(userEmail.trim())) {
       toast.error("Please enter a valid email address");
       return;
     }
-    navigate(`/exam-session/${examId}?email=${encodeURIComponent(email)}`);
+
+    navigate(
+      `/exam-session/${examId}?email=${encodeURIComponent(userEmail.trim())}`
+    );
   };
 
   const handleDirectExamLink = () => {
@@ -204,8 +218,14 @@ const TakeExam = () => {
                         toast.error("Please enter your email address");
                         return;
                       }
+
+                      if (!emailRegex.test(email.trim())) {
+                        toast.error("Please enter a valid email address");
+                        return;
+                      }
+
                       navigate(
-                        `/exam-session/${directExam.id}?email=${encodeURIComponent(email)}`
+                        `/exam-session/${directExam.id}?email=${encodeURIComponent(email.trim())}`
                       );
                     }}
                     className="bg-purple-600 text-white px-4 py-2 rounded-r-md hover:bg-purple-700 transition-colors"
@@ -228,6 +248,18 @@ const TakeExam = () => {
                     {directExam.enforceTimeLimit
                       ? "The exam will be automatically submitted when the time expires."
                       : "You can continue after the time limit, but it will be noted."}
+                  </li>
+                  <li>
+                    Ensure you have a stable internet connection to avoid
+                    disconnections during the exam.
+                  </li>
+                  {/* <li>
+                    You can only take each exam once. If you need to retake, please
+                    contact the examiner.
+                  </li> */}
+                  <li>
+                    Leaving the exam tab or going back will automatically submit
+                    your answers.
                   </li>
                   <li>
                     Your results will be sent to the email address you provide.
@@ -281,24 +313,6 @@ const TakeExam = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4">Find Public Exams</h2>
             <form onSubmit={handleSearch}>
-              <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Your Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  required
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-              </div>
-
               <div className="mb-6">
                 <label
                   htmlFor="subject"
@@ -311,7 +325,7 @@ const TakeExam = () => {
                   id="subject"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="e.g., JavaScript, React, CSS"
+                  placeholder="e.g., JavaScript, React, CSS, or leave empty to see all public exams"
                   className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
@@ -326,7 +340,7 @@ const TakeExam = () => {
                 ) : (
                   <>
                     <Search className="h-4 w-4 mr-2" />
-                    Search Exams
+                    Search Public Exams
                   </>
                 )}
               </button>
@@ -334,7 +348,9 @@ const TakeExam = () => {
 
             {hasSearched && (
               <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Search Results</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  {subject.trim() ? "Search Results" : "Available Public Exams"}
+                </h3>
 
                 {searchResults.length === 0 ? (
                   <div className="text-center py-8">
@@ -371,7 +387,7 @@ const TakeExam = () => {
                             By {exam.examiner}
                           </span>
                           <button
-                            onClick={() => handleTakeExam(exam.id, email)}
+                            onClick={() => handleTakeExam(exam.id)}
                             className="text-sm bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition-colors"
                           >
                             Take Exam

@@ -237,4 +237,73 @@ const GetAllExams = async (examinerId) => {
   }
 };
 
-export { CreateExam, DeleteExam, GetExamByID, GetAllExams };
+const GetPublicExams = async (subject = null) => {
+  try {
+    const whereClause = {
+      isPublic: true,
+    };
+
+    if (subject && subject.trim()) {
+      whereClause.OR = [
+        {
+          subject: {
+            contains: subject,
+            mode: "insensitive",
+          },
+        },
+        {
+          title: {
+            contains: subject,
+            mode: "insensitive",
+          },
+        },
+        {
+          description: {
+            contains: subject,
+            mode: "insensitive",
+          },
+        },
+      ];
+    }
+
+    const exams = await database.Exam.findMany({
+      where: whereClause,
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+        creator: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        dateCreated: "desc",
+      },
+    });
+
+    if (exams) {
+      return Response.Successful({
+        message: "Public exams retrieved successfully",
+        body: exams,
+      });
+    }
+
+    return Response.Unsuccessful({
+      message: "Failed to retrieve public exams",
+    });
+  } catch (error) {
+    // console.log("Error in GetPublicExams:", error);
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
+export { CreateExam, DeleteExam, GetExamByID, GetAllExams, GetPublicExams };

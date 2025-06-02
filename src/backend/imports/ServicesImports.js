@@ -10,6 +10,7 @@ import {
   DeleteExam,
   GetExamByID,
   GetAllExams,
+  GetPublicExams,
 } from "../functionalities/Exam/Exam.Service.js";
 import {
   CreateExamAttempt,
@@ -32,6 +33,7 @@ export {
   DeleteExam,
   GetExamByID,
   GetAllExams,
+  GetPublicExams,
   CreateExamAttempt,
   GetExamAttempts,
   GetExamAttemptById,

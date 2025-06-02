@@ -3,6 +3,7 @@ import {
   DeleteExam,
   GetExamByID,
   GetAllExams,
+  GetPublicExams,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
 
@@ -74,4 +75,26 @@ const GetAllExamsAsync = async (req, res) => {
   }
 };
 
-export { CreateExamAsync, DeleteExamAsync, GetExamAsync, GetAllExamsAsync };
+const GetPublicExamsAsync = async (req, res) => {
+  const { subject } = req.query;
+
+  try {
+    const response = await GetPublicExams(subject);
+
+    if (response.isSuccessful) {
+      return res.status(200).json({ response: response });
+    } else {
+      return res.status(response.resultCode).json({ response: response });
+    }
+  } catch (e) {
+    return res.status(500).json({ response: Response.Unsuccessful() });
+  }
+};
+
+export {
+  CreateExamAsync,
+  DeleteExamAsync,
+  GetExamAsync,
+  GetAllExamsAsync,
+  GetPublicExamsAsync,
+};
