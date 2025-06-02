@@ -1,48 +1,51 @@
 .exam-form {
   .exam-details {
-    input:focus, textarea:focus {
-      border-color: #9333ea;
-      box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+    input:focus,
+    textarea:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
     }
-    
+
     input[type="checkbox"]:checked {
-      background-color: #9333ea;
-      border-color: #9333ea;
+      background-color: $primary-color;
+      border-color: $primary-color;
     }
   }
-  
+
   .questions-section {
     .question-card {
       transition: box-shadow 0.2s ease;
-      
+
       &:hover {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
       }
-      
+
       .options-container {
         .option-item {
           input[type="radio"]:checked {
-            background-color: #9333ea;
-            border-color: #9333ea;
+            background-color: $primary-color;
+            border-color: $primary-color;
           }
-          
+
           input[type="text"]:focus {
-            border-color: #9333ea;
-            box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+            border-color: $primary-color;
+            box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
           }
         }
       }
     }
   }
-  
+
   .form-actions {
     button {
       transition: all 0.2s ease;
-      
+
       &:hover {
         transform: translateY(-1px);
       }
-      
+
       &:disabled {
         cursor: not-allowed;
       }

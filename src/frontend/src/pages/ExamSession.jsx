@@ -20,7 +20,7 @@ const ExamSession = () => {
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [examStartTime, setExamStartTime] = useState(null);
-  const [hasLeftTab, setHasLeftTab] = useState(false);
+  const [tabChangeCount, setTabChangeCount] = useState(0);
   const timerRef = useRef(null);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -154,15 +154,25 @@ const ExamSession = () => {
     };
   };
 
-  // Handle page visibility changes (tab switching)
+  //This handles the tab switching
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden && !hasLeftTab) {
-        // First time leaving tab - show warning and auto-submit
-        setHasLeftTab(true);
+      if (document.hidden && !isSubmitting) {
+        // If they've already left once, auto-submit immediately
+        if (tabChangeCount >= 1) {
+          toast.error(
+            "Exam automatically submitted because you left this page again"
+          );
+          handleSubmitExam(true);
+          return;
+        }
+
         const confirmSubmit = window.confirm(
-          "You have left the exam tab. For security reasons, your exam will be automatically submitted. Click OK to submit or Cancel to continue (this warning will only appear once)."
+          "You are leaving the exam tab. For security reasons, your exam will be automatically submitted if you leave again. Click OK to submit now or Cancel to continue (this is your only warning)."
         );
+
+        // Increment the count after showing the warning
+        setTabChangeCount((prev) => prev + 1);
 
         if (confirmSubmit) {
           handleSubmitExam(true);
@@ -175,7 +185,7 @@ const ExamSession = () => {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [hasLeftTab]);
+  }, [isSubmitting, tabChangeCount]);
 
   // Handle page unload/navigation away
   useEffect(() => {
@@ -197,7 +207,6 @@ const ExamSession = () => {
       if (confirmSubmit) {
         handleSubmitExam(true);
       } else {
-        // Push the current state back to prevent navigation
         window.history.pushState(null, "", window.location.href);
       }
     };
@@ -216,6 +225,12 @@ const ExamSession = () => {
 
   const handleSubmitExam = async (isAutoSubmit = false) => {
     if (isSubmitting) return;
+
+    // Check if exam is loaded
+    if (!exam || !exam.questions) {
+      toast.error("Exam data not loaded. Please refresh and try again.");
+      return;
+    }
 
     if (!isAutoSubmit) {
       const unansweredQuestions = exam.questions.filter(

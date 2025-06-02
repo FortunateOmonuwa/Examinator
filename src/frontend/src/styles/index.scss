@@ -20,14 +20,14 @@ body {
 }
 
 // Custom variables
-$primary-color: #9333ea; // purple-600
-$primary-hover: #7e22ce; // purple-700
+$primary-color: #ea339b; // purple-600
+$primary-hover: #c5187a; // purple-700
 $secondary-color: #f3f4f6; // gray-100
 $text-color: #111827; // gray-900
 $text-light: #6b7280; // gray-500
 $border-color: #e5e7eb; // gray-200
 $success-color: #10b981; // green-500
-$error-color: #ef4444; // red-500
+$error-color: #f51d1d; // red-500
 
 // Import component styles
 @import "auth";

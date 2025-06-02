@@ -165,6 +165,7 @@ exports.Prisma.ExamScalarFieldEnum = {
   creatorId: 'creatorId',
   enforceTimeLimit: 'enforceTimeLimit',
   stipulatedTime: 'stipulatedTime',
+  attemptLimit: 'attemptLimit',
   dateCreated: 'dateCreated',
   dateUpdated: 'dateUpdated',
   isPublic: 'isPublic'

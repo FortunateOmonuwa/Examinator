@@ -2,7 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Search, ArrowLeft } from "lucide-react";
+import {
+  Search,
+  ArrowLeft,
+  AlertTriangle,
+  Timer,
+  WifiOff,
+  LogOut,
+} from "lucide-react";
 import { api, publicExamService } from "../services/api";
 import toast from "react-hot-toast";
 import "../styles/take-exam.scss";
@@ -115,7 +122,7 @@ const TakeExam = () => {
     }
   };
 
-  const handleTakeExam = (examId) => {
+  const handleTakeExam = async (examId) => {
     // Prompt for email when taking exam
     const userEmail = prompt(
       "Please enter your email address to take this exam:"
@@ -128,6 +135,30 @@ const TakeExam = () => {
 
     if (!emailRegex.test(userEmail.trim())) {
       toast.error("Please enter a valid email address");
+      return;
+    }
+
+    // Check attempt limits before allowing exam
+    try {
+      const attemptCheck = await publicExamService.checkExamAttempts(
+        examId,
+        userEmail.trim()
+      );
+
+      if (attemptCheck.response && attemptCheck.response.isSuccessful) {
+        const { canAttempt, attemptCount, attemptLimit, examTitle } =
+          attemptCheck.response.body;
+
+        if (!canAttempt) {
+          toast.error(
+            `You have already attempted "${examTitle}" ${attemptCount} time(s). Maximum attempts allowed: ${attemptLimit}`
+          );
+          return;
+        }
+      }
+    } catch (error) {
+      // console.error("Error checking attempt limits:", error);
+      toast.error("Failed to verify attempt eligibility. Please try again.");
       return;
     }
 
@@ -213,7 +244,7 @@ const TakeExam = () => {
                     className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (!email.trim()) {
                         toast.error("Please enter your email address");
                         return;
@@ -221,6 +252,40 @@ const TakeExam = () => {
 
                       if (!emailRegex.test(email.trim())) {
                         toast.error("Please enter a valid email address");
+                        return;
+                      }
+
+                      // Check attempt limits before allowing exam
+                      try {
+                        const attemptCheck =
+                          await publicExamService.checkExamAttempts(
+                            directExam.id,
+                            email.trim()
+                          );
+
+                        if (
+                          attemptCheck.response &&
+                          attemptCheck.response.isSuccessful
+                        ) {
+                          const {
+                            canAttempt,
+                            attemptCount,
+                            attemptLimit,
+                            examTitle,
+                          } = attemptCheck.response.body;
+
+                          if (!canAttempt) {
+                            toast.error(
+                              `You have already attempted "${examTitle}" ${attemptCount} time(s). Maximum attempts allowed: ${attemptLimit}`
+                            );
+                            return;
+                          }
+                        }
+                      } catch (error) {
+                        // console.error("Error checking attempt limits:", error);
+                        toast.error(
+                          "Failed to verify attempt eligibility. Please try again."
+                        );
                         return;
                       }
 
@@ -236,33 +301,49 @@ const TakeExam = () => {
               </div>
 
               <div className="border-t border-gray-200 pt-4">
-                <h3 className="text-sm font-medium text-gray-500">
+                <h3 className="text-pretty font-semibold text-gray-700 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-800" />
                   Important Notes:
                 </h3>
-                <ul className="mt-2 text-sm text-gray-600 list-disc pl-5 space-y-1">
-                  <li>
-                    This exam has a time limit of {directExam.stipulatedTime}{" "}
-                    minutes.
+                <ul className="mt-3 text-sm text-gray-700 space-y-2">
+                  <li className="flex items-start gap-2">
+                    <Timer className="w-3 h-3 text-gray-600 mt-1" />
+                    <span>
+                      This exam has a time limit of{" "}
+                      <strong>{directExam.stipulatedTime} minutes</strong>.
+                    </span>
                   </li>
-                  <li>
-                    {directExam.enforceTimeLimit
-                      ? "The exam will be automatically submitted when the time expires."
-                      : "You can continue after the time limit, but it will be noted."}
+                  <li className="flex items-start gap-2">
+                    <AlertTriangle className="w-3 h-3 text-red-600  mt-1" />
+                    <span>
+                      {directExam.enforceTimeLimit ? (
+                        <>
+                          The exam will be{" "}
+                          <strong>automatically submitted</strong> when the time
+                          expires.
+                        </>
+                      ) : (
+                        <>
+                          You can continue after the time limit, but it will be{" "}
+                          <strong>noted</strong>.
+                        </>
+                      )}
+                    </span>
                   </li>
-                  <li>
-                    Ensure you have a stable internet connection to avoid
-                    disconnections during the exam.
+                  <li className="flex items-start gap-2">
+                    <WifiOff className="w-3 h-3 text-gray-600 mt-1" />
+                    <span>
+                      Ensure you have a{" "}
+                      <strong>stable internet connection</strong> to avoid
+                      disconnections during the exam.
+                    </span>
                   </li>
-                  {/* <li>
-                    You can only take each exam once. If you need to retake, please
-                    contact the examiner.
-                  </li> */}
-                  <li>
-                    Leaving the exam tab or going back will automatically submit
-                    your answers.
-                  </li>
-                  <li>
-                    Your results will be sent to the email address you provide.
+                  <li className="flex items-start gap-2">
+                    <AlertTriangle className="w-3 h-3 text-red-600  mt-1" />
+                    <span>
+                      Leaving the exam tab or going back will{" "}
+                      <strong>automatically submit</strong> your answers.
+                    </span>
                   </li>
                 </ul>
               </div>

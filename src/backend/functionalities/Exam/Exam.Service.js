@@ -10,6 +10,8 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
     subject,
     stipulatedTime,
     enforceTimeLimit = false,
+    attemptLimit = 1,
+    isPublic = false,
     questions,
   } = exam;
 
@@ -92,6 +94,8 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
         creatorId: examinerId,
         stipulatedTime,
         enforceTimeLimit,
+        attemptLimit,
+        isPublic,
         questions: {
           create: questions.map((q) => ({
             text: q.text,
@@ -306,4 +310,54 @@ const GetPublicExams = async (subject = null) => {
   }
 };
 
-export { CreateExam, DeleteExam, GetExamByID, GetAllExams, GetPublicExams };
+const CheckExamAttempts = async (examId, email) => {
+  try {
+    const exam = await database.Exam.findUnique({
+      where: { id: examId },
+      select: { attemptLimit: true, title: true },
+    });
+
+    if (!exam) {
+      return Response.Unsuccessful({
+        message: "Exam not found",
+        resultCode: 404,
+      });
+    }
+
+    const attemptCount = await database.ExamAttempt.count({
+      where: {
+        examId: examId,
+        responderEmal: email,
+      },
+    });
+
+    const canAttempt = attemptCount < exam.attemptLimit;
+
+    return Response.Successful({
+      message: "Exam attempt check completed",
+      body: {
+        canAttempt,
+        attemptCount,
+        attemptLimit: exam.attemptLimit,
+        examTitle: exam.title,
+      },
+    });
+  } catch (error) {
+    // console.log("Error in CheckExamAttempts:", error);
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
+export {
+  CreateExam,
+  DeleteExam,
+  GetExamByID,
+  GetAllExams,
+  GetPublicExams,
+  CheckExamAttempts,
+};

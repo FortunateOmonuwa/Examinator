@@ -4,6 +4,7 @@ import {
   GetExamByID,
   GetAllExams,
   GetPublicExams,
+  CheckExamAttempts,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
 
@@ -91,10 +92,37 @@ const GetPublicExamsAsync = async (req, res) => {
   }
 };
 
+const CheckExamAttemptsAsync = async (req, res) => {
+  const { examId } = req.params;
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({
+      response: Response.Unsuccessful({
+        message: "Email is required",
+        resultCode: 400,
+      }),
+    });
+  }
+
+  try {
+    const response = await CheckExamAttempts(examId, email);
+
+    if (response.isSuccessful) {
+      return res.status(200).json({ response: response });
+    } else {
+      return res.status(response.resultCode).json({ response: response });
+    }
+  } catch (e) {
+    return res.status(500).json({ response: Response.Unsuccessful() });
+  }
+};
+
 export {
   CreateExamAsync,
   DeleteExamAsync,
   GetExamAsync,
   GetAllExamsAsync,
   GetPublicExamsAsync,
+  CheckExamAttemptsAsync,
 };

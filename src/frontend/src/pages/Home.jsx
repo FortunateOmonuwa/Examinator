@@ -20,7 +20,7 @@ const Home = () => {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="hero-content">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl md:text-5xl text-pretty font-bold text-gray-900 mb-4">
                 The Ultimate{" "}
                 <span className="text-purple-600">Examination</span> Platform
               </h1>

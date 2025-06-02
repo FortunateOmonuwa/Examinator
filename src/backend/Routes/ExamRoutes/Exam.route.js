@@ -5,6 +5,7 @@ import {
   GetExamAsync,
   GetAllExamsAsync,
   GetPublicExamsAsync,
+  CheckExamAttemptsAsync,
 } from "../../imports/Controllerimports.js";
 import {
   CreateExamAttemptAsync,
@@ -40,6 +41,9 @@ router.post(
 
 // Get public exams (no authentication required)
 router.get("/public", GetPublicExamsAsync);
+
+// Check exam attempts for email (no authentication required)
+router.get("/check-attempts/:examId", CheckExamAttemptsAsync);
 
 router.get("/:id", GetExamAsync);
 router.delete(

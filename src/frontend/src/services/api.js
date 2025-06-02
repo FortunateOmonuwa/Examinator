@@ -49,6 +49,17 @@ export const publicExamService = {
       throw error.response?.data || error.message;
     }
   },
+
+  checkExamAttempts: async (examId, email) => {
+    try {
+      const response = await api.get(
+        `/api/exam/check-attempts/${examId}?email=${encodeURIComponent(email)}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 // Exam Attempt Services

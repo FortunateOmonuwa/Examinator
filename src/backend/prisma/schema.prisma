@@ -63,6 +63,7 @@ model Exam {
   questions Question[] @relation("Questions")
   enforceTimeLimit Boolean @default(false)
   stipulatedTime Int
+  attemptLimit Int @default(1)
   dateCreated DateTime @default(now())
   dateUpdated DateTime @default(now())
   isPublic Boolean @default(false)

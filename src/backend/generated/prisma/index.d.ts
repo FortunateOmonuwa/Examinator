@@ -6455,10 +6455,12 @@ export namespace Prisma {
 
   export type ExamAvgAggregateOutputType = {
     stipulatedTime: number | null
+    attemptLimit: number | null
   }
 
   export type ExamSumAggregateOutputType = {
     stipulatedTime: number | null
+    attemptLimit: number | null
   }
 
   export type ExamMinAggregateOutputType = {
@@ -6470,6 +6472,7 @@ export namespace Prisma {
     creatorId: string | null
     enforceTimeLimit: boolean | null
     stipulatedTime: number | null
+    attemptLimit: number | null
     dateCreated: Date | null
     dateUpdated: Date | null
     isPublic: boolean | null
@@ -6484,6 +6487,7 @@ export namespace Prisma {
     creatorId: string | null
     enforceTimeLimit: boolean | null
     stipulatedTime: number | null
+    attemptLimit: number | null
     dateCreated: Date | null
     dateUpdated: Date | null
     isPublic: boolean | null
@@ -6498,6 +6502,7 @@ export namespace Prisma {
     creatorId: number
     enforceTimeLimit: number
     stipulatedTime: number
+    attemptLimit: number
     dateCreated: number
     dateUpdated: number
     isPublic: number
@@ -6507,10 +6512,12 @@ export namespace Prisma {
 
   export type ExamAvgAggregateInputType = {
     stipulatedTime?: true
+    attemptLimit?: true
   }
 
   export type ExamSumAggregateInputType = {
     stipulatedTime?: true
+    attemptLimit?: true
   }
 
   export type ExamMinAggregateInputType = {
@@ -6522,6 +6529,7 @@ export namespace Prisma {
     creatorId?: true
     enforceTimeLimit?: true
     stipulatedTime?: true
+    attemptLimit?: true
     dateCreated?: true
     dateUpdated?: true
     isPublic?: true
@@ -6536,6 +6544,7 @@ export namespace Prisma {
     creatorId?: true
     enforceTimeLimit?: true
     stipulatedTime?: true
+    attemptLimit?: true
     dateCreated?: true
     dateUpdated?: true
     isPublic?: true
@@ -6550,6 +6559,7 @@ export namespace Prisma {
     creatorId?: true
     enforceTimeLimit?: true
     stipulatedTime?: true
+    attemptLimit?: true
     dateCreated?: true
     dateUpdated?: true
     isPublic?: true
@@ -6651,6 +6661,7 @@ export namespace Prisma {
     creatorId: string
     enforceTimeLimit: boolean
     stipulatedTime: number
+    attemptLimit: number
     dateCreated: Date
     dateUpdated: Date
     isPublic: boolean
@@ -6684,6 +6695,7 @@ export namespace Prisma {
     creatorId?: boolean
     enforceTimeLimit?: boolean
     stipulatedTime?: boolean
+    attemptLimit?: boolean
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
@@ -6703,6 +6715,7 @@ export namespace Prisma {
     creatorId?: boolean
     enforceTimeLimit?: boolean
     stipulatedTime?: boolean
+    attemptLimit?: boolean
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
@@ -6718,6 +6731,7 @@ export namespace Prisma {
     creatorId?: boolean
     enforceTimeLimit?: boolean
     stipulatedTime?: boolean
+    attemptLimit?: boolean
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
@@ -6733,12 +6747,13 @@ export namespace Prisma {
     creatorId?: boolean
     enforceTimeLimit?: boolean
     stipulatedTime?: boolean
+    attemptLimit?: boolean
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
   }
 
-  export type ExamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "subject" | "link" | "creatorId" | "enforceTimeLimit" | "stipulatedTime" | "dateCreated" | "dateUpdated" | "isPublic", ExtArgs["result"]["exam"]>
+  export type ExamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "subject" | "link" | "creatorId" | "enforceTimeLimit" | "stipulatedTime" | "attemptLimit" | "dateCreated" | "dateUpdated" | "isPublic", ExtArgs["result"]["exam"]>
   export type ExamInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | ExaminerDefaultArgs<ExtArgs>
     questions?: boolean | Exam$questionsArgs<ExtArgs>
@@ -6770,6 +6785,7 @@ export namespace Prisma {
       creatorId: string
       enforceTimeLimit: boolean
       stipulatedTime: number
+      attemptLimit: number
       dateCreated: Date
       dateUpdated: Date
       isPublic: boolean
@@ -7208,6 +7224,7 @@ export namespace Prisma {
     readonly creatorId: FieldRef<"Exam", 'String'>
     readonly enforceTimeLimit: FieldRef<"Exam", 'Boolean'>
     readonly stipulatedTime: FieldRef<"Exam", 'Int'>
+    readonly attemptLimit: FieldRef<"Exam", 'Int'>
     readonly dateCreated: FieldRef<"Exam", 'DateTime'>
     readonly dateUpdated: FieldRef<"Exam", 'DateTime'>
     readonly isPublic: FieldRef<"Exam", 'Boolean'>
@@ -13429,6 +13446,7 @@ export namespace Prisma {
     creatorId: 'creatorId',
     enforceTimeLimit: 'enforceTimeLimit',
     stipulatedTime: 'stipulatedTime',
+    attemptLimit: 'attemptLimit',
     dateCreated: 'dateCreated',
     dateUpdated: 'dateUpdated',
     isPublic: 'isPublic'
@@ -13904,6 +13922,7 @@ export namespace Prisma {
     creatorId?: UuidFilter<"Exam"> | string
     enforceTimeLimit?: BoolFilter<"Exam"> | boolean
     stipulatedTime?: IntFilter<"Exam"> | number
+    attemptLimit?: IntFilter<"Exam"> | number
     dateCreated?: DateTimeFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeFilter<"Exam"> | Date | string
     isPublic?: BoolFilter<"Exam"> | boolean
@@ -13922,6 +13941,7 @@ export namespace Prisma {
     creatorId?: SortOrder
     enforceTimeLimit?: SortOrder
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
@@ -13943,6 +13963,7 @@ export namespace Prisma {
     creatorId?: UuidFilter<"Exam"> | string
     enforceTimeLimit?: BoolFilter<"Exam"> | boolean
     stipulatedTime?: IntFilter<"Exam"> | number
+    attemptLimit?: IntFilter<"Exam"> | number
     dateCreated?: DateTimeFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeFilter<"Exam"> | Date | string
     isPublic?: BoolFilter<"Exam"> | boolean
@@ -13961,6 +13982,7 @@ export namespace Prisma {
     creatorId?: SortOrder
     enforceTimeLimit?: SortOrder
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
@@ -13983,6 +14005,7 @@ export namespace Prisma {
     creatorId?: UuidWithAggregatesFilter<"Exam"> | string
     enforceTimeLimit?: BoolWithAggregatesFilter<"Exam"> | boolean
     stipulatedTime?: IntWithAggregatesFilter<"Exam"> | number
+    attemptLimit?: IntWithAggregatesFilter<"Exam"> | number
     dateCreated?: DateTimeWithAggregatesFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeWithAggregatesFilter<"Exam"> | Date | string
     isPublic?: BoolWithAggregatesFilter<"Exam"> | boolean
@@ -14605,6 +14628,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -14623,6 +14647,7 @@ export namespace Prisma {
     creatorId: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -14639,6 +14664,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -14657,6 +14683,7 @@ export namespace Prisma {
     creatorId?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -14674,6 +14701,7 @@ export namespace Prisma {
     creatorId: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -14687,6 +14715,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -14701,6 +14730,7 @@ export namespace Prisma {
     creatorId?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -15435,6 +15465,7 @@ export namespace Prisma {
     creatorId?: SortOrder
     enforceTimeLimit?: SortOrder
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
@@ -15442,6 +15473,7 @@ export namespace Prisma {
 
   export type ExamAvgOrderByAggregateInput = {
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
   }
 
   export type ExamMaxOrderByAggregateInput = {
@@ -15453,6 +15485,7 @@ export namespace Prisma {
     creatorId?: SortOrder
     enforceTimeLimit?: SortOrder
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
@@ -15467,6 +15500,7 @@ export namespace Prisma {
     creatorId?: SortOrder
     enforceTimeLimit?: SortOrder
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
@@ -15474,6 +15508,7 @@ export namespace Prisma {
 
   export type ExamSumOrderByAggregateInput = {
     stipulatedTime?: SortOrder
+    attemptLimit?: SortOrder
   }
 
   export type EnumExamStatusFilter<$PrismaModel = never> = {
@@ -17048,6 +17083,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -17064,6 +17100,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -17137,6 +17174,7 @@ export namespace Prisma {
     creatorId?: UuidFilter<"Exam"> | string
     enforceTimeLimit?: BoolFilter<"Exam"> | boolean
     stipulatedTime?: IntFilter<"Exam"> | number
+    attemptLimit?: IntFilter<"Exam"> | number
     dateCreated?: DateTimeFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeFilter<"Exam"> | Date | string
     isPublic?: BoolFilter<"Exam"> | boolean
@@ -17610,6 +17648,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -17627,6 +17666,7 @@ export namespace Prisma {
     creatorId: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -17683,6 +17723,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -17700,6 +17741,7 @@ export namespace Prisma {
     creatorId?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -17715,6 +17757,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -17732,6 +17775,7 @@ export namespace Prisma {
     creatorId: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -17813,6 +17857,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -17830,6 +17875,7 @@ export namespace Prisma {
     creatorId?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -18010,6 +18056,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -18027,6 +18074,7 @@ export namespace Prisma {
     creatorId: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -18109,6 +18157,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -18126,6 +18175,7 @@ export namespace Prisma {
     creatorId?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -18390,6 +18440,7 @@ export namespace Prisma {
     link: string
     enforceTimeLimit?: boolean
     stipulatedTime: number
+    attemptLimit?: number
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
@@ -18403,6 +18454,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -18419,6 +18471,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
@@ -18435,6 +18488,7 @@ export namespace Prisma {
     link?: StringFieldUpdateOperationsInput | string
     enforceTimeLimit?: BoolFieldUpdateOperationsInput | boolean
     stipulatedTime?: IntFieldUpdateOperationsInput | number
+    attemptLimit?: IntFieldUpdateOperationsInput | number
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean

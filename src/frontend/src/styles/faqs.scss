@@ -1,21 +1,21 @@
 .faqs-page {
   .hero-section {
-    background: linear-gradient(to right, #9333ea, #7e22ce);
+    background: linear-gradient(to right, #f84cae, #c10d73);
   }
-  
+
   .faq-item {
     transition: all $transition-normal;
-    
+
     &:hover {
       box-shadow: $shadow-md;
     }
-    
+
     &.active {
       h3 {
         color: $primary-color;
       }
     }
-    
+
     .faq-answer {
       animation: fadeIn 0.3s ease-in-out;
     }

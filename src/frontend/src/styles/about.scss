@@ -1,21 +1,21 @@
 .about-page {
   .hero-section {
-    background: linear-gradient(to right, #9333ea, #7e22ce);
+    background: linear-gradient(to right, #f84cae, #c10d73);
   }
-  
+
   .about-image {
     img {
       transition: all $transition-normal;
-      
+
       &:hover {
         transform: scale(1.02);
       }
     }
   }
-  
+
   .value-card {
     transition: all $transition-normal;
-    
+
     &:hover {
       transform: translateY(-5px);
       box-shadow: $shadow-md;

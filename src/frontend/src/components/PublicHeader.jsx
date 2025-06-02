@@ -21,7 +21,7 @@ const PublicHeader = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-purple-600">Examinator</h1>
+              <h1 className="text-2xl font-bold text-pink-500">Examinator</h1>
             </Link>
             <nav className="hidden md:ml-10 md:flex md:space-x-8">
               {/* <Link to="/" className="nav-link">
@@ -32,14 +32,14 @@ const PublicHeader = () => {
               </Link> */}
               <Link
                 to={user ? "/dashboard/create-exam" : "/register"}
-                className="nav-link"
+                className="nav-link text-sm"
               >
                 Create Exam
               </Link>
-              <Link to="/about" className="nav-link">
+              <Link to="/about" className="nav-link text-sm">
                 About
               </Link>
-              <Link to="/faqs" className="nav-link">
+              <Link to="/faqs" className="nav-link text-sm">
                 FAQs
               </Link>
             </nav>
@@ -63,7 +63,7 @@ const PublicHeader = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="text-sm px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700"
+                  className="text-sm px-4 py-2 rounded-md bg-pink-600 text-white hover:bg-pink-700"
                 >
                   Register
                 </Link>
@@ -143,7 +143,7 @@ const PublicHeader = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="block px-3 py-2 rounded-md text-base font-medium bg-purple-600 text-white hover:bg-purple-700"
+                  className="block px-3 py-2 rounded-md text-base font-medium bg-pink-600 text-white hover:bg-pink-700"
                   onClick={toggleMobileMenu}
                 >
                   Register

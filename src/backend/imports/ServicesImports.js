@@ -11,6 +11,7 @@ import {
   GetExamByID,
   GetAllExams,
   GetPublicExams,
+  CheckExamAttempts,
 } from "../functionalities/Exam/Exam.Service.js";
 import {
   CreateExamAttempt,
@@ -34,6 +35,7 @@ export {
   GetExamByID,
   GetAllExams,
   GetPublicExams,
+  CheckExamAttempts,
   CreateExamAttempt,
   GetExamAttempts,
   GetExamAttemptById,

@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12 max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 min-w-0">
           <div className="footer-brand min-w-0">
-            <h2 className="text-2xl font-bold mb-4">Examinator</h2>
+            <h2 className="text-2xl font-bold mb-4 bg-pink-600">Examinator</h2>
             <p className="text-gray-300 mb-4">
               The ultimate examination platform for creating, managing, and
               taking exams with ease.
@@ -135,7 +135,7 @@ const Footer = () => {
                 />
                 <button
                   type="submit"
-                  className="bg-purple-600 px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-purple-700 transition-colors whitespace-nowrap"
+                  className="bg-pink-600 px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-purple-700 transition-colors whitespace-nowrap"
                 >
                   Subscribe
                 </button>
