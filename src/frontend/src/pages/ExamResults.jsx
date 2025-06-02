@@ -235,7 +235,7 @@ const ExamResults = () => {
           </button>
         </div>
 
-        {/* Debug Information */}
+        {/* Debug Information
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
           <h4 className="font-medium text-yellow-800 mb-2">
             Debug Information:
@@ -265,7 +265,7 @@ const ExamResults = () => {
               )}
             </pre>
           </details>
-        </div>
+        </div> */}
 
         {/* Answers Section */}
         {showAnswers && (
