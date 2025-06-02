@@ -361,7 +361,7 @@ const ExamSession = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading exam...</p>
         </div>
       </div>
@@ -377,7 +377,7 @@ const ExamSession = () => {
           </h2>
           <button
             onClick={() => navigate("/take-exam")}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
           >
             Back to Exam Search
           </button>
@@ -426,7 +426,7 @@ const ExamSession = () => {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                className="bg-pink-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
@@ -454,7 +454,7 @@ const ExamSession = () => {
                       onClick={() => goToQuestion(index)}
                       className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                         isCurrent
-                          ? "bg-purple-600 text-white"
+                          ? "bg-pink-600 text-white"
                           : isAnswered
                             ? "bg-green-100 text-green-800 hover:bg-green-200"
                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -476,7 +476,7 @@ const ExamSession = () => {
                   <span>Not answered</span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <div className="w-3 h-3 bg-purple-600 rounded"></div>
+                  <div className="w-3 h-3 bg-pink-600 rounded"></div>
                   <span>Current</span>
                 </div>
               </div>
@@ -520,7 +520,7 @@ const ExamSession = () => {
                               e.target.value
                             )
                           }
-                          className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300"
+                          className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
                         />
                         <span className="ml-3 text-gray-700">
                           {String.fromCharCode(65 + optionIndex)}. {option.text}
@@ -560,7 +560,7 @@ const ExamSession = () => {
                               );
                             }
                           }}
-                          className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                         />
                         <span className="ml-3 text-gray-700">
                           {String.fromCharCode(65 + optionIndex)}. {option.text}
@@ -578,7 +578,7 @@ const ExamSession = () => {
                     }
                     placeholder="Type your answer here..."
                     rows={6}
-                    className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                    className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none"
                   />
                 )}
               </div>
@@ -597,7 +597,7 @@ const ExamSession = () => {
                   {currentQuestionIndex < exam.questions.length - 1 ? (
                     <button
                       onClick={nextQuestion}
-                      className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                      className="px-6 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
                     >
                       Next
                     </button>

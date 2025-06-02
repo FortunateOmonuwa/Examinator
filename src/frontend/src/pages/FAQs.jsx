@@ -65,7 +65,7 @@ const FAQs = () => {
 
   return (
     <div className="faqs-page">
-      <div className="hero-section bg-purple-600 text-white py-16">
+      <div className="hero-section bg-pink-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
           <p className="text-xl max-w-2xl mx-auto">
@@ -88,7 +88,7 @@ const FAQs = () => {
                 >
                   <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
                   {openFaq === index ? (
-                    <ChevronUp className="h-5 w-5 text-purple-600" />
+                    <ChevronUp className="h-5 w-5 text-pink-600" />
                   ) : (
                     <ChevronDown className="h-5 w-5 text-gray-500" />
                   )}
@@ -107,7 +107,7 @@ const FAQs = () => {
             </p>
             <a
               href="mailto:support@exerminator.com"
-              className="inline-block px-6 py-3 bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 transition-colors"
+              className="inline-block px-6 py-3 bg-pink-600 text-white font-medium rounded-md hover:bg-pink-700 transition-colors"
             >
               Contact Support
             </a>

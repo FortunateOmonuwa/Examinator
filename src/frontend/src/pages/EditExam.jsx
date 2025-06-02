@@ -297,7 +297,7 @@ const EditExam = () => {
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
                 placeholder="e.g., Introduction to .NET"
               />
             </div>
@@ -315,7 +315,7 @@ const EditExam = () => {
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
                 placeholder="Describe what this exam is about"
               />
             </div>
@@ -333,7 +333,7 @@ const EditExam = () => {
                 id="subject"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
                 placeholder="e.g., C#, ASP.NET, etc."
               />
             </div>
@@ -352,7 +352,7 @@ const EditExam = () => {
                 min="1"
                 value={stipulatedTime}
                 onChange={(e) => setStipulatedTime(Number(e.target.value))}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
               />
             </div>
 
@@ -364,7 +364,7 @@ const EditExam = () => {
                   type="checkbox"
                   checked={enforceTimeLimit}
                   onChange={(e) => setEnforceTimeLimit(e.target.checked)}
-                  className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                 />
                 <label
                   htmlFor="enforceTimeLimit"
@@ -381,7 +381,7 @@ const EditExam = () => {
                   type="checkbox"
                   checked={isPublic}
                   onChange={(e) => setIsPublic(e.target.checked)}
-                  className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                 />
                 <label
                   htmlFor="isPublic"
@@ -400,7 +400,7 @@ const EditExam = () => {
             <button
               type="button"
               onClick={addQuestion}
-              className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
               <Plus className="mr-1 h-4 w-4" />
               Add Question
@@ -439,7 +439,7 @@ const EditExam = () => {
                     onChange={(e) =>
                       updateQuestionText(question.id, e.target.value)
                     }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
                     placeholder="Enter your question here"
                     rows={2}
                   />
@@ -453,7 +453,7 @@ const EditExam = () => {
                     onChange={(e) =>
                       updateQuestionRequired(question.id, e.target.checked)
                     }
-                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
                   />
                   <label
                     htmlFor={`required-${question.id}`}
@@ -471,7 +471,7 @@ const EditExam = () => {
                     <button
                       type="button"
                       onClick={() => addOption(question.id)}
-                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
                     >
                       <Plus className="mr-1 h-3 w-3" />
                       Add Option
@@ -491,7 +491,7 @@ const EditExam = () => {
                         onChange={() =>
                           updateOptionCorrect(question.id, option.id)
                         }
-                        className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300"
+                        className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
                       />
                       <input
                         type="text"
@@ -503,7 +503,7 @@ const EditExam = () => {
                             e.target.value
                           )
                         }
-                        className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                        className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
                         placeholder="Option text"
                       />
                       <button
@@ -525,14 +525,14 @@ const EditExam = () => {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="mr-4 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+            className="mr-4 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </button>

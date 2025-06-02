@@ -131,11 +131,11 @@ const Footer = () => {
                 <input
                   type="email"
                   placeholder="Your email address"
-                  className="flex-1 px-4 py-2 rounded-md sm:rounded-l-md sm:rounded-r-none text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-0"
+                  className="flex-1 px-4 py-2 rounded-md sm:rounded-l-md sm:rounded-r-none text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500 min-w-0"
                 />
                 <button
                   type="submit"
-                  className="bg-pink-600 px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-purple-700 transition-colors whitespace-nowrap"
+                  className="bg-pink-600 px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-pink-700 transition-colors whitespace-nowrap"
                 >
                   Subscribe
                 </button>

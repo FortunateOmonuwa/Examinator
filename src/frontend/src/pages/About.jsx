@@ -5,7 +5,7 @@ import "../styles/about.scss";
 const About = () => {
   return (
     <div className="about-page">
-      <div className="hero-section bg-purple-600 text-white py-16 md:py-24">
+      <div className="hero-section bg-pink-600 text-white py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             About Exerminator
@@ -56,8 +56,8 @@ const About = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           <div className="value-card bg-white p-6 rounded-lg shadow-md text-center">
-            <div className="icon-wrapper bg-purple-100 p-4 rounded-full inline-flex mb-4">
-              <Users className="h-6 w-6 text-purple-600" />
+            <div className="icon-wrapper bg-pink-100 p-4 rounded-full inline-flex mb-4">
+              <Users className="h-6 w-6 text-pink-600" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Collaboration</h3>
             <p className="text-gray-600">
@@ -67,7 +67,7 @@ const About = () => {
           </div>
           <div className="value-card bg-white p-6 rounded-lg shadow-md text-center">
             <div className="icon-wrapper bg-purple-100 p-4 rounded-full inline-flex mb-4">
-              <Award className="h-6 w-6 text-purple-600" />
+              <Award className="h-6 w-6 text-pink-600" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Excellence</h3>
             <p className="text-gray-600">
@@ -77,7 +77,7 @@ const About = () => {
           </div>
           <div className="value-card bg-white p-6 rounded-lg shadow-md text-center">
             <div className="icon-wrapper bg-purple-100 p-4 rounded-full inline-flex mb-4">
-              <Shield className="h-6 w-6 text-purple-600" />
+              <Shield className="h-6 w-6 text-pink-600" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Integrity</h3>
             <p className="text-gray-600">
@@ -87,7 +87,7 @@ const About = () => {
           </div>
           <div className="value-card bg-white p-6 rounded-lg shadow-md text-center">
             <div className="icon-wrapper bg-purple-100 p-4 rounded-full inline-flex mb-4">
-              <BookOpen className="h-6 w-6 text-purple-600" />
+              <BookOpen className="h-6 w-6 text-pink-600" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Innovation</h3>
             <p className="text-gray-600">
@@ -108,13 +108,13 @@ const About = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/register"
-              className="px-6 py-3 bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 transition-colors"
+              className="px-6 py-3 bg-pink-600 text-white font-medium rounded-md hover:bg-pink-700 transition-colors"
             >
               Register as Examiner
             </Link>
             <Link
               to="/take-exam"
-              className="px-6 py-3 bg-white text-purple-600 font-medium rounded-md border border-purple-600 hover:bg-purple-50 transition-colors"
+              className="px-6 py-3 bg-white text-pink-600 font-medium rounded-md border border-pink-600 hover:bg-pink-50 transition-colors"
             >
               Take an Exam
             </Link>

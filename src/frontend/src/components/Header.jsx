@@ -24,7 +24,9 @@ const Header = () => {
             <div className="ml-4 lg:ml-0">
               <h1 className="text-lg text-gray-900">
                 Welcome{" "}
-                <span className="text-pink-500 text-xl">{user?.name}</span>
+                <span className="text-pink-500 font-bold text-xl">
+                  {user?.name}
+                </span>
               </h1>
             </div>
           </div>
@@ -41,7 +43,7 @@ const Header = () => {
               <div>
                 <button
                   type="button"
-                  className="flex items-center max-w-xs text-sm bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                  className="flex items-center max-w-xs text-sm bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
                   id="user-menu"
                   aria-expanded="false"
                   aria-haspopup="true"

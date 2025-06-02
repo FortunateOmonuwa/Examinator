@@ -155,7 +155,7 @@ const ExamResults = () => {
           </h2>
           <button
             onClick={() => navigate("/take-exam")}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink  -700"
           >
             Back to Exam Search
           </button>
@@ -171,7 +171,7 @@ const ExamResults = () => {
         <div className="text-center mb-8">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center text-purple-600 hover:text-purple-700 mb-4"
+            className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-4"
           >
             <Home className="h-4 w-4 mr-2" />
             Back to Home
@@ -224,7 +224,7 @@ const ExamResults = () => {
 
           <button
             onClick={toggleAnswers}
-            className="mt-6 inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            className="mt-6 inline-flex items-center px-6 py-3 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
           >
             {showAnswers ? (
               <EyeOff className="h-5 w-5 mr-2" />
@@ -383,5 +383,4 @@ const ExamResults = () => {
     </div>
   );
 };
-
 export default ExamResults;

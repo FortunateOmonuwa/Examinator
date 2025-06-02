@@ -360,7 +360,7 @@ const TakeExam = () => {
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center text-purple-600 hover:text-purple-700"
+            className="inline-flex items-center text-pink-600 hover:text-pink-700"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
@@ -380,10 +380,10 @@ const TakeExam = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Paste your exam link here"
-                className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
               <button
-                className="bg-purple-600 text-white px-4 py-2 rounded-r-md hover:bg-purple-700 transition-colors"
+                className="bg-pink-600 text-white px-4 py-2 rounded-r-md hover:bg-pink-700 transition-colors"
                 onClick={handleDirectExamLink}
               >
                 Go
@@ -407,14 +407,14 @@ const TakeExam = () => {
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="e.g., JavaScript, React, CSS, or leave empty to see all public exams"
-                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isSearching}
-                className="w-full flex justify-center items-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors disabled:opacity-70"
+                className="w-full flex justify-center items-center bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors disabled:opacity-70"
               >
                 {isSearching ? (
                   "Searching..."
@@ -453,7 +453,7 @@ const TakeExam = () => {
                           {exam.description}
                         </p>
                         <div className="flex flex-wrap gap-2 mb-3">
-                          <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                          <span className="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                             {exam.subject}
                           </span>
                           <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
@@ -469,7 +469,7 @@ const TakeExam = () => {
                           </span>
                           <button
                             onClick={() => handleTakeExam(exam.id)}
-                            className="text-sm bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition-colors"
+                            className="text-sm bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 transition-colors"
                           >
                             Take Exam
                           </button>

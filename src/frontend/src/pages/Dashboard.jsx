@@ -77,7 +77,7 @@ const Dashboard = () => {
           <div className="mt-6">
             <Link
               to="/dashboard/create-exam"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
             >
               <PlusCircle className="mr-2 h-5 w-5" />
               Create New Exam
@@ -99,7 +99,7 @@ const Dashboard = () => {
                         {exam.description}
                       </p>
                       <div className="mt-2 flex items-center text-sm text-gray-500">
-                        <span className="bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded subject-tag">
+                        <span className="bg-pink-100 text-pink-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded subject-tag">
                           {exam.subject}
                         </span>
                         <span className="text-xs">
@@ -110,7 +110,7 @@ const Dashboard = () => {
                     <div className="flex space-x-2 action-buttons">
                       <Link
                         to={`/exams/${exam.id}`}
-                        className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 view-btn"
+                        className="inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 view-btn"
                       >
                         <Eye className="h-4 w-4" aria-hidden="true" />
                       </Link>

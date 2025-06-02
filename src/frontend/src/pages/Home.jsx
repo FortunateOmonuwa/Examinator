@@ -21,8 +21,7 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="hero-content">
               <h1 className="text-4xl md:text-5xl text-pretty font-bold text-gray-900 mb-4">
-                The Ultimate{" "}
-                <span className="text-purple-600">Examination</span> Platform
+                The Ultimate <span className="">Examination</span> Platform
               </h1>
               <p className="text-lg text-gray-600 mb-8">
                 Create, manage, and take exams with ease. Examinator provides a
@@ -67,7 +66,7 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="feature-card bg-white p-6 rounded-lg shadow-md">
               <div className="icon-wrapper bg-purple-100 p-3 rounded-full inline-flex mb-4">
-                <BookOpen className="h-6 w-6 text-purple-600" />
+                <BookOpen className="h-6 w-6 text-pink-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Easy to Use</h3>
               <p className="text-gray-600">
@@ -77,7 +76,7 @@ const Home = () => {
             </div>
             <div className="feature-card bg-white p-6 rounded-lg shadow-md">
               <div className="icon-wrapper bg-purple-100 p-3 rounded-full inline-flex mb-4">
-                <CheckCircle className="h-6 w-6 text-purple-600" />
+                <CheckCircle className="h-6 w-6 text-pink-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Secure</h3>
               <p className="text-gray-600">
@@ -87,7 +86,7 @@ const Home = () => {
             </div>
             <div className="feature-card bg-white p-6 rounded-lg shadow-md">
               <div className="icon-wrapper bg-purple-100 p-3 rounded-full inline-flex mb-4">
-                <Clock className="h-6 w-6 text-purple-600" />
+                <Clock className="h-6 w-6 text-pink-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Time Management</h3>
               <p className="text-gray-600">
@@ -96,7 +95,7 @@ const Home = () => {
             </div>
             <div className="feature-card bg-white p-6 rounded-lg shadow-md">
               <div className="icon-wrapper bg-purple-100 p-3 rounded-full inline-flex mb-4">
-                <Award className="h-6 w-6 text-purple-600" />
+                <Award className="h-6 w-6 text-pink-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Instant Results</h3>
               <p className="text-gray-600">
@@ -147,10 +146,10 @@ const Home = () => {
                     <input
                       type="text"
                       id="exam-link"
-                      className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
                       placeholder="Paste your exam link here"
                     />
-                    <button className="bg-purple-600 text-white px-4 py-2 rounded-r-md hover:bg-purple-700 transition-colors">
+                    <button className="bg-pink-600 text-white px-4 py-2 rounded-r-md hover:bg-pink-700 transition-colors">
                       Go
                     </button>
                   </div>
@@ -159,7 +158,7 @@ const Home = () => {
                   <p className="text-gray-600 mb-4">Or</p>
                   <Link
                     to="/take-exam"
-                    className="text-purple-600 font-medium hover:text-purple-700"
+                    className="text-pink-600 font-medium hover:text-pink-700"
                   >
                     Browse Public Exams
                   </Link>

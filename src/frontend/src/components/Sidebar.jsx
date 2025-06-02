@@ -15,7 +15,7 @@ const Sidebar = () => {
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
               <NavLink to="/">
-                <span className="text-xl font-bold text-purple-600 logo">
+                <span className="text-xl font-bold text-pink-600 logo">
                   Examinator
                 </span>
               </NavLink>
@@ -31,7 +31,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                       isActive
-                        ? "bg-purple-50 text-purple-700"
+                        ? "bg-pink-50 text-pink-700"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`
                   }
@@ -44,7 +44,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                       isActive
-                        ? "bg-purple-50 text-purple-700"
+                        ? "bg-pink-50 text-pink-700"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`
                   }
@@ -57,7 +57,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                       isActive
-                        ? "bg-purple-50 text-purple-700"
+                        ? "bg-pink-50 text-pink-700"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`
                   }
@@ -70,7 +70,7 @@ const Sidebar = () => {
                   className={({ isActive }) =>
                     `group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                       isActive
-                        ? "bg-purple-50 text-purple-700"
+                        ? "bg-pink-50 text-pink-700"
                         : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
                     }`
                   }
