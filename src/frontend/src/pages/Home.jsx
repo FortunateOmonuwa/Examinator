@@ -243,10 +243,10 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Featured Public Exams
+              Featured Exams
             </h2>
             <p className="text-lg text-gray-600">
-              Discover and take popular exams from various subjects
+              Discover and take exams from various subjects
             </p>
           </div>
 
@@ -299,9 +299,7 @@ const Home = () => {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-600">
-                No public exams available at the moment.
-              </p>
+              <p className="text-gray-600">No exams available at the moment.</p>
             </div>
           )}
 
@@ -310,7 +308,7 @@ const Home = () => {
               to="/take-exam"
               className="inline-flex items-center px-6 py-3 border border-pink-600 text-pink-600 font-medium rounded-md hover:bg-pink-50 transition-colors"
             >
-              View All Public Exams
+              View Exams
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
