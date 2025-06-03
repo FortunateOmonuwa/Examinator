@@ -70,6 +70,7 @@ model Exam {
   isPublic         Boolean       @default(false)
   studentExams     StudentExam[]
   examAttempts     ExamAttempt[] @relation("Exam")
+  level            String        @default("BEGINNER")
 }
 
 model StudentExam {

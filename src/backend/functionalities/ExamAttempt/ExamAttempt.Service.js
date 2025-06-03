@@ -15,7 +15,8 @@ const CreateExamAttempt = async (examAttemptData) => {
   // Validate required fields
   if (!examId || !responderEmail || !answers || !Array.isArray(answers)) {
     return Response.Unsuccessful({
-      message: "Missing required fields: examId, responderEmail, and answers are required",
+      message:
+        "Missing required fields: examId, responderEmail, and answers are required",
       resultCode: 400,
     });
   }
@@ -61,7 +62,9 @@ const CreateExamAttempt = async (examAttemptData) => {
             if (answer.questionType === "SINGLECHOICE") {
               // For single choice, connect the selected option
               if (answer.answer !== undefined && answer.answer !== null) {
-                const question = exam.questions.find(q => q.id === answer.questionId);
+                const question = exam.questions.find(
+                  (q) => q.id === answer.questionId
+                );
                 if (question && question.options[Number(answer.answer)]) {
                   answerData.options.connect.push({
                     id: question.options[Number(answer.answer)].id,
@@ -71,7 +74,9 @@ const CreateExamAttempt = async (examAttemptData) => {
             } else if (answer.questionType === "MULTICHOICE") {
               // For multiple choice, connect all selected options
               if (Array.isArray(answer.answer)) {
-                const question = exam.questions.find(q => q.id === answer.questionId);
+                const question = exam.questions.find(
+                  (q) => q.id === answer.questionId
+                );
                 if (question) {
                   answer.answer.forEach((optionIndex) => {
                     if (question.options[Number(optionIndex)]) {
@@ -139,7 +144,7 @@ const GetExamAttempts = async (examId) => {
         },
       },
       orderBy: {
-        submittedAt: 'desc',
+        submittedAt: "desc",
       },
     });
 
@@ -150,7 +155,8 @@ const GetExamAttempts = async (examId) => {
   } catch (error) {
     console.error("Error retrieving exam attempts:", error);
     return Response.Unsuccessful({
-      message: "An internal server error occurred while retrieving exam attempts",
+      message:
+        "An internal server error occurred while retrieving exam attempts",
       resultCode: 500,
     });
   } finally {
@@ -197,7 +203,8 @@ const GetExamAttemptById = async (attemptId) => {
   } catch (error) {
     console.error("Error retrieving exam attempt:", error);
     return Response.Unsuccessful({
-      message: "An internal server error occurred while retrieving exam attempt",
+      message:
+        "An internal server error occurred while retrieving exam attempt",
       resultCode: 500,
     });
   } finally {
@@ -205,4 +212,54 @@ const GetExamAttemptById = async (attemptId) => {
   }
 };
 
-export { CreateExamAttempt, GetExamAttempts, GetExamAttemptById };
+const GetAllExaminerAttempts = async (examinerId) => {
+  try {
+    // Get all attempts for exams created by this examiner
+    const examAttempts = await database.ExamAttempt.findMany({
+      where: {
+        exam: {
+          creatorId: examinerId,
+        },
+      },
+      include: {
+        exam: {
+          select: {
+            id: true,
+            title: true,
+            subject: true,
+          },
+        },
+        answers: {
+          include: {
+            options: true,
+            question: true,
+          },
+        },
+      },
+      orderBy: {
+        submittedAt: "desc",
+      },
+    });
+
+    return Response.Successful({
+      message: "All examiner attempts retrieved successfully",
+      body: examAttempts,
+    });
+  } catch (error) {
+    // console.error("Error retrieving examiner attempts:", error);
+    return Response.Unsuccessful({
+      message:
+        "An internal server error occurred while retrieving examiner attempts",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
+export {
+  CreateExamAttempt,
+  GetExamAttempts,
+  GetExamAttemptById,
+  GetAllExaminerAttempts,
+};

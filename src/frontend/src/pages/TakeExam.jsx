@@ -19,6 +19,7 @@ const TakeExam = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [subject, setSubject] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -66,6 +67,7 @@ const TakeExam = () => {
               examiner: exam.creator?.name || "Unknown",
               questions: exam.questions?.length || 0,
               time: exam.stipulatedTime || 0,
+              level: exam.level || "",
             }));
 
             setSearchResults(exams);
@@ -102,6 +104,7 @@ const TakeExam = () => {
           examiner: exam.creator?.name || "Unknown",
           questions: exam.questions?.length || 0,
           time: exam.stipulatedTime || 0,
+          level: exam.level || "",
         }));
 
         setSearchResults(exams);
@@ -120,51 +123,6 @@ const TakeExam = () => {
     } finally {
       setIsSearching(false);
     }
-  };
-
-  const handleTakeExam = async (examId) => {
-    // Prompt for email when taking exam
-    const userEmail = prompt(
-      "Please enter your email address to take this exam:"
-    );
-
-    if (!userEmail || !userEmail.trim()) {
-      toast.error("Email is required to take the exam");
-      return;
-    }
-
-    if (!emailRegex.test(userEmail.trim())) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-
-    // Check attempt limits before allowing exam
-    try {
-      const attemptCheck = await publicExamService.checkExamAttempts(
-        examId,
-        userEmail.trim()
-      );
-
-      if (attemptCheck.response && attemptCheck.response.isSuccessful) {
-        const { canAttempt, attemptCount, attemptLimit, examTitle } =
-          attemptCheck.response.body;
-
-        if (!canAttempt) {
-          toast.error(
-            `You have already attempted "${examTitle}" ${attemptCount} time(s). Maximum attempts allowed: ${attemptLimit}`
-          );
-          return;
-        }
-      }
-    } catch (error) {
-      // console.error("Error checking attempt limits:", error);
-      toast.error("Failed to verify attempt eligibility. Please try again.");
-      return;
-    }
-
-    navigate(
-      `/exam-session/${examId}?email=${encodeURIComponent(userEmail.trim())}`
-    );
   };
 
   const handleDirectExamLink = () => {
@@ -190,7 +148,7 @@ const TakeExam = () => {
       <div className="take-exam-page py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading exam...</p>
           </div>
         </div>
@@ -205,7 +163,7 @@ const TakeExam = () => {
           <div className="mb-8">
             <Link
               to="/take-exam"
-              className="inline-flex items-center text-purple-600 hover:text-purple-700"
+              className="inline-flex items-center text-pink-600 hover:text-pink-700"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Exam Search
@@ -220,7 +178,7 @@ const TakeExam = () => {
               <p className="text-gray-600 mb-6">{directExam.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-6">
-                <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                <span className="bg-purple-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                   {directExam.subject}
                 </span>
                 <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
@@ -232,17 +190,34 @@ const TakeExam = () => {
               </div>
 
               <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-2">
-                  Enter your email to take this exam
+                <h2 className="text-lg font-semibold mb-4">
+                  Enter your details to take this exam
                 </h2>
-                <div className="flex">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Your email address"
-                    className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your full name"
+                      className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Your email address"
+                      className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                  </div>
                   <button
                     onClick={async () => {
                       if (!email.trim()) {
@@ -252,6 +227,10 @@ const TakeExam = () => {
 
                       if (!emailRegex.test(email.trim())) {
                         toast.error("Please enter a valid email address");
+                        return;
+                      }
+                      if (!name.trim()) {
+                        toast.error("Please enter your name");
                         return;
                       }
 
@@ -290,10 +269,10 @@ const TakeExam = () => {
                       }
 
                       navigate(
-                        `/exam-session/${directExam.id}?email=${encodeURIComponent(email.trim())}`
+                        `/exam-session/${directExam.id}?email=${encodeURIComponent(email.trim())}&name=${encodeURIComponent(name.trim())}`
                       );
                     }}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-r-md hover:bg-purple-700 transition-colors"
+                    className="w-full bg-pink-600 text-white px-6 py-3 rounded-md hover:bg-pink-700 transition-colors font-medium"
                   >
                     Start Exam
                   </button>
@@ -462,17 +441,29 @@ const TakeExam = () => {
                           <span className="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                             {exam.time} Minutes
                           </span>
+                          <span
+                            className={`text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded
+                            ${
+                              exam.level === "BEGINNER"
+                                ? "bg-green-100"
+                                : exam.level === "INTERMEDIATE"
+                                  ? "bg-yellow-300"
+                                  : "bg-red-800"
+                            } bg-gray-100`}
+                          >
+                            {exam.level}
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-gray-500">
                             By {exam.examiner}
                           </span>
-                          <button
-                            onClick={() => handleTakeExam(exam.id)}
-                            className="text-sm bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 transition-colors"
+                          <Link
+                            to={`/exam/${exam.id}`}
+                            className=" btn text-sm bg-pink-600 text-white px-3 py-1 rounded hover:bg-pink-700 transition-colors"
                           >
                             Take Exam
-                          </button>
+                          </Link>
                         </div>
                       </div>
                     ))}

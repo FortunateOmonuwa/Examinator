@@ -22,6 +22,7 @@ import ExamSession from "./pages/ExamSession";
 import ExamResults from "./pages/ExamResults";
 import ExamAttempts from "./pages/ExamAttempts";
 import ExamAttemptDetail from "./pages/ExamAttemptDetail";
+import ExamDetails from "./pages/ExamDetails";
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="take-exam" element={<TakeExam />} />
-            <Route path="exam/:examId" element={<TakeExam />} />
+            <Route path="exam/:examId" element={<ExamDetails />} />
             <Route path="about" element={<About />} />
             <Route path="faqs" element={<FAQs />} />
           </Route>

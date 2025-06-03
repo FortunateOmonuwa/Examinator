@@ -5,6 +5,7 @@ import {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  ToggleExamPublicStatus,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
 
@@ -118,6 +119,32 @@ const CheckExamAttemptsAsync = async (req, res) => {
   }
 };
 
+const ToggleExamPublicStatusAsync = async (req, res) => {
+  const { examId } = req.params;
+  const { examinerId } = req.body;
+
+  if (!examinerId) {
+    return res.status(400).json({
+      response: Response.Unsuccessful({
+        message: "Examiner ID is required",
+        resultCode: 400,
+      }),
+    });
+  }
+
+  try {
+    const response = await ToggleExamPublicStatus(examId, examinerId);
+
+    if (response.isSuccessful) {
+      return res.status(200).json({ response: response });
+    } else {
+      return res.status(response.resultCode).json({ response: response });
+    }
+  } catch (e) {
+    return res.status(500).json({ response: Response.Unsuccessful() });
+  }
+};
+
 export {
   CreateExamAsync,
   DeleteExamAsync,
@@ -125,4 +152,5 @@ export {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  ToggleExamPublicStatusAsync,
 };

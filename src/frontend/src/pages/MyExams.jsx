@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import { api } from "../services/api";
+import { api, examService } from "../services/api";
 import { GetAllExams } from "../services/Exam";
 import LoadingSpinner from "../components/LoadingSpinner";
 import toast from "react-hot-toast";
@@ -73,24 +73,28 @@ const MyExams = () => {
     }
   };
 
-  // Toggle the isPublic state locally
-  // Isn't actually doing anything for now. No endpoint to update exam
+  // Toggle the isPublic state with actual API call
   const handleTogglePublic = async (exam) => {
     try {
-      const updatedExam = { ...exam, isPublic: !exam.isPublic };
-
-      setExams(exams.map((e) => (e.id === exam.id ? updatedExam : e)));
-
-      toast.success(
-        `Exam is now ${updatedExam.isPublic ? "public" : "private"}`
+      const response = await examService.togglePublicStatus(
+        exam.id,
+        user.userId
       );
 
-      // Supposed request
-      // const response = await api.put(`/api/exam/${exam.id}`, {
-      //   exam: { ...exam, isPublic: !exam.isPublic }
-      // })
+      if (response.response && response.response.isSuccessful) {
+        const updatedExam = {
+          ...exam,
+          isPublic: response.response.body.isPublic,
+        };
+        setExams(exams.map((e) => (e.id === exam.id ? updatedExam : e)));
+        toast.success(response.response.message);
+      } else {
+        toast.error(
+          response.response?.message || "Failed to update exam visibility"
+        );
+      }
     } catch (error) {
-      console.error("Error updating exam:", error);
+      // console.error("Error updating exam:", error);
       toast.error("Failed to update exam visibility");
     }
   };

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Exam" ADD COLUMN     "level" TEXT NOT NULL DEFAULT 'BEGINNER';

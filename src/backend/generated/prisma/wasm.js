@@ -168,7 +168,8 @@ exports.Prisma.ExamScalarFieldEnum = {
   attemptLimit: 'attemptLimit',
   dateCreated: 'dateCreated',
   dateUpdated: 'dateUpdated',
-  isPublic: 'isPublic'
+  isPublic: 'isPublic',
+  level: 'level'
 };
 
 exports.Prisma.StudentExamScalarFieldEnum = {

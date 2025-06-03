@@ -2,6 +2,7 @@ import {
   CreateExamAttempt,
   GetExamAttempts,
   GetExamAttemptById,
+  GetAllExaminerAttempts,
 } from "../../functionalities/ExamAttempt/ExamAttempt.Service.js";
 import Response from "../../utilities/Response.js";
 
@@ -77,8 +78,33 @@ const GetExamAttemptByIdAsync = async (req, res) => {
   }
 };
 
+const GetAllExaminerAttemptsAsync = async (req, res) => {
+  const { examinerId } = req.params;
+
+  try {
+    const response = await GetAllExaminerAttempts(examinerId);
+
+    if (response.isSuccessful) {
+      return res.status(200).json({ response: response });
+    } else {
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
+    }
+  } catch (error) {
+    // console.error("Error in GetAllExaminerAttemptsAsync:", error);
+    return res.status(500).json({
+      response: Response.Unsuccessful({
+        message: "An internal server error occurred",
+        resultCode: 500,
+      }),
+    });
+  }
+};
+
 export {
   CreateExamAttemptAsync,
   GetExamAttemptsAsync,
   GetExamAttemptByIdAsync,
+  GetAllExaminerAttemptsAsync,
 };

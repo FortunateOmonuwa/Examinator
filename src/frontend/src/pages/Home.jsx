@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, CheckCircle, Clock, Award } from "lucide-react";
+import { BookOpen, CheckCircle, Clock, Award, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { publicExamService } from "../services/api";
 import "../styles/home.scss";
 
 // Import images
@@ -12,6 +14,26 @@ import createExamImage from "../images/home3.jpg";
 
 const Home = () => {
   const { user } = useAuth();
+  const [featuredExams, setFeaturedExams] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedExams = async () => {
+      try {
+        const response = await publicExamService.getPublicExams();
+        if (response.response && response.response.isSuccessful) {
+          // Get first 4 exams for featured section
+          setFeaturedExams(response.response.body.slice(0, 4));
+        }
+      } catch (error) {
+        // console.error("Error fetching featured exams:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedExams();
+  }, []);
 
   return (
     <div className="home-page">
@@ -212,6 +234,85 @@ const Home = () => {
                 className="w-full h-80 object-cover rounded-lg shadow-lg"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Public Exams Section */}
+      <section className="featured-exams-section py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Featured Public Exams
+            </h2>
+            <p className="text-lg text-gray-600">
+              Discover and take popular exams from various subjects
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading featured exams...</p>
+            </div>
+          ) : featuredExams.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {featuredExams.map((exam) => (
+                <div
+                  key={exam.id}
+                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                >
+                  <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {exam.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      {exam.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <span className="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        {exam.subject}
+                      </span>
+                      <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                        {exam.level?.toLowerCase()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                      <span className="flex items-center">
+                        <Clock className="h-4 w-4 mr-1" />
+                        {exam.stipulatedTime} min
+                      </span>
+                      <span className="flex items-center">
+                        <BookOpen className="h-4 w-4 mr-1" />
+                        {exam.questions?.length || 0} questions
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    to={`/exam/${exam.id}`}
+                    className="w-full bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors text-center block font-medium"
+                  >
+                    Take Exam
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-600">
+                No public exams available at the moment.
+              </p>
+            </div>
+          )}
+
+          <div className="text-center">
+            <Link
+              to="/take-exam"
+              className="inline-flex items-center px-6 py-3 border border-pink-600 text-pink-600 font-medium rounded-md hover:bg-pink-50 transition-colors"
+            >
+              View All Public Exams
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>

@@ -6476,6 +6476,7 @@ export namespace Prisma {
     dateCreated: Date | null
     dateUpdated: Date | null
     isPublic: boolean | null
+    level: string | null
   }
 
   export type ExamMaxAggregateOutputType = {
@@ -6491,6 +6492,7 @@ export namespace Prisma {
     dateCreated: Date | null
     dateUpdated: Date | null
     isPublic: boolean | null
+    level: string | null
   }
 
   export type ExamCountAggregateOutputType = {
@@ -6506,6 +6508,7 @@ export namespace Prisma {
     dateCreated: number
     dateUpdated: number
     isPublic: number
+    level: number
     _all: number
   }
 
@@ -6533,6 +6536,7 @@ export namespace Prisma {
     dateCreated?: true
     dateUpdated?: true
     isPublic?: true
+    level?: true
   }
 
   export type ExamMaxAggregateInputType = {
@@ -6548,6 +6552,7 @@ export namespace Prisma {
     dateCreated?: true
     dateUpdated?: true
     isPublic?: true
+    level?: true
   }
 
   export type ExamCountAggregateInputType = {
@@ -6563,6 +6568,7 @@ export namespace Prisma {
     dateCreated?: true
     dateUpdated?: true
     isPublic?: true
+    level?: true
     _all?: true
   }
 
@@ -6665,6 +6671,7 @@ export namespace Prisma {
     dateCreated: Date
     dateUpdated: Date
     isPublic: boolean
+    level: string
     _count: ExamCountAggregateOutputType | null
     _avg: ExamAvgAggregateOutputType | null
     _sum: ExamSumAggregateOutputType | null
@@ -6699,6 +6706,7 @@ export namespace Prisma {
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
+    level?: boolean
     creator?: boolean | ExaminerDefaultArgs<ExtArgs>
     questions?: boolean | Exam$questionsArgs<ExtArgs>
     studentExams?: boolean | Exam$studentExamsArgs<ExtArgs>
@@ -6719,6 +6727,7 @@ export namespace Prisma {
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
+    level?: boolean
     creator?: boolean | ExaminerDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["exam"]>
 
@@ -6735,6 +6744,7 @@ export namespace Prisma {
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
+    level?: boolean
     creator?: boolean | ExaminerDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["exam"]>
 
@@ -6751,9 +6761,10 @@ export namespace Prisma {
     dateCreated?: boolean
     dateUpdated?: boolean
     isPublic?: boolean
+    level?: boolean
   }
 
-  export type ExamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "subject" | "link" | "creatorId" | "enforceTimeLimit" | "stipulatedTime" | "attemptLimit" | "dateCreated" | "dateUpdated" | "isPublic", ExtArgs["result"]["exam"]>
+  export type ExamOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "subject" | "link" | "creatorId" | "enforceTimeLimit" | "stipulatedTime" | "attemptLimit" | "dateCreated" | "dateUpdated" | "isPublic" | "level", ExtArgs["result"]["exam"]>
   export type ExamInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | ExaminerDefaultArgs<ExtArgs>
     questions?: boolean | Exam$questionsArgs<ExtArgs>
@@ -6789,6 +6800,7 @@ export namespace Prisma {
       dateCreated: Date
       dateUpdated: Date
       isPublic: boolean
+      level: string
     }, ExtArgs["result"]["exam"]>
     composites: {}
   }
@@ -7228,6 +7240,7 @@ export namespace Prisma {
     readonly dateCreated: FieldRef<"Exam", 'DateTime'>
     readonly dateUpdated: FieldRef<"Exam", 'DateTime'>
     readonly isPublic: FieldRef<"Exam", 'Boolean'>
+    readonly level: FieldRef<"Exam", 'String'>
   }
     
 
@@ -13449,7 +13462,8 @@ export namespace Prisma {
     attemptLimit: 'attemptLimit',
     dateCreated: 'dateCreated',
     dateUpdated: 'dateUpdated',
-    isPublic: 'isPublic'
+    isPublic: 'isPublic',
+    level: 'level'
   };
 
   export type ExamScalarFieldEnum = (typeof ExamScalarFieldEnum)[keyof typeof ExamScalarFieldEnum]
@@ -13926,6 +13940,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeFilter<"Exam"> | Date | string
     isPublic?: BoolFilter<"Exam"> | boolean
+    level?: StringFilter<"Exam"> | string
     creator?: XOR<ExaminerScalarRelationFilter, ExaminerWhereInput>
     questions?: QuestionListRelationFilter
     studentExams?: StudentExamListRelationFilter
@@ -13945,6 +13960,7 @@ export namespace Prisma {
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
+    level?: SortOrder
     creator?: ExaminerOrderByWithRelationInput
     questions?: QuestionOrderByRelationAggregateInput
     studentExams?: StudentExamOrderByRelationAggregateInput
@@ -13967,6 +13983,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeFilter<"Exam"> | Date | string
     isPublic?: BoolFilter<"Exam"> | boolean
+    level?: StringFilter<"Exam"> | string
     creator?: XOR<ExaminerScalarRelationFilter, ExaminerWhereInput>
     questions?: QuestionListRelationFilter
     studentExams?: StudentExamListRelationFilter
@@ -13986,6 +14003,7 @@ export namespace Prisma {
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
+    level?: SortOrder
     _count?: ExamCountOrderByAggregateInput
     _avg?: ExamAvgOrderByAggregateInput
     _max?: ExamMaxOrderByAggregateInput
@@ -14009,6 +14027,7 @@ export namespace Prisma {
     dateCreated?: DateTimeWithAggregatesFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeWithAggregatesFilter<"Exam"> | Date | string
     isPublic?: BoolWithAggregatesFilter<"Exam"> | boolean
+    level?: StringWithAggregatesFilter<"Exam"> | string
   }
 
   export type StudentExamWhereInput = {
@@ -14632,6 +14651,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     creator: ExaminerCreateNestedOneWithoutExamsInput
     questions?: QuestionCreateNestedManyWithoutExamInput
     studentExams?: StudentExamCreateNestedManyWithoutExamInput
@@ -14651,6 +14671,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     questions?: QuestionUncheckedCreateNestedManyWithoutExamInput
     studentExams?: StudentExamUncheckedCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptUncheckedCreateNestedManyWithoutExamInput
@@ -14668,6 +14689,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     creator?: ExaminerUpdateOneRequiredWithoutExamsNestedInput
     questions?: QuestionUpdateManyWithoutExamNestedInput
     studentExams?: StudentExamUpdateManyWithoutExamNestedInput
@@ -14687,6 +14709,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     questions?: QuestionUncheckedUpdateManyWithoutExamNestedInput
     studentExams?: StudentExamUncheckedUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUncheckedUpdateManyWithoutExamNestedInput
@@ -14705,6 +14728,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
   }
 
   export type ExamUpdateManyMutationInput = {
@@ -14719,6 +14743,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
   }
 
   export type ExamUncheckedUpdateManyInput = {
@@ -14734,6 +14759,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
   }
 
   export type StudentExamCreateInput = {
@@ -15469,6 +15495,7 @@ export namespace Prisma {
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
+    level?: SortOrder
   }
 
   export type ExamAvgOrderByAggregateInput = {
@@ -15489,6 +15516,7 @@ export namespace Prisma {
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
+    level?: SortOrder
   }
 
   export type ExamMinOrderByAggregateInput = {
@@ -15504,6 +15532,7 @@ export namespace Prisma {
     dateCreated?: SortOrder
     dateUpdated?: SortOrder
     isPublic?: SortOrder
+    level?: SortOrder
   }
 
   export type ExamSumOrderByAggregateInput = {
@@ -17087,6 +17116,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     questions?: QuestionCreateNestedManyWithoutExamInput
     studentExams?: StudentExamCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptCreateNestedManyWithoutExamInput
@@ -17104,6 +17134,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     questions?: QuestionUncheckedCreateNestedManyWithoutExamInput
     studentExams?: StudentExamUncheckedCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptUncheckedCreateNestedManyWithoutExamInput
@@ -17178,6 +17209,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFilter<"Exam"> | Date | string
     dateUpdated?: DateTimeFilter<"Exam"> | Date | string
     isPublic?: BoolFilter<"Exam"> | boolean
+    level?: StringFilter<"Exam"> | string
   }
 
   export type UserProfileUpsertWithoutExaminerInput = {
@@ -17652,6 +17684,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     creator: ExaminerCreateNestedOneWithoutExamsInput
     questions?: QuestionCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptCreateNestedManyWithoutExamInput
@@ -17670,6 +17703,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     questions?: QuestionUncheckedCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptUncheckedCreateNestedManyWithoutExamInput
   }
@@ -17727,6 +17761,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     creator?: ExaminerUpdateOneRequiredWithoutExamsNestedInput
     questions?: QuestionUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUpdateManyWithoutExamNestedInput
@@ -17745,6 +17780,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     questions?: QuestionUncheckedUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUncheckedUpdateManyWithoutExamNestedInput
   }
@@ -17761,6 +17797,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     creator: ExaminerCreateNestedOneWithoutExamsInput
     studentExams?: StudentExamCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptCreateNestedManyWithoutExamInput
@@ -17779,6 +17816,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     studentExams?: StudentExamUncheckedCreateNestedManyWithoutExamInput
     examAttempts?: ExamAttemptUncheckedCreateNestedManyWithoutExamInput
   }
@@ -17861,6 +17899,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     creator?: ExaminerUpdateOneRequiredWithoutExamsNestedInput
     studentExams?: StudentExamUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUpdateManyWithoutExamNestedInput
@@ -17879,6 +17918,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     studentExams?: StudentExamUncheckedUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUncheckedUpdateManyWithoutExamNestedInput
   }
@@ -18060,6 +18100,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     creator: ExaminerCreateNestedOneWithoutExamsInput
     questions?: QuestionCreateNestedManyWithoutExamInput
     studentExams?: StudentExamCreateNestedManyWithoutExamInput
@@ -18078,6 +18119,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
     questions?: QuestionUncheckedCreateNestedManyWithoutExamInput
     studentExams?: StudentExamUncheckedCreateNestedManyWithoutExamInput
   }
@@ -18161,6 +18203,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     creator?: ExaminerUpdateOneRequiredWithoutExamsNestedInput
     questions?: QuestionUpdateManyWithoutExamNestedInput
     studentExams?: StudentExamUpdateManyWithoutExamNestedInput
@@ -18179,6 +18222,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     questions?: QuestionUncheckedUpdateManyWithoutExamNestedInput
     studentExams?: StudentExamUncheckedUpdateManyWithoutExamNestedInput
   }
@@ -18444,6 +18488,7 @@ export namespace Prisma {
     dateCreated?: Date | string
     dateUpdated?: Date | string
     isPublic?: boolean
+    level?: string
   }
 
   export type ExamUpdateWithoutCreatorInput = {
@@ -18458,6 +18503,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     questions?: QuestionUpdateManyWithoutExamNestedInput
     studentExams?: StudentExamUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUpdateManyWithoutExamNestedInput
@@ -18475,6 +18521,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
     questions?: QuestionUncheckedUpdateManyWithoutExamNestedInput
     studentExams?: StudentExamUncheckedUpdateManyWithoutExamNestedInput
     examAttempts?: ExamAttemptUncheckedUpdateManyWithoutExamNestedInput
@@ -18492,6 +18539,7 @@ export namespace Prisma {
     dateCreated?: DateTimeFieldUpdateOperationsInput | Date | string
     dateUpdated?: DateTimeFieldUpdateOperationsInput | Date | string
     isPublic?: BoolFieldUpdateOperationsInput | boolean
+    level?: StringFieldUpdateOperationsInput | string
   }
 
   export type QuestionCreateManyExamInput = {

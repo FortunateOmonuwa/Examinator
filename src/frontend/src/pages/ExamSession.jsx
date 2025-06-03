@@ -12,6 +12,7 @@ const ExamSession = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
+  const name = searchParams.get("name");
 
   const [exam, setExam] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -258,7 +259,7 @@ const ExamSession = () => {
       const examAttemptData = {
         examId: exam.id,
         responderEmail: email,
-        responderName: email.split("@")[0],
+        responderName: name || email.split("@")[0], // Use provided name or fallback to email prefix
         startTime: examStartTime,
         submittedAt: new Date(),
         answers: exam.questions.map((question, index) => {
@@ -397,7 +398,9 @@ const ExamSession = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-xl font-bold text-gray-900">{exam.title}</h1>
-              <p className="text-sm text-gray-600">Student: {email}</p>
+              <p className="text-sm text-gray-600">
+                Student: {name ? `${name} (${email})` : email}
+              </p>
             </div>
 
             {timeRemaining !== null && (

@@ -12,6 +12,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
     enforceTimeLimit = false,
     attemptLimit = 1,
     isPublic = false,
+    level = "BEGINNER",
     questions,
   } = exam;
 
@@ -96,6 +97,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
         enforceTimeLimit,
         attemptLimit,
         isPublic,
+        level,
         questions: {
           create: questions.map((q) => ({
             text: q.text,
@@ -113,7 +115,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
       },
     });
 
-    const examLink = `${baseUrl}/exams/${newExam.id}`;
+    const examLink = `${baseUrl}/exam/${newExam.id}`;
 
     const updatedExam = await database.Exam.update({
       where: { id: newExam.id },
@@ -267,6 +269,12 @@ const GetPublicExams = async (subject = null) => {
             mode: "insensitive",
           },
         },
+        {
+          level: {
+            contains: subject,
+            mode: "insensitive",
+          },
+        },
       ];
     }
 
@@ -353,6 +361,50 @@ const CheckExamAttempts = async (examId, email) => {
   }
 };
 
+const ToggleExamPublicStatus = async (examId, examinerId) => {
+  try {
+    // First check if the exam exists and belongs to the examiner
+    const exam = await database.Exam.findUnique({
+      where: { id: examId },
+      select: { id: true, isPublic: true, creatorId: true, title: true },
+    });
+
+    if (!exam) {
+      return Response.Unsuccessful({
+        message: "Exam not found",
+        resultCode: 404,
+      });
+    }
+
+    if (exam.creatorId !== examinerId) {
+      return Response.Unsuccessful({
+        message: "You don't have permission to modify this exam",
+        resultCode: 403,
+      });
+    }
+
+    // Toggle the public status
+    const updatedExam = await database.Exam.update({
+      where: { id: examId },
+      data: { isPublic: !exam.isPublic },
+      select: { id: true, isPublic: true, title: true },
+    });
+
+    return Response.Successful({
+      message: `Exam "${exam.title}" is now ${updatedExam.isPublic ? "public" : "private"}`,
+      body: updatedExam,
+    });
+  } catch (error) {
+    // console.log("Error in ToggleExamPublicStatus:", error);
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
 export {
   CreateExam,
   DeleteExam,
@@ -360,4 +412,5 @@ export {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  ToggleExamPublicStatus,
 };

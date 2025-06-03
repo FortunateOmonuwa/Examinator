@@ -3,6 +3,7 @@ import {
   CreateExamAttemptAsync,
   GetExamAttemptsAsync,
   GetExamAttemptByIdAsync,
+  GetAllExaminerAttemptsAsync,
 } from "../../controllers/ExamAttemptController/ExamAttempt.Controller.js";
 import {
   AuthenticateToken,
@@ -25,6 +26,14 @@ router.get(
   AuthenticateToken,
   AuthorizeRole("EXAMINER", "ADMIN"),
   GetExamAttemptByIdAsync
+);
+
+// Get all attempts for all exams created by an examiner
+router.get(
+  "/examiner/:examinerId",
+  AuthenticateToken,
+  AuthorizeRole("EXAMINER", "ADMIN"),
+  GetAllExaminerAttemptsAsync
 );
 
 export { router as ExamAttemptRouter };

@@ -6,6 +6,7 @@ import {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  ToggleExamPublicStatusAsync,
 } from "../../imports/Controllerimports.js";
 import {
   CreateExamAttemptAsync,
@@ -57,6 +58,14 @@ router.get(
   AuthenticateToken,
   AuthorizeRole("EXAMINER"),
   GetAllExamsAsync
+);
+
+// Toggle exam public status
+router.patch(
+  "/:examId/toggle-public",
+  AuthenticateToken,
+  AuthorizeRole("EXAMINER"),
+  ToggleExamPublicStatusAsync
 );
 
 export { router as ExamRouter };

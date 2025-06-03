@@ -38,6 +38,56 @@ const api = axios.create({
 //   }
 // );
 
+// Exam Services
+export const examService = {
+  createExam: async (examinerId, examData) => {
+    try {
+      const response = await api.post(`/api/exam/${examinerId}`, examData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  deleteExam: async (examId) => {
+    try {
+      const response = await api.delete(`/api/exam/${examId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  getExam: async (examId) => {
+    try {
+      const response = await api.get(`/api/exam/${examId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  getAllExams: async (examinerId) => {
+    try {
+      const response = await api.get(`/api/exam/exams/${examinerId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  togglePublicStatus: async (examId, examinerId) => {
+    try {
+      const response = await api.patch(`/api/exam/${examId}/toggle-public`, {
+        examinerId: examinerId,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+};
+
 // Public Exam Services
 export const publicExamService = {
   getPublicExams: async (subject = null) => {
@@ -85,6 +135,17 @@ export const examAttemptService = {
   getExamAttemptById: async (attemptId) => {
     try {
       const response = await api.get(`/api/exam-attempt/${attemptId}`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+
+  getAllExaminerAttempts: async (examinerId) => {
+    try {
+      const response = await api.get(
+        `/api/exam-attempt/examiner/${examinerId}`
+      );
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

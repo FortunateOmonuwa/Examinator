@@ -21,14 +21,14 @@ const Header = () => {
             >
               <Menu size={24} />
             </button>
-            <div className="ml-4 lg:ml-0">
+            {/* <div className="ml-4 lg:ml-0">
               <h1 className="text-lg text-gray-900">
-                Welcome{" "}
+                Hello{" "}
                 <span className="text-pink-500 font-bold text-xl">
                   {user?.name}
                 </span>
               </h1>
-            </div>
+            </div> */}
           </div>
           <div className="flex items-center">
             <Link
