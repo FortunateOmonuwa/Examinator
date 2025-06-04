@@ -1,10 +1,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    process.env.NODE_ENV === "development"
-      ? "https://examinator-backend.onrender.com"
-      : "http://localhost:5001",
+  // baseURL:
+  //   process.env.NODE_ENV === "development"
+  //     ? "https://examinator-backend.onrender.com"
+  //     : "http://localhost:5001",
+  baseURL: "http://localhost:5001",
+
   timeout: 10000,
   withCredentials: true,
   headers: {

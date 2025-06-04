@@ -10,9 +10,10 @@ const corsConfig = () => {
       "http://localhost:3000",
       "https://examinator-frontend-dev.onrender.com",
       "https://examinator-frontend.onrender.com",
+      "http://localhost:5001",
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 };
