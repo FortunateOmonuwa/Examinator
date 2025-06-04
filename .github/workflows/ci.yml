@@ -79,7 +79,7 @@ jobs:
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -e REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }} \
             -p 5001:5001 \
-            fortunateomonuwa/examinator-backend:latest
+            fortunateomonuwa/examinator-backend:${{github.ref_name}}
 
       - name: Wait for app and show container status
         run: |
@@ -191,11 +191,22 @@ jobs:
 
       - name: Build Docker File for Frontend (development)
         if: github.ref == 'refs/heads/dev'
-        working-directory: src/frontend/development
-        run: docker build -t fortunateomonuwa/examinator-frontend:${{github.ref_name}}  .
+        run: docker build -f src/frontend/development/dockerfile.dev -t fortunateomonuwa/examinator-frontend:${{github.ref_name}}  .
 
       - name: Push Docker Image
         run: docker push fortunateomonuwa/examinator-frontend:${{github.ref_name}}
+      - name: Run frontend container(dev)
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          docker run -d \
+            -p 5173:5173 \
+            fortunateomonuwa/examinator-frontend:${{ github.ref_name }}
+      - name: Run frontend container(prod)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker run -d \
+            -p 80:80 \
+            fortunateomonuwa/examinator-frontend:${{ github.ref_name }}
       - name: Wait for app and show container status
         run: |
           sleep 5
