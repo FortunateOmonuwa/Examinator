@@ -71,7 +71,7 @@ jobs:
         working-directory: src/backend
         run: docker build -t fortunateomonuwa/examinator-backend:${{github.ref_name}}  .
       - name: Push Docker image
-        run: docker push fortunateomonuwa/examinator-backend:${{github.ref_name}}  .
+        run: docker push fortunateomonuwa/examinator-backend:${{github.ref_name}}
       - name: Run container
         run: |
           docker run -d \
@@ -171,6 +171,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
         working-directory: src/frontend
