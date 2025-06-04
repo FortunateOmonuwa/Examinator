@@ -72,13 +72,29 @@ jobs:
       #   working-directory: src/backend
       #   run: npm run test
 
+      # - name: Run backend tests with retry
+      #   uses: cirrus-actions/retry@v2
+      #   with:
+      #     max_attempts: 3
+      #     retry_interval: 10
+      #     command: |
+      #       npm run test
+
       - name: Run backend tests with retry
-        uses: cirrus-actions/retry@v2
-        with:
-          max_attempts: 3
-          retry_interval: 10
-          command: |
-            npm run test
+        run: |
+          n=0
+          until [ $n -ge 3 ]
+          do
+            npm run test && break
+            n=$((n+1))
+            echo "Test failed. Retrying $n/3..."
+            sleep 10
+          done
+
+          if [ $n -eq 3 ]; then
+            echo "Tests failed after 3 attempts."
+            exit 1
+          fi
 
       - name: Format code
         working-directory: src/backend
