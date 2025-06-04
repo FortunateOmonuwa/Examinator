@@ -1,23 +1,31 @@
-name: CI
+name: Examinator CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev, staging]
+    paths:
+      - "src/backend/**"
+      - "src/frontend/**"
+      - ".github/workflows/ci.yml"
   pull_request:
-    branches: [main]
+    branches: [dev]
+    paths:
+      - "src/backend/**"
+      - "src/frontend/**"
+      - ".github/workflows/ci.yml"
 
 jobs:
-  build:
+  build-backend:
+    name: Build Backend
     runs-on: ubuntu-latest
-
     env:
-      # NODE_ENV: staging
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      EXAMINER_ID: ${{ secrets.EXAMINER_ID }}
+      # BACKEND_RENDER_DEPLOY_HOOK_URL: ${{ secrets.BACKEND_RENDER_DEPLOY_HOOK_URL }}
+      # BASE_URL : ${{ secrets.BASE_URL }}
       #NODE_OPTIONS: --max_old_space_size=4096
     steps:
       - name: Checkout code
@@ -61,9 +69,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
         working-directory: src/backend
-        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-backend:latest  .
+        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-backend:${{github.ref_name}}  .
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/examinator-backend:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/examinator-backend:${{github.ref_name}}  .
       - name: Run container
         run: |
           docker run -d \
@@ -79,6 +87,141 @@ jobs:
           docker ps
           docker logs $(docker ps -q)
 
-      - name: Test health endpoint
+      - name: Run Health Check For Container With localhost
         run: |
-          curl http://localhost:5001/api/exam/exams/${{secrets.EXAMINER_ID}} || echo "Health check failed"
+          curl http://localhost:5001/api/exam/public || echo "Health check failed"
+
+      # deploy-to-render:
+      #   needs: build-backend
+      #   runs-on: ubuntu-latest
+      #   steps:
+      #     - name: Deploy to Render
+      #       if: github.ref == 'refs/heads/dev'
+      #       run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+      # - name: Run Health Check For Container
+      # if: github.ref == 'refs/heads/dev'
+      #   run: |
+      #     curl ${{secrets.BASE_URL}}/api/exam/public || echo "Health check failed"
+  # deploy-backend:
+  #   needs: build-backend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Kubectl
+  #       uses: azure/setup-kubectl@v3
+  #       with:
+  #         version: "latest"
+
+  #     - name: Deploy to Kubernetes (Staging)
+  #       if: github.ref == 'refs/heads/staging'
+  #       env:
+  #         KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
+  #       run: |
+  #         kubectl --kubeconfig=$KUBECONFIG set image deployment/examinator-backend examinator-backend=${{secrets.DOCKER_USERNAME}}/examinator-backend:${{github.ref_name}}
+  #         kubectl --kubeconfig=$KUBECONFIG rollout status deployment/examinator-backend
+
+  #     - name: Deploy to Kubernetes (PROD)
+  #       if: github.ref == 'refs/heads/main'
+  #       env:
+  #         KUBECONFIG: ${{ secrets.KUBECONFIG_STAGING }}
+  #       run: |
+  #         kubectl --kubeconfig=$KUBECONFIG set image deployment/examinator-backend examinator-backend=${{secrets.DOCKER_USERNAME}}/examinator-backend:${{github.ref_name}}
+  #         kubectl --kubeconfig=$KUBECONFIG rollout status deployment/examinator-backend
+
+  #     # - name: Deploy to Render via Webhook
+  #     #   if: github.ref == 'refs/heads/dev'
+  #     #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+  #     ## Running health check by first fetching
+  #     - name: Fetch Service IP
+  #       id: get_ip
+  #       run: |
+  #         echo "Fetching external IP..."
+  #         IP=$(kubectl get svc examinator-backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  #         echo "IP=$IP"
+  #         echo "::set-output name=ip::$IP"
+
+  #     # - name: Fetch Service IP
+  #     #   id: get_ip
+  #     #   run: |
+  #     #       echo "Fetching external IP..."
+  #     #       IP=$(kubectl get svc examinator-backend -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  #     #       if [ -z "$IP"]; then
+  #     #         echo "Waiting for IP..."
+  #     #         sleep 5
+  #     #         IP=$(kubectl get ingress examinator-backend -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  #     #       fi
+  #     #       echo "IP=$IP"
+  #     #       echo "::set-output name=ip::$IP"
+
+  #     - name: Run Health Check for Cluster
+  #       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+  #       run: |
+  #         echo "Checking health of deployed app..."
+  #         curl --retry 5 --retry-connrefused --fail http://${{ steps.get_ip.outputs.ip }}:80/api/exam/public || echo "Cluster health check failed"
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: src/frontend
+        run: pnpm install
+
+      # - name: Build Frontend (production)
+      #   working-directory: src/frontend
+      #   env:
+      #     VITE_BACKEND_URL: https://your-backend-service.onrender.com
+      #   run: pnpm build
+
+      - name: Build Docker File for Frontend (production)
+        if: github.ref == 'refs/heads/main'
+        working-directory: src/frontend
+        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-frontend:${{github.ref_name}}  .
+
+      - name: Build Docker File for Frontend (development)
+        if: github.ref == 'refs/heads/dev'
+        working-directory: src/frontend/development
+        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-frontend:${{github.ref_name}}  .
+
+      - name: Push Docker Image
+        run: docker push ${{secrets.DOCKER_USERNAME}}/examinator-frontend:${{github.ref_name}}
+      - name: Wait for app and show container status
+        run: |
+          sleep 5
+          docker ps
+          docker logs $(docker ps -q)
+
+  # deploy-FE-to-render:
+  #   needs: build-frontend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to Render
+  #       if: github.ref == 'refs/heads/dev'
+  #       run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+  # deploy-frontend:
+  #   needs: build-frontend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Deploy to Vercel (Dev)
+  #       if: github.ref == 'refs/heads/dev'
+  #       run: |
+  #         echo "Deploy frontend to Vercel"
+  #         # e.g. vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
+
+  #     - name: Deploy to Netlify (Prod)
+  #       if: github.ref == 'refs/heads/main'
+  #       run: |
+  #         echo "Deploy frontend to Netlify"
+  #         # e.g. netlify deploy --prod --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}

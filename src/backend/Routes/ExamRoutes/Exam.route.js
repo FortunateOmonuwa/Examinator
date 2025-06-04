@@ -40,7 +40,6 @@ router.post(
   CreateExamAsync
 );
 
-// Get public exams (no authentication required)
 router.get("/public", GetPublicExamsAsync);
 
 // Check exam attempts for email (no authentication required)
