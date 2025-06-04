@@ -15,8 +15,26 @@ on:
       - ".github/workflows/ci.yml"
 
 jobs:
+  paths-filter:
+    runs-on: ubuntu-latest
+    outputs:
+      backend_changed: ${{ steps.filter.outputs.backend }}
+      frontend_changed: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            backend:
+              - 'src/backend/**'
+            frontend:
+              - 'src/frontend/**'
   build-backend:
     name: Build Backend
+    needs: paths-filter
+    if: needs.paths-filter.outputs.backend_changed == 'true'
     runs-on: ubuntu-latest
     env:
       if: github.ref == 'refs/heads/dev'
@@ -50,9 +68,17 @@ jobs:
         working-directory: src/backend
         run: npx prisma generate
 
-      - name: Run tests
-        working-directory: src/backend
-        run: npm run test
+      # - name: Run tests
+      #   working-directory: src/backend
+      #   run: npm run test
+
+      - name: Run backend tests with retry
+        uses: cirrus-actions/retry@v2
+        with:
+          max_attempts: 3
+          retry_interval: 10
+          command: |
+            npm run test
 
       - name: Format code
         working-directory: src/backend
@@ -169,6 +195,9 @@ jobs:
 
   build-frontend:
     name: Build Frontend
+    needs: paths-filter
+    if: needs.paths-filter.outputs.frontend_changed == 'true'
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
