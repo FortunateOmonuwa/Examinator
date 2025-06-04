@@ -5,7 +5,8 @@ const api = axios.create({
   //   process.env.NODE_ENV === "development"
   //     ? "https://examinator-backend.onrender.com"
   //     : "http://localhost:5001",
-  baseURL: "http://localhost:5001",
+  baseURL: "https://examinator-backend-dev.onrender.com",
+  //baseURL: "http://localhost:5001",
 
   timeout: 10000,
   withCredentials: true,
