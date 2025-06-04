@@ -69,9 +69,9 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker image
         working-directory: src/backend
-        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-backend:${{github.ref_name}}  .
+        run: docker build -t fortunateomonuwa/examinator-backend:${{github.ref_name}}  .
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/examinator-backend:${{github.ref_name}}  .
+        run: docker push fortunateomonuwa/examinator-backend:${{github.ref_name}}  .
       - name: Run container
         run: |
           docker run -d \
@@ -79,7 +79,7 @@ jobs:
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -e REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }} \
             -p 5001:5001 \
-            ${{ secrets.DOCKER_USERNAME }}/examinator-backend:latest
+            fortunateomonuwa/examinator-backend:latest
 
       - name: Wait for app and show container status
         run: |
@@ -185,15 +185,15 @@ jobs:
       - name: Build Docker File for Frontend (production)
         if: github.ref == 'refs/heads/main'
         working-directory: src/frontend
-        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-frontend:${{github.ref_name}}  .
+        run: docker build -t fortunaeomonuwa/examinator-frontend:${{github.ref_name}}  .
 
       - name: Build Docker File for Frontend (development)
         if: github.ref == 'refs/heads/dev'
         working-directory: src/frontend/development
-        run: docker build -t ${{secrets.DOCKER_USERNAME}}/examinator-frontend:${{github.ref_name}}  .
+        run: docker build -t fortunateomonuwa/examinator-frontend:${{github.ref_name}}  .
 
       - name: Push Docker Image
-        run: docker push ${{secrets.DOCKER_USERNAME}}/examinator-frontend:${{github.ref_name}}
+        run: docker push fortunateomonuwa/examinator-frontend:${{github.ref_name}}
       - name: Wait for app and show container status
         run: |
           sleep 5
