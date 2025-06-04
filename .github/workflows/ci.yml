@@ -137,7 +137,8 @@ jobs:
           curl --fail http://localhost:5001/api/exam/public
 
   deploy-to-render:
-    needs: build-backend
+    needs: [paths-filter, build-backend]
+    if: needs.paths-filter.outputs.backend_changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
@@ -280,7 +281,8 @@ jobs:
           docker logs $(docker ps -q)
 
   deploy-FE-to-render:
-    needs: build-frontend
+    needs: [paths-filter, build-frontend]
+    if: needs.paths-filter.outputs.frontend_changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Render
