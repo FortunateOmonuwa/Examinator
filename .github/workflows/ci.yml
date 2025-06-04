@@ -81,6 +81,7 @@ jobs:
       #       npm run test
 
       - name: Run backend tests with retry
+        working-directory: src/backend
         run: |
           n=0
           until [ $n -ge 3 ]
