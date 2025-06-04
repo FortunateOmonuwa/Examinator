@@ -85,7 +85,7 @@ jobs:
         run: |
           sleep 5
           docker ps
-          docker logs $(docker ps -q)
+          docker logs $(docker ps -l -q)
 
       - name: Run Health Check For Container With localhost
         run: |
@@ -191,7 +191,7 @@ jobs:
 
       - name: Build Docker File for Frontend (development)
         if: github.ref == 'refs/heads/dev'
-        run: docker build -f src/frontend/development/dockerfile.dev -t fortunateomonuwa/examinator-frontend:${{github.ref_name}}  .
+        run: docker build -f src/frontend/development/dockerfile.dev -t fortunateomonuwa/examinator-frontend:${{github.ref_name}}  src/frontend
 
       - name: Push Docker Image
         run: docker push fortunateomonuwa/examinator-frontend:${{github.ref_name}}
