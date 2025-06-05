@@ -39,7 +39,8 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
     });
   }
 
-  const checkUserProfile = await checkIfUserExists(email);
+  const upperCaseEmail = email.toUpperCase();
+  const checkUserProfile = await checkIfUserExists(upperCaseEmail);
   if (checkUserProfile) {
     // console.log("Profile already exists");
     return Response.Unsuccessful({
@@ -50,7 +51,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
 
   const newExaminer = new Examiner({
     name: `${firstname} ${lastname}`.toUpperCase(),
-    email: email.toUpperCase(),
+    email: upperCaseEmail,
     password: CreateHash(password),
   });
 

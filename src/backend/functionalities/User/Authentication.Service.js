@@ -17,7 +17,7 @@ const Login = async ({ email, password }) => {
   try {
     const user = await database.UserProfile.findUnique({
       where: {
-        email: email,
+        email: email.toUpperCase(),
       },
       include: {
         examiner: true,
@@ -28,7 +28,7 @@ const Login = async ({ email, password }) => {
 
     if (!user) {
       return Response.Unsuccessful({
-        message: "email or password does not exist",
+        message: "Email or password is incorrect",
         resultCode: 401,
       });
     }
@@ -38,12 +38,14 @@ const Login = async ({ email, password }) => {
     const hasTooManyAttempts = user.authManager?.loginAttempts >= 5;
 
     if (isAccountLocked || hasTooManyAttempts) {
+      const lockUntil = new Date(Date.now() + 1 * 60 * 60 * 1000);
+
       await database.AuthManager.update({
         where: { id: user.authManager.id },
         data: {
           isLocked: true,
           isLoggedIn: false,
-          lockedUntil: new Date(Date.now() + 1 * 60 * 60 * 1000),
+          lockedUntil: lockUntil,
           refreshToken: null,
           refreshTokenExpiresAt: null,
           loginAttempts: { increment: 1 },
@@ -51,19 +53,22 @@ const Login = async ({ email, password }) => {
       });
 
       return Response.Unsuccessful({
-        message: `Your account has been locked due to too many login attempts. Try again in 1 hour.`,
+        message: `Your account has been locked due to too many login attempts. Please try again in 1 hour.`,
         resultCode: 403,
         body: {
-          lockedUntil: user.authManager.lockedUntil,
-          loginAttempts: user.authManager.loginAttempts,
+          lockedUntil: lockUntil,
+          loginAttempts: user.authManager.loginAttempts + 1,
           lastLoginAt: user.authManager.lastLoginAt,
           loginSuccessful: false,
+          isLocked: true,
         },
       });
     }
 
     const isPasswordCorrect = await CompareHash(password, user.passwordHash);
     if (!isPasswordCorrect) {
+      let updatedAttempts = (user.authManager?.loginAttempts || 0) + 1;
+
       if (user.authManager) {
         await database.AuthManager.update({
           where: { id: user.authManager.id },
@@ -73,11 +78,19 @@ const Login = async ({ email, password }) => {
         });
       }
 
+      const remainingAttempts = Math.max(0, 5 - updatedAttempts);
+      let message = "Email or password is incorrect";
+
+      if (updatedAttempts >= 3 && updatedAttempts < 5) {
+        message += `. You have ${remainingAttempts} attempt${remainingAttempts !== 1 ? "s" : ""} left before your account is locked.`;
+      }
+
       return Response.Unsuccessful({
-        message: "email or password does not exist",
+        message: message,
         resultCode: 401,
         body: {
-          loginAttempts: user.authManager?.loginAttempts,
+          loginAttempts: updatedAttempts,
+          remainingAttempts: remainingAttempts,
           loginSuccessful: false,
         },
       });

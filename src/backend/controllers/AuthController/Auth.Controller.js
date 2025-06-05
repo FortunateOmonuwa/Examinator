@@ -44,7 +44,9 @@ const LoginAsync = async (req, res) => {
         }),
       });
     } else {
-      return res.status(400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (e) {
     return res.status(500).json({

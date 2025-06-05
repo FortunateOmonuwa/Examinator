@@ -22,6 +22,15 @@ const Login = () => {
       navigate("/");
       toast.success("Logged in successfully!");
     } catch (error) {
+      if (error.isAccountLocked) {
+        // Redirect to account locked page with locked until time
+        navigate("/account-locked", {
+          state: { lockedUntil: error.lockedUntil },
+          replace: true,
+        });
+        return;
+      }
+
       toast.error(error instanceof Error ? error.message : "Failed to login");
     } finally {
       setIsLoading(false);
