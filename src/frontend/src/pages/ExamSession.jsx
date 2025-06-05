@@ -108,23 +108,24 @@ const ExamSession = () => {
   };
 
   const calculateScore = (examQuestions, userAnswers) => {
+    let totalScore = 0;
+    let maxPossibleScore = 0;
     let correctAnswers = 0;
     const totalQuestions = examQuestions.length;
 
     examQuestions.forEach((question, index) => {
       const userAnswer = userAnswers[index];
+      const questionScore = question.score || 1;
+      maxPossibleScore += questionScore;
 
       if (question.type === "SINGLECHOICE") {
         const correctOptionIndex = question.options.findIndex(
           (opt) => opt.isCorrect
         );
-        // Convert userAnswer to number for proper comparison
         const userAnswerNum = Number(userAnswer);
-        // console.log(
-        //   `Question ${index + 1}: User answer: ${userAnswer} (${typeof userAnswer}), Correct index: ${correctOptionIndex}, Match: ${userAnswerNum === correctOptionIndex}`
-        // );
 
         if (userAnswerNum === correctOptionIndex) {
+          totalScore += questionScore;
           correctAnswers++;
         }
       } else if (question.type === "MULTICHOICE") {
@@ -135,14 +136,40 @@ const ExamSession = () => {
         const userAnswerArray = userAnswer || [];
         const userAnswerNumbers = userAnswerArray.map((ans) => Number(ans));
 
-        if (
-          correctOptionIndices.length === userAnswerNumbers.length &&
-          correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx))
-        ) {
-          correctAnswers++;
+        // For multichoice, calculate partial scoring
+        if (questionScore === 1) {
+          // Default scoring: all correct or zero
+          if (
+            correctOptionIndices.length === userAnswerNumbers.length &&
+            correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx))
+          ) {
+            totalScore += questionScore;
+            correctAnswers++;
+          }
+        } else {
+          // Custom scoring: partial credit based on correct vs wrong selections
+          const correctSelections = userAnswerNumbers.filter((idx) =>
+            correctOptionIndices.includes(idx)
+          ).length;
+          const wrongSelections = userAnswerNumbers.filter(
+            (idx) => !correctOptionIndices.includes(idx)
+          ).length;
+
+          const partialScore = Math.max(0, correctSelections - wrongSelections);
+          const maxCorrect = correctOptionIndices.length;
+
+          if (partialScore > 0) {
+            totalScore += Math.round(
+              (partialScore / maxCorrect) * questionScore
+            );
+            if (partialScore === maxCorrect && wrongSelections === 0) {
+              correctAnswers++;
+            }
+          }
         }
       } else if (question.type === "TEXT") {
         if (userAnswer && userAnswer.trim()) {
+          totalScore += questionScore;
           correctAnswers++;
         }
       }
@@ -151,7 +178,9 @@ const ExamSession = () => {
     return {
       correctAnswers,
       totalQuestions,
-      score: Math.round((correctAnswers / totalQuestions) * 100),
+      totalScore,
+      maxPossibleScore,
+      score: Math.round((totalScore / maxPossibleScore) * 100),
     };
   };
 

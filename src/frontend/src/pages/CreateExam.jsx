@@ -27,6 +27,7 @@ const CreateExam = () => {
       required: true,
       type: "singlechoice",
       expectedAnswer: "",
+      score: 1,
       options: [
         { id: "1-1", text: "", isCorrect: false },
         { id: "1-2", text: "", isCorrect: false },
@@ -44,6 +45,7 @@ const CreateExam = () => {
         required: true,
         type: "singlechoice",
         expectedAnswer: "",
+        score: 1,
         options: [
           { id: `${newId}-1`, text: "", isCorrect: false },
           { id: `${newId}-2`, text: "", isCorrect: false },
@@ -69,6 +71,15 @@ const CreateExam = () => {
   const updateQuestionRequired = (questionId, required) => {
     setQuestions(
       questions.map((q) => (q.id === questionId ? { ...q, required } : q))
+    );
+  };
+
+  const updateQuestionScore = (questionId, score) => {
+    const numericScore = Math.max(0, parseInt(score) || 1);
+    setQuestions(
+      questions.map((q) =>
+        q.id === questionId ? { ...q, score: numericScore } : q
+      )
     );
   };
 
@@ -202,6 +213,7 @@ const CreateExam = () => {
         required: q.required,
         type: q.type,
         expectedAnswer: q.expectedAnswer || "",
+        score: q.score || 1,
         options: q.options.map((o) => ({
           text: o.text,
           isCorrect: o.isCorrect,
@@ -442,13 +454,34 @@ const CreateExam = () => {
                 <h3 className="text-lg font-medium text-gray-900">
                   Question {qIndex + 1}
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => removeQuestion(question.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <label
+                      htmlFor={`score-${question.id}`}
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Score:
+                    </label>
+                    <input
+                      type="number"
+                      id={`score-${question.id}`}
+                      value={question.score || 1}
+                      onChange={(e) =>
+                        updateQuestionScore(question.id, e.target.value)
+                      }
+                      min="0"
+                      step="1"
+                      className="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeQuestion(question.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-4">

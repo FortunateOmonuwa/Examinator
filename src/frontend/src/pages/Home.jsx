@@ -305,10 +305,10 @@ const Home = () => {
 
           <div className="text-center">
             <Link
-              to="/take-exam"
+              to="/public-exams"
               className="inline-flex items-center px-6 py-3 border border-pink-600 text-pink-600 font-medium rounded-md hover:bg-pink-50 transition-colors"
             >
-              View Exams
+              View All Exams
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>

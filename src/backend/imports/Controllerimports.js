@@ -11,6 +11,7 @@ import {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  UpdateExamAsync,
   ToggleExamPublicStatusAsync,
 } from "../controllers/ExamController/Exam.Controller.js";
 import {
@@ -36,6 +37,7 @@ export {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  UpdateExamAsync,
   ToggleExamPublicStatusAsync,
   CreateExamAttemptAsync,
   GetExamAttemptsAsync,

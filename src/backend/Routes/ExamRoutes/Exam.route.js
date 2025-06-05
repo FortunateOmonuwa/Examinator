@@ -7,6 +7,7 @@ import {
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
   ToggleExamPublicStatusAsync,
+  UpdateExamAsync,
 } from "../../imports/Controllerimports.js";
 import {
   CreateExamAttemptAsync,
@@ -46,6 +47,12 @@ router.get("/public", GetPublicExamsAsync);
 router.get("/check-attempts/:examId", CheckExamAttemptsAsync);
 
 router.get("/:id", GetExamAsync);
+router.put(
+  "/:id",
+  AuthenticateToken,
+  AuthorizeRole("EXAMINER", "ADMIN"),
+  UpdateExamAsync
+);
 router.delete(
   "/:id",
   AuthenticateToken,

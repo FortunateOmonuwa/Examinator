@@ -41,58 +41,57 @@ const ExamResults = () => {
     return "Keep studying!";
   };
 
-  const isAnswerCorrect = (question, questionIndex, userAnswer) => {
-    // console.log(`\n=== Checking Question ${questionIndex + 1} ===`);
-    // console.log("Question type:", question.type);
-    // console.log("User answer:", userAnswer, typeof userAnswer);
-    // console.log("Question options:", question.options);
+  const calculateQuestionScore = (question, questionIndex, userAnswer) => {
+    const questionScore = question.score || 1;
 
     if (question.type === "SINGLECHOICE") {
       const correctOptionIndex = question.options.findIndex(
         (opt) => opt.isCorrect
       );
-      // console.log(
-      //   "Correct option index:",
-      //   correctOptionIndex,
-      //   typeof correctOptionIndex
-      // );
-
       const userAnswerNum = Number(userAnswer);
-      const isCorrect = userAnswerNum === correctOptionIndex;
-
-      // console.log(
-      //   "Comparison:",
-      //   `${userAnswer} (${typeof userAnswer}) -> ${userAnswerNum} === ${correctOptionIndex}`,
-      //   "->",
-      //   isCorrect
-      // );
-      // console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
-      return isCorrect;
+      return userAnswerNum === correctOptionIndex ? questionScore : 0;
     } else if (question.type === "MULTICHOICE") {
       const correctOptionIndices = question.options
         .map((opt, idx) => (opt.isCorrect ? idx : -1))
         .filter((idx) => idx !== -1);
 
-      // console.log("Correct option indices:", correctOptionIndices);
-
       const userAnswerArray = userAnswer || [];
-      //console.log("User answer array:", userAnswerArray);
-
       const userAnswerNumbers = userAnswerArray.map((ans) => Number(ans));
-      const isCorrect =
-        correctOptionIndices.length === userAnswerNumbers.length &&
-        correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx));
 
-      //console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
-      return isCorrect;
+      // For multichoice, calculate partial scoring
+      if (questionScore === 1) {
+        // Default scoring: all correct or zero
+        return correctOptionIndices.length === userAnswerNumbers.length &&
+          correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx))
+          ? questionScore
+          : 0;
+      } else {
+        // Custom scoring: partial credit based on correct vs wrong selections
+        const correctSelections = userAnswerNumbers.filter((idx) =>
+          correctOptionIndices.includes(idx)
+        ).length;
+        const wrongSelections = userAnswerNumbers.filter(
+          (idx) => !correctOptionIndices.includes(idx)
+        ).length;
+
+        const partialScore = Math.max(0, correctSelections - wrongSelections);
+        const maxCorrect = correctOptionIndices.length;
+
+        return partialScore > 0
+          ? Math.round((partialScore / maxCorrect) * questionScore)
+          : 0;
+      }
     } else if (question.type === "TEXT") {
-      const isCorrect = userAnswer && userAnswer.trim();
-      //console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
-      return isCorrect;
+      return userAnswer && userAnswer.trim() ? questionScore : 0;
     }
 
-    //console.log("Unknown question type, returning false");
-    return false;
+    return 0;
+  };
+
+  const isAnswerCorrect = (question, questionIndex, userAnswer) => {
+    const score = calculateQuestionScore(question, questionIndex, userAnswer);
+    const questionScore = question.score || 1;
+    return score === questionScore;
   };
 
   const getUserAnswerText = (question, userAnswer) => {
@@ -197,6 +196,13 @@ const ExamResults = () => {
               You answered {results.correctAnswers} out of{" "}
               {results.totalQuestions} questions correctly
             </p>
+            {results.totalScore !== undefined &&
+              results.maxPossibleScore !== undefined && (
+                <p className="text-gray-500 mt-1">
+                  Total Score: {Math.round(results.totalScore)} /{" "}
+                  {results.maxPossibleScore} points
+                </p>
+              )}
           </div>
 
           <div className="border-t border-gray-200 pt-6">
@@ -282,6 +288,12 @@ const ExamResults = () => {
                   questionIndex,
                   userAnswer
                 );
+                const questionScore = calculateQuestionScore(
+                  question,
+                  questionIndex,
+                  userAnswer
+                );
+                const maxQuestionScore = question.score || 1;
 
                 return (
                   <div
@@ -296,17 +308,34 @@ const ExamResults = () => {
                       <h4 className="text-lg font-medium text-gray-900">
                         Question {questionIndex + 1}
                       </h4>
-                      <div className="flex items-center">
-                        {isCorrect ? (
-                          <CheckCircle className="h-6 w-6 text-green-600" />
-                        ) : (
-                          <XCircle className="h-6 w-6 text-red-600" />
-                        )}
-                        <span
-                          className={`ml-2 font-medium ${isCorrect ? "text-green-600" : "text-red-600"}`}
-                        >
-                          {isCorrect ? "Correct" : "Incorrect"}
-                        </span>
+                      <div className="flex items-center space-x-3">
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-gray-900">
+                            {Math.round(questionScore)} / {maxQuestionScore} pts
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {Math.round(
+                              (questionScore / maxQuestionScore) * 100
+                            )}
+                            %
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          {isCorrect ? (
+                            <CheckCircle className="h-6 w-6 text-green-600" />
+                          ) : (
+                            <XCircle className="h-6 w-6 text-red-600" />
+                          )}
+                          <span
+                            className={`ml-2 font-medium ${isCorrect ? "text-green-600" : "text-red-600"}`}
+                          >
+                            {isCorrect
+                              ? "Correct"
+                              : questionScore > 0
+                                ? "Partial"
+                                : "Incorrect"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
