@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  // baseURL: "https://examinator-backend-dev.onrender.com",
-  baseURL: "http://localhost:5001",
+  baseURL: "https://examinator-backend-dev.onrender.com",
+  //baseURL: "http://localhost:5001",
 
   timeout: 10000,
   withCredentials: true,
