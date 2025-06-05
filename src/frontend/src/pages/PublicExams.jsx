@@ -32,12 +32,13 @@ const PublicExams = () => {
             time: exam.stipulatedTime || 0,
             level: exam.level || "",
           }));
-          
+
           setExams(examData);
           setFilteredExams(examData);
-          
-          // Extract unique subjects for filter
-          const uniqueSubjects = [...new Set(examData.map(exam => exam.subject))];
+
+          const uniqueSubjects = [
+            ...new Set(examData.map((exam) => exam.subject)),
+          ];
           setSubjects(uniqueSubjects);
         } else {
           toast.error("Failed to load public exams");
@@ -56,7 +57,6 @@ const PublicExams = () => {
   useEffect(() => {
     let filtered = exams;
 
-    // Filter by search term
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (exam) =>
@@ -67,12 +67,10 @@ const PublicExams = () => {
       );
     }
 
-    // Filter by subject
     if (subjectFilter) {
       filtered = filtered.filter((exam) => exam.subject === subjectFilter);
     }
 
-    // Filter by level
     if (levelFilter) {
       filtered = filtered.filter((exam) => exam.level === levelFilter);
     }
@@ -192,7 +190,8 @@ const PublicExams = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold">
-                {filteredExams.length} Exam{filteredExams.length !== 1 ? 's' : ''} Found
+                {filteredExams.length} Exam
+                {filteredExams.length !== 1 ? "s" : ""} Found
               </h2>
             </div>
 
@@ -225,7 +224,7 @@ const PublicExams = () => {
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                       {exam.description}
                     </p>
-                    
+
                     <div className="flex flex-wrap gap-2 mb-4">
                       <span className="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                         {exam.subject}
