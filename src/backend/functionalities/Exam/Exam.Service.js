@@ -386,7 +386,6 @@ const UpdateExam = async (examId, examData) => {
   }
 
   try {
-    // First check if the exam exists
     const existingExam = await database.Exam.findUnique({
       where: { id: examId },
       include: {
@@ -405,12 +404,10 @@ const UpdateExam = async (examId, examData) => {
       });
     }
 
-    // Delete existing questions and their options (cascade will handle options)
     await database.Question.deleteMany({
       where: { examId: examId },
     });
 
-    // Update the exam with new data
     const updatedExam = await database.Exam.update({
       where: { id: examId },
       data: {
@@ -462,7 +459,6 @@ const UpdateExam = async (examId, examData) => {
 
 const ToggleExamPublicStatus = async (examId, examinerId) => {
   try {
-    // First check if the exam exists and belongs to the examiner
     const exam = await database.Exam.findUnique({
       where: { id: examId },
       select: { id: true, isPublic: true, creatorId: true, title: true },
@@ -482,7 +478,6 @@ const ToggleExamPublicStatus = async (examId, examinerId) => {
       });
     }
 
-    // Toggle the public status
     const updatedExam = await database.Exam.update({
       where: { id: examId },
       data: { isPublic: !exam.isPublic },

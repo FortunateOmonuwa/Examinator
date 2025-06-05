@@ -49,8 +49,8 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   }
 
   const newExaminer = new Examiner({
-    name: `${firstname} ${lastname}`,
-    email: email,
+    name: `${firstname} ${lastname}`.toUpperCase(),
+    email: email.toUpperCase(),
     password: CreateHash(password),
   });
 
