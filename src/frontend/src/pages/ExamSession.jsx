@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Clock, AlertCircle, CheckCircle, Send } from "lucide-react";
-import { api, examAttemptService } from "../services/api";
+import { api, examAttemptService, integrationService } from "../services/api";
 import toast from "react-hot-toast";
 import "../styles/exam-session.scss";
 
@@ -37,8 +37,37 @@ const ExamSession = () => {
       return;
     }
 
+    // Check if user has already submitted this exam
+    const checkExamSubmission = () => {
+      const storedResults = localStorage.getItem("examResults");
+      if (storedResults) {
+        try {
+          const parsedResults = JSON.parse(storedResults);
+          if (parsedResults.examId === examId) {
+            // User has already submitted this exam, redirect to homepage instead of results
+            toast.error(
+              "You have already submitted this exam. Redirecting to homepage."
+            );
+            localStorage.removeItem("examResults"); // Clear the results
+            navigate("/", { replace: true }); // Use replace to avoid history entry
+            return true;
+          }
+        } catch (error) {
+          // Invalid stored results, clear them
+          localStorage.removeItem("examResults");
+        }
+      }
+      return false;
+    };
+
     const fetchExam = async () => {
       try {
+        // Check if exam was already submitted before fetching
+        if (checkExamSubmission()) {
+          setLoading(false);
+          return;
+        }
+
         const response = await api.get(`/api/exam/${examId}`);
         if (
           response.data.response.isSuccessful &&
@@ -169,7 +198,6 @@ const ExamSession = () => {
         }
       } else if (question.type === "TEXT") {
         if (userAnswer && userAnswer.trim()) {
-          totalScore += questionScore;
           correctAnswers++;
         }
       }
@@ -181,6 +209,133 @@ const ExamSession = () => {
       totalScore,
       maxPossibleScore,
       score: Math.round((totalScore / maxPossibleScore) * 100),
+    };
+  };
+
+  // New async function to calculate scores including OpenAI for text questions
+  const calculateScoreAsync = async (examQuestions, userAnswers) => {
+    let totalScore = 0;
+    let maxPossibleScore = 0;
+    let correctAnswers = 0;
+    const totalQuestions = examQuestions.length;
+    const questionScores = []; // Store individual question scores
+
+    // P
+    for (let index = 0; index < examQuestions.length; index++) {
+      const question = examQuestions[index];
+      const userAnswer = userAnswers[index];
+      const questionScore = question.score || 1;
+      maxPossibleScore += questionScore;
+      let earnedScore = 0;
+
+      if (question.type === "SINGLECHOICE") {
+        const correctOptionIndex = question.options.findIndex(
+          (opt) => opt.isCorrect
+        );
+        const userAnswerNum = Number(userAnswer);
+
+        if (userAnswerNum === correctOptionIndex) {
+          earnedScore = questionScore;
+          correctAnswers++;
+        }
+      } else if (question.type === "MULTICHOICE") {
+        const correctOptionIndices = question.options
+          .map((opt, idx) => (opt.isCorrect ? idx : -1))
+          .filter((idx) => idx !== -1);
+
+        const userAnswerArray = userAnswer || [];
+        const userAnswerNumbers = userAnswerArray.map((ans) => Number(ans));
+
+        // For multichoice, calculate partial scoring
+        if (questionScore === 1) {
+          // Default scoring: all correct or zero
+          if (
+            correctOptionIndices.length === userAnswerNumbers.length &&
+            correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx))
+          ) {
+            earnedScore = questionScore;
+            correctAnswers++;
+          }
+        } else {
+          // Custom scoring: partial credit based on correct vs wrong selections
+          const correctSelections = userAnswerNumbers.filter((idx) =>
+            correctOptionIndices.includes(idx)
+          ).length;
+          const wrongSelections = userAnswerNumbers.filter(
+            (idx) => !correctOptionIndices.includes(idx)
+          ).length;
+
+          const partialScore = Math.max(0, correctSelections - wrongSelections);
+          const maxCorrect = correctOptionIndices.length;
+
+          if (partialScore > 0) {
+            earnedScore = Math.round(
+              (partialScore / maxCorrect) * questionScore
+            );
+            if (partialScore === maxCorrect && wrongSelections === 0) {
+              correctAnswers++;
+            }
+          }
+        }
+      } else if (question.type === "TEXT") {
+        if (userAnswer && userAnswer.trim()) {
+          try {
+            earnedScore = await integrationService.calculateScore({
+              question: question.text,
+              answer: userAnswer,
+              maxScore: questionScore,
+            });
+
+            // Check if AI returned a valid score (not NaN or undefined)
+            if (
+              isNaN(earnedScore) ||
+              earnedScore === undefined ||
+              earnedScore === null
+            ) {
+              // Fallback to old implementation: mark as correct and require manual grading
+              earnedScore = questionScore;
+              correctAnswers++;
+              // Store a flag to indicate manual grading is required
+              questionScores[index] = {
+                score: questionScore,
+                requiresManualGrading: true,
+              };
+            } else {
+              // AI scoring worked, use the score
+              // Consider it "correct" if score is above 60% of max score
+              if (earnedScore >= questionScore * 0.6) {
+                correctAnswers++;
+              }
+              questionScores[index] = earnedScore;
+            }
+          } catch (error) {
+            // Fallback to old implementation on error
+            earnedScore = questionScore;
+            correctAnswers++;
+            // Store a flag to indicate manual grading is required
+            questionScores[index] = {
+              score: questionScore,
+              requiresManualGrading: true,
+            };
+          }
+        } else {
+          questionScores[index] = 0;
+        }
+      } else {
+        questionScores[index] = earnedScore;
+      }
+
+      totalScore += earnedScore;
+      // Don't overwrite questionScores here as we've already set it with proper metadata
+    }
+
+    return {
+      correctAnswers,
+      totalQuestions,
+      totalScore,
+      maxPossibleScore,
+      score: Math.round((totalScore / maxPossibleScore) * 100),
+      questionScores, // Include individual question scores
     };
   };
 
@@ -281,8 +436,8 @@ const ExamSession = () => {
     setIsSubmitting(true);
 
     try {
-      // Calculate results
-      const results = calculateScore(exam.questions, answers);
+      // Calculate results using async function for OpenAI scoring
+      const results = await calculateScoreAsync(exam.questions, answers);
 
       // Prepare exam attempt data for backend
       const examAttemptData = {
@@ -355,13 +510,17 @@ const ExamSession = () => {
 
       localStorage.setItem("examResults", JSON.stringify(examResults));
 
+      // Clear browser history and navigate to results page
+      // This prevents users from going back to the exam session
+      window.history.replaceState(null, "", `/exam-results/${exam.id}`);
+
       // Navigate to results page
       if (isAutoSubmit) {
         // For auto-submit, use window.location to ensure navigation happens
         window.location.href = `/exam-results/${exam.id}`;
       } else {
         // For manual submit, use navigate
-        navigate(`/exam-results/${exam.id}`);
+        navigate(`/exam-results/${exam.id}`, { replace: true });
       }
     } catch (error) {
       console.error("Error submitting exam:", error);

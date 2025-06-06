@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://examinator-backend-dev.onrender.com",
+  baseURL: process.env.BASE_URL,
   //baseURL: "http://localhost:5001",
 
   timeout: 10000,
@@ -149,6 +149,21 @@ export const examAttemptService = {
         `/api/exam-attempt/examiner/${examinerId}`
       );
       return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+};
+
+export const integrationService = {
+  calculateScore: async ({ question, answer, maxScore }) => {
+    try {
+      const response = await api.post("/api/integration/calculate-score", {
+        question,
+        answer,
+        maxScore,
+      });
+      return response.data.response.body.score;
     } catch (error) {
       throw error.response?.data || error.message;
     }

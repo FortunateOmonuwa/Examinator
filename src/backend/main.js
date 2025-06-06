@@ -5,6 +5,7 @@ import { ExaminerRouter } from "./imports/RouteImports.js";
 import { ExamRouter } from "./imports/RouteImports.js";
 import { AuthRouter } from "./imports/RouteImports.js";
 import { ExamAttemptRouter } from "./imports/RouteImports.js";
+import { IntegrationRouter } from "./imports/RouteImports.js";
 
 const app = express();
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/api/examiner", ExaminerRouter);
 app.use("/api/exam", ExamRouter);
 app.use("/api/auth", AuthRouter);
 app.use("/api/exam-attempt", ExamAttemptRouter);
+app.use("/api/integration", IntegrationRouter);
 
 try {
   app.listen(port, () => {

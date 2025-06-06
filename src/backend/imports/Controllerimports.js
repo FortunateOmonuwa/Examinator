@@ -26,6 +26,7 @@ import {
   ConfirmUser,
   Logout,
 } from "./ServicesImports.js";
+import { CalculateScoreAsync } from "../controllers/IntegrationControllers/Integration.Controller.js";
 export {
   RegisterAdminAsync,
   RegisterExaminerAsync,
@@ -46,4 +47,5 @@ export {
   RefreshAccessToken,
   ConfirmUser,
   Logout,
+  CalculateScoreAsync,
 };

@@ -15,17 +15,70 @@ const ExamResults = () => {
   useEffect(() => {
     const storedResults = localStorage.getItem("examResults");
     if (storedResults) {
-      const parsedResults = JSON.parse(storedResults);
-      if (parsedResults.examId === examId) {
-        setResults(parsedResults);
-        //console.log("Loaded results:", parsedResults);
-      } else {
+      try {
+        const parsedResults = JSON.parse(storedResults);
+        if (parsedResults.examId === examId) {
+          setResults(parsedResults);
+          //console.log("Loaded results:", parsedResults);
+        } else {
+          navigate("/take-exam");
+        }
+      } catch (error) {
+        // Invalid stored results, clear them
+        localStorage.removeItem("examResults");
         navigate("/take-exam");
       }
     } else {
       navigate("/take-exam");
     }
   }, [examId, navigate]);
+
+  // Prevent navigation back to exam session after submission
+  useEffect(() => {
+    // Disable browser back button completely
+    const disableBackButton = () => {
+      window.history.pushState(null, "", window.location.href);
+      window.onpopstate = () => {
+        window.history.pushState(null, "", window.location.href);
+        toast.error(
+          "Navigation blocked. Use the Home button to return to homepage."
+        );
+      };
+    };
+
+    const handleBeforeUnload = () => {
+      // Clear exam results when leaving the results page
+      localStorage.removeItem("examResults");
+    };
+
+    const handleKeyDown = (e) => {
+      // Prevent Alt+Left Arrow (back) and other navigation shortcuts
+      if (
+        (e.altKey && e.key === "ArrowLeft") ||
+        (e.key === "Backspace" &&
+          !["INPUT", "TEXTAREA"].includes(e.target.tagName))
+      ) {
+        e.preventDefault();
+        toast.error(
+          "Navigation blocked. Use the Home button to return to homepage."
+        );
+      }
+    };
+
+    // Disable back button immediately
+    disableBackButton();
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("keydown", handleKeyDown);
+      // Reset onpopstate when component unmounts
+      window.onpopstate = null;
+    };
+  }, []);
 
   const getScoreColor = (score) => {
     if (score >= 80) return "text-green-600";
@@ -43,6 +96,19 @@ const ExamResults = () => {
 
   const calculateQuestionScore = (question, questionIndex, userAnswer) => {
     const questionScore = question.score || 1;
+
+    // If we have stored question scores from OpenAI, use them
+    if (
+      results.questionScores &&
+      results.questionScores[questionIndex] !== undefined
+    ) {
+      const storedScore = results.questionScores[questionIndex];
+      // Handle both old format (number) and new format (object with metadata)
+      if (typeof storedScore === "object" && storedScore.score !== undefined) {
+        return storedScore.score;
+      }
+      return storedScore;
+    }
 
     if (question.type === "SINGLECHOICE") {
       const correctOptionIndex = question.options.findIndex(
@@ -116,7 +182,7 @@ const ExamResults = () => {
 
   const getCorrectAnswerText = (question) => {
     if (question.type === "TEXT") {
-      return "Text answer (manual grading required)";
+      return "Text answer (AI-graded)";
     } else if (question.type === "SINGLECHOICE") {
       const correctOption = question.options.find((opt) => opt.isCorrect);
       return correctOption?.text || "No correct answer defined";
@@ -125,6 +191,62 @@ const ExamResults = () => {
       return correctOptions.map((opt) => opt.text).join(", ");
     }
     return "No correct answer defined";
+  };
+
+  // Get dynamic feedback for text questions based on score
+  const getTextQuestionFeedback = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 90) return "Excellent";
+    if (percentage >= 80) return "Very good";
+    if (percentage >= 70) return "Very good";
+    if (percentage >= 40) return "Satisfactory";
+    return "Not quite";
+  };
+
+  // Get color class for text questions based on score
+  const getTextQuestionColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 90) return "text-green-800"; // Dark green for excellent
+    if (percentage >= 70) return "text-green-600"; // Light green for very good
+    if (percentage >= 40) return "text-orange-600"; // Orange for satisfactory
+    return "text-red-600"; // Red for not quite
+  };
+
+  // Get background color class for text questions based on score
+  const getTextQuestionBgColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 90) return "bg-green-100"; // Dark green background
+    if (percentage >= 70) return "bg-green-50"; // Light green background
+    if (percentage >= 40) return "bg-orange-50"; // Orange background
+    return "bg-red-50"; // Red background
+  };
+
+  // Get border color class for text questions based on score
+  const getTextQuestionBorderColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 90) return "border-green-200"; // Dark green border
+    if (percentage >= 70) return "border-green-200"; // Light green border
+    if (percentage >= 40) return "border-orange-200"; // Orange border
+    return "border-red-200"; // Red border
+  };
+
+  // Check if a question requires manual grading
+  const requiresManualGrading = (questionIndex) => {
+    if (
+      results.questionScores &&
+      results.questionScores[questionIndex] !== undefined
+    ) {
+      const storedScore = results.questionScores[questionIndex];
+      return (
+        typeof storedScore === "object" &&
+        storedScore.requiresManualGrading === true
+      );
+    }
+    return false;
   };
 
   const toggleAnswers = () => {
@@ -169,7 +291,13 @@ const ExamResults = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              localStorage.removeItem("examResults");
+              // Reset onpopstate to allow normal navigation
+              window.onpopstate = null;
+              // Use window.location to ensure clean navigation
+              window.location.href = "/";
+            }}
             className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-4"
           >
             <Home className="h-4 w-4 mr-2" />
@@ -295,14 +423,32 @@ const ExamResults = () => {
                 );
                 const maxQuestionScore = question.score || 1;
 
+                // Dynamic styling for text questions
+                const isTextQuestion = question.type === "TEXT";
+                const needsManualGrading = requiresManualGrading(questionIndex);
+
+                const borderColor = isTextQuestion
+                  ? needsManualGrading
+                    ? "border-blue-200"
+                    : getTextQuestionBorderColor(
+                        questionScore,
+                        maxQuestionScore
+                      )
+                  : isCorrect
+                    ? "border-green-200"
+                    : "border-red-200";
+                const bgColor = isTextQuestion
+                  ? needsManualGrading
+                    ? "bg-blue-50"
+                    : getTextQuestionBgColor(questionScore, maxQuestionScore)
+                  : isCorrect
+                    ? "bg-green-50"
+                    : "bg-red-50";
+
                 return (
                   <div
                     key={questionIndex}
-                    className={`border rounded-lg p-6 ${
-                      isCorrect
-                        ? "border-green-200 bg-green-50"
-                        : "border-red-200 bg-red-50"
-                    }`}
+                    className={`border rounded-lg p-6 ${borderColor} ${bgColor}`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <h4 className="text-lg font-medium text-gray-900">
@@ -327,13 +473,31 @@ const ExamResults = () => {
                             <XCircle className="h-6 w-6 text-red-600" />
                           )}
                           <span
-                            className={`ml-2 font-medium ${isCorrect ? "text-green-600" : "text-red-600"}`}
+                            className={`ml-2 font-medium ${
+                              isTextQuestion
+                                ? needsManualGrading
+                                  ? "text-blue-600"
+                                  : getTextQuestionColor(
+                                      questionScore,
+                                      maxQuestionScore
+                                    )
+                                : isCorrect
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                            }`}
                           >
-                            {isCorrect
-                              ? "Correct"
-                              : questionScore > 0
-                                ? "Partial"
-                                : "Incorrect"}
+                            {isTextQuestion
+                              ? needsManualGrading
+                                ? "Manual Grading Required"
+                                : getTextQuestionFeedback(
+                                    questionScore,
+                                    maxQuestionScore
+                                  )
+                              : isCorrect
+                                ? "Correct"
+                                : questionScore > 0
+                                  ? "Partial"
+                                  : "Incorrect"}
                           </span>
                         </div>
                       </div>
@@ -348,9 +512,13 @@ const ExamResults = () => {
                         </h5>
                         <p
                           className={`p-3 rounded-md ${
-                            isCorrect
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
+                            isTextQuestion
+                              ? needsManualGrading
+                                ? "bg-blue-100 text-blue-800"
+                                : `${getTextQuestionBgColor(questionScore, maxQuestionScore)} ${getTextQuestionColor(questionScore, maxQuestionScore)}`
+                              : isCorrect
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
                           }`}
                         >
                           {getUserAnswerText(question, userAnswer)}
@@ -359,10 +527,14 @@ const ExamResults = () => {
 
                       <div>
                         <h5 className="font-medium text-gray-900 mb-2">
-                          Correct Answer:
+                          {isTextQuestion ? "AI Feedback:" : "Correct Answer:"}
                         </h5>
-                        <p className="p-3 bg-green-100 text-green-800 rounded-md">
-                          {getCorrectAnswerText(question)}
+                        <p className="p-3 bg-blue-100 text-blue-800 rounded-md">
+                          {isTextQuestion
+                            ? needsManualGrading
+                              ? "Text answer (manual grading required)"
+                              : `Score: ${Math.round(questionScore)}/${maxQuestionScore} - ${getTextQuestionFeedback(questionScore, maxQuestionScore)}`
+                            : getCorrectAnswerText(question)}
                         </p>
                       </div>
                     </div>
