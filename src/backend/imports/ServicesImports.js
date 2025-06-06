@@ -12,6 +12,7 @@ import {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  UpdateExam,
   ToggleExamPublicStatus,
 } from "../functionalities/Exam/Exam.Service.js";
 import {
@@ -37,6 +38,7 @@ export {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  UpdateExam,
   ToggleExamPublicStatus,
   CreateExamAttempt,
   GetExamAttempts,

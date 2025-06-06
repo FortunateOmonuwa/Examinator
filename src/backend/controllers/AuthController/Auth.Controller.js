@@ -13,18 +13,24 @@ const LoginAsync = async (req, res) => {
     const response = await Login({ email: email, password: password });
     if (response.isSuccessful) {
       const { accessToken, user, refreshToken, userId } = response.body;
+
+      const isSecureEnv =
+        process.env.NODE_ENV === "production" || process.env.RENDER === "true";
+
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: isSecureEnv,
+        sameSite: isSecureEnv ? "None" : "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: isSecureEnv,
+        sameSite: isSecureEnv ? "None" : "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
       return res.status(200).json({
         response: Response.Successful({
           message: "Login successful",
@@ -38,7 +44,9 @@ const LoginAsync = async (req, res) => {
         }),
       });
     } else {
-      return res.status(400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (e) {
     return res.status(500).json({
@@ -56,8 +64,10 @@ const RefreshAccessTokenAsync = async (req, res) => {
     if (response.isSuccessful) {
       res.cookie("accessToken", response.body.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure:
+          process.env.NODE_ENV === "production" ||
+          process.env.NODE_ENV === "development",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 

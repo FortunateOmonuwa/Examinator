@@ -1,9 +1,9 @@
-import { database } from '../../imports/UtilityImports.js';
+import { database } from "../../imports/UtilityImports.js";
 const checkIfUserExists = async (email) => {
   try {
     const user = await database.UserProfile.findUnique({
       where: {
-        email: email,
+        email: email.toUpperCase(),
       },
     });
 
@@ -13,7 +13,7 @@ const checkIfUserExists = async (email) => {
       return false;
     }
   } catch (error) {
-    console.error('Error querying database:', error);
+    console.error("Error querying database:", error);
     throw error;
   }
 };
@@ -32,7 +32,7 @@ const checkExaminerId = async (examinerId) => {
       return false;
     }
   } catch (error) {
-    console.error('Error querying database:', error);
+    console.error("Error querying database:", error);
     throw error;
   }
 };

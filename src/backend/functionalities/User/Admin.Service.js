@@ -1,5 +1,5 @@
-import { Admin } from '../../imports/ModelImports.js';
-import { checkIfUserExists } from './User.Service.js';
+import { Admin } from "../../imports/ModelImports.js";
+import { checkIfUserExists } from "./User.Service.js";
 import {
   CreateHash,
   Response,
@@ -7,17 +7,18 @@ import {
   nameRegex,
   emailRegex,
   passwordRegex,
-} from '../../imports/UtilityImports.js';
+} from "../../imports/UtilityImports.js";
 
 const RegisterAdmin = async ({ email, password }) => {
-  const checkUserProfile = await checkIfUserExists(email);
+  const upperCaseEmail = email.toUpperCase();
+  const checkUserProfile = await checkIfUserExists(upperCaseEmail);
   if (checkUserProfile) {
     return Response.Unsuccessful({
       message: `Profile with email: ${email} already exists`,
     });
   }
   const newAdmin = new Admin({
-    email: email,
+    email: upperCaseEmail,
     password: CreateHash(password),
   });
 
@@ -28,19 +29,19 @@ const RegisterAdmin = async ({ email, password }) => {
 
     if (newAdminQuery) {
       return Response.Successful({
-        message: 'Admin profile created successfully',
+        message: "Admin profile created successfully",
         body: newAdminQuery,
       });
     }
 
     return Response.Unsuccessful({
-      message: 'Failed to create admin profile',
+      message: "Failed to create admin profile",
     });
   } catch (error) {
-    console.error('An error occurred while creating the admin profile:', error);
+    console.error("An error occurred while creating the admin profile:", error);
 
     return Response.Unsuccessful({
-      message: 'An error occurred',
+      message: "An error occurred",
       resultCode: 500,
     });
   } finally {

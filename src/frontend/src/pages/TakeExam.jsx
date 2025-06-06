@@ -10,7 +10,7 @@ import {
   WifiOff,
   LogOut,
 } from "lucide-react";
-import { api, publicExamService } from "../services/api";
+import { examService, publicExamService } from "../services/api";
 import toast from "react-hot-toast";
 import "../styles/take-exam.scss";
 
@@ -33,12 +33,9 @@ const TakeExam = () => {
       setDirectExamLoading(true);
       const fetchExam = async () => {
         try {
-          const response = await api.get(`/api/exam/${examId}`);
-          if (
-            response.data.response.isSuccessful &&
-            response.data.response.body
-          ) {
-            setDirectExam(response.data.response.body);
+          const response = await examService.getExam(examId);
+          if (response.response.isSuccessful && response.response.body) {
+            setDirectExam(response.response.body);
           } else {
             toast.error("Exam not found or is not available");
           }

@@ -12,7 +12,6 @@ const CreateExamAttempt = async (examAttemptData) => {
     totalScore,
   } = examAttemptData;
 
-  // Validate required fields
   if (!examId || !responderEmail || !answers || !Array.isArray(answers)) {
     return Response.Unsuccessful({
       message:
@@ -22,7 +21,6 @@ const CreateExamAttempt = async (examAttemptData) => {
   }
 
   try {
-    // Check if exam exists
     const exam = await database.Exam.findUnique({
       where: { id: examId },
       include: {
@@ -41,11 +39,10 @@ const CreateExamAttempt = async (examAttemptData) => {
       });
     }
 
-    // Create the exam attempt with answers
     const examAttempt = await database.ExamAttempt.create({
       data: {
         examId,
-        responderEmal: responderEmail, // Note: keeping the typo to match existing schema
+        responderEmal: responderEmail, // i know this is a typo ...but i'm leaving it to match the existing database
         responderName,
         startTime: startTime ? new Date(startTime) : null,
         submittedAt: submittedAt ? new Date(submittedAt) : new Date(),
@@ -58,9 +55,7 @@ const CreateExamAttempt = async (examAttemptData) => {
               options: { connect: [] },
             };
 
-            // Handle different question types
             if (answer.questionType === "SINGLECHOICE") {
-              // For single choice, connect the selected option
               if (answer.answer !== undefined && answer.answer !== null) {
                 const question = exam.questions.find(
                   (q) => q.id === answer.questionId
@@ -72,7 +67,6 @@ const CreateExamAttempt = async (examAttemptData) => {
                 }
               }
             } else if (answer.questionType === "MULTICHOICE") {
-              // For multiple choice, connect all selected options
               if (Array.isArray(answer.answer)) {
                 const question = exam.questions.find(
                   (q) => q.id === answer.questionId
@@ -88,7 +82,6 @@ const CreateExamAttempt = async (examAttemptData) => {
                 }
               }
             } else if (answer.questionType === "TEXT") {
-              // For text answers, store in textAnswer array
               if (answer.answer) {
                 answerData.textAnswer = [answer.answer.toString()];
               }
@@ -214,7 +207,6 @@ const GetExamAttemptById = async (attemptId) => {
 
 const GetAllExaminerAttempts = async (examinerId) => {
   try {
-    // Get all attempts for exams created by this examiner
     const examAttempts = await database.ExamAttempt.findMany({
       where: {
         exam: {

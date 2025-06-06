@@ -189,7 +189,8 @@ exports.Prisma.QuestionScalarFieldEnum = {
   examId: 'examId',
   required: 'required',
   type: 'type',
-  expectedAnswer: 'expectedAnswer'
+  expectedAnswer: 'expectedAnswer',
+  score: 'score'
 };
 
 exports.Prisma.OptionScalarFieldEnum = {
