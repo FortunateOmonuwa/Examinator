@@ -319,9 +319,11 @@ const ExamSession = () => {
             };
           }
         } else {
+          earnedScore = 0;
           questionScores[index] = 0;
         }
       } else {
+        // For non-TEXT questions, store the score directly
         questionScores[index] = earnedScore;
       }
 

@@ -97,17 +97,27 @@ const ExamResults = () => {
   const calculateQuestionScore = (question, questionIndex, userAnswer) => {
     const questionScore = question.score || 1;
 
-    // If we have stored question scores from OpenAI, use them
+    // Only use stored OpenAI scores for TEXT questions
     if (
+      question.type === "TEXT" &&
       results.questionScores &&
       results.questionScores[questionIndex] !== undefined
     ) {
       const storedScore = results.questionScores[questionIndex];
       // Handle both old format (number) and new format (object with metadata)
-      if (typeof storedScore === "object" && storedScore.score !== undefined) {
+      if (
+        typeof storedScore === "object" &&
+        storedScore !== null &&
+        storedScore.score !== undefined
+      ) {
         return storedScore.score;
       }
-      return storedScore;
+      // If it's a number, return it directly
+      if (typeof storedScore === "number") {
+        return storedScore;
+      }
+      // Fallback to question score if stored score is invalid
+      return questionScore;
     }
 
     if (question.type === "SINGLECHOICE") {
@@ -154,10 +164,48 @@ const ExamResults = () => {
     return 0;
   };
 
-  const isAnswerCorrect = (question, questionIndex, userAnswer) => {
-    const score = calculateQuestionScore(question, questionIndex, userAnswer);
-    const questionScore = question.score || 1;
-    return score === questionScore;
+  // Get the performance level based on score percentage
+  const getPerformanceLevel = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 80) return "excellent";
+    if (percentage >= 70) return "very-good";
+    if (percentage >= 60) return "good";
+    if (percentage >= 50) return "average";
+    if (percentage >= 40) return "satisfactory";
+    if (percentage >= 30) return "poor";
+    return "very-poor";
+  };
+
+  // Get the appropriate icon based on performance level
+  const getPerformanceIcon = (performanceLevel) => {
+    switch (performanceLevel) {
+      case "excellent":
+      case "very-good":
+      case "good":
+        return <CheckCircle className="h-6 w-6 text-green-600" />;
+      case "average":
+        return (
+          <div className="h-6 w-6 rounded-full bg-yellow-500 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">~</span>
+          </div>
+        );
+      case "satisfactory":
+        return (
+          <div className="h-6 w-6 rounded-full bg-orange-500 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">-</span>
+          </div>
+        );
+      case "poor":
+        return (
+          <div className="h-6 w-6 rounded-full bg-red-400 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">-</span>
+          </div>
+        );
+      case "very-poor":
+      default:
+        return <XCircle className="h-6 w-6 text-red-600" />;
+    }
   };
 
   const getUserAnswerText = (question, userAnswer) => {
@@ -193,13 +241,13 @@ const ExamResults = () => {
     return "No correct answer defined";
   };
 
-  // Get dynamic feedback for text questions based on score
   const getTextQuestionFeedback = (score, maxScore) => {
     const percentage = (score / maxScore) * 100;
 
-    if (percentage >= 90) return "Excellent";
-    if (percentage >= 80) return "Very good";
+    if (percentage >= 80) return "Excellent";
     if (percentage >= 70) return "Very good";
+    if (percentage >= 60) return "Good";
+    if (percentage >= 50) return "Average";
     if (percentage >= 40) return "Satisfactory";
     return "Not quite";
   };
@@ -208,8 +256,10 @@ const ExamResults = () => {
   const getTextQuestionColor = (score, maxScore) => {
     const percentage = (score / maxScore) * 100;
 
-    if (percentage >= 90) return "text-green-800"; // Dark green for excellent
-    if (percentage >= 70) return "text-green-600"; // Light green for very good
+    if (percentage >= 80) return "text-green-800"; // Dark green for excellent
+    if (percentage >= 70) return "text-green-700"; // Green for very good
+    if (percentage >= 60) return "text-green-600"; // Light green for good
+    if (percentage >= 50) return "text-yellow-600"; // Yellow for average
     if (percentage >= 40) return "text-orange-600"; // Orange for satisfactory
     return "text-red-600"; // Red for not quite
   };
@@ -218,20 +268,24 @@ const ExamResults = () => {
   const getTextQuestionBgColor = (score, maxScore) => {
     const percentage = (score / maxScore) * 100;
 
-    if (percentage >= 90) return "bg-green-100"; // Dark green background
-    if (percentage >= 70) return "bg-green-50"; // Light green background
-    if (percentage >= 40) return "bg-orange-50"; // Orange background
-    return "bg-red-50"; // Red background
+    if (percentage >= 80) return "bg-green-200"; // Dark green background for excellent
+    if (percentage >= 70) return "bg-green-100"; // Green background for very good
+    if (percentage >= 60) return "bg-green-50"; // Light green background for good
+    if (percentage >= 50) return "bg-yellow-50"; // Yellow background for average
+    if (percentage >= 40) return "bg-orange-50"; // Orange background for satisfactory
+    return "bg-red-50"; // Red background for not quite
   };
 
   // Get border color class for text questions based on score
   const getTextQuestionBorderColor = (score, maxScore) => {
     const percentage = (score / maxScore) * 100;
 
-    if (percentage >= 90) return "border-green-200"; // Dark green border
-    if (percentage >= 70) return "border-green-200"; // Light green border
-    if (percentage >= 40) return "border-orange-200"; // Orange border
-    return "border-red-200"; // Red border
+    if (percentage >= 80) return "border-green-300"; // Dark green border for excellent
+    if (percentage >= 70) return "border-green-200"; // Green border for very good
+    if (percentage >= 60) return "border-green-200"; // Light green border for good
+    if (percentage >= 50) return "border-yellow-200"; // Yellow border for average
+    if (percentage >= 40) return "border-orange-200"; // Orange border for satisfactory
+    return "border-red-200"; // Red border for not quite
   };
 
   // Check if a question requires manual grading
@@ -243,6 +297,7 @@ const ExamResults = () => {
       const storedScore = results.questionScores[questionIndex];
       return (
         typeof storedScore === "object" &&
+        storedScore !== null &&
         storedScore.requiresManualGrading === true
       );
     }
@@ -411,11 +466,6 @@ const ExamResults = () => {
             <div className="space-y-6">
               {results.questions.map((question, questionIndex) => {
                 const userAnswer = results.answers[questionIndex];
-                const isCorrect = isAnswerCorrect(
-                  question,
-                  questionIndex,
-                  userAnswer
-                );
                 const questionScore = calculateQuestionScore(
                   question,
                   questionIndex,
@@ -423,9 +473,13 @@ const ExamResults = () => {
                 );
                 const maxQuestionScore = question.score || 1;
 
-                // Dynamic styling for text questions
+                // Dynamic styling for all questions
                 const isTextQuestion = question.type === "TEXT";
                 const needsManualGrading = requiresManualGrading(questionIndex);
+                const performanceLevel = getPerformanceLevel(
+                  questionScore,
+                  maxQuestionScore
+                );
 
                 const borderColor = isTextQuestion
                   ? needsManualGrading
@@ -434,16 +488,29 @@ const ExamResults = () => {
                         questionScore,
                         maxQuestionScore
                       )
-                  : isCorrect
+                  : performanceLevel === "excellent" ||
+                      performanceLevel === "very-good" ||
+                      performanceLevel === "good"
                     ? "border-green-200"
-                    : "border-red-200";
+                    : performanceLevel === "average"
+                      ? "border-yellow-200"
+                      : performanceLevel === "satisfactory"
+                        ? "border-orange-200"
+                        : "border-red-200";
+
                 const bgColor = isTextQuestion
                   ? needsManualGrading
                     ? "bg-blue-50"
                     : getTextQuestionBgColor(questionScore, maxQuestionScore)
-                  : isCorrect
+                  : performanceLevel === "excellent" ||
+                      performanceLevel === "very-good" ||
+                      performanceLevel === "good"
                     ? "bg-green-50"
-                    : "bg-red-50";
+                    : performanceLevel === "average"
+                      ? "bg-yellow-50"
+                      : performanceLevel === "satisfactory"
+                        ? "bg-orange-50"
+                        : "bg-red-50";
 
                 return (
                   <div
@@ -467,10 +534,14 @@ const ExamResults = () => {
                           </div>
                         </div>
                         <div className="flex items-center">
-                          {isCorrect ? (
-                            <CheckCircle className="h-6 w-6 text-green-600" />
+                          {isTextQuestion && needsManualGrading ? (
+                            <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">
+                                ?
+                              </span>
+                            </div>
                           ) : (
-                            <XCircle className="h-6 w-6 text-red-600" />
+                            getPerformanceIcon(performanceLevel)
                           )}
                           <span
                             className={`ml-2 font-medium ${
@@ -481,9 +552,15 @@ const ExamResults = () => {
                                       questionScore,
                                       maxQuestionScore
                                     )
-                                : isCorrect
+                                : performanceLevel === "excellent" ||
+                                    performanceLevel === "very-good" ||
+                                    performanceLevel === "good"
                                   ? "text-green-600"
-                                  : "text-red-600"
+                                  : performanceLevel === "average"
+                                    ? "text-yellow-600"
+                                    : performanceLevel === "satisfactory"
+                                      ? "text-orange-600"
+                                      : "text-red-600"
                             }`}
                           >
                             {isTextQuestion
@@ -493,9 +570,12 @@ const ExamResults = () => {
                                     questionScore,
                                     maxQuestionScore
                                   )
-                              : isCorrect
+                              : performanceLevel === "excellent" ||
+                                  performanceLevel === "very-good" ||
+                                  performanceLevel === "good"
                                 ? "Correct"
-                                : questionScore > 0
+                                : performanceLevel === "average" ||
+                                    performanceLevel === "satisfactory"
                                   ? "Partial"
                                   : "Incorrect"}
                           </span>
@@ -516,9 +596,15 @@ const ExamResults = () => {
                               ? needsManualGrading
                                 ? "bg-blue-100 text-blue-800"
                                 : `${getTextQuestionBgColor(questionScore, maxQuestionScore)} ${getTextQuestionColor(questionScore, maxQuestionScore)}`
-                              : isCorrect
+                              : performanceLevel === "excellent" ||
+                                  performanceLevel === "very-good" ||
+                                  performanceLevel === "good"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
+                                : performanceLevel === "average"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : performanceLevel === "satisfactory"
+                                    ? "bg-orange-100 text-orange-800"
+                                    : "bg-red-100 text-red-800"
                           }`}
                         >
                           {getUserAnswerText(question, userAnswer)}
@@ -527,7 +613,7 @@ const ExamResults = () => {
 
                       <div>
                         <h5 className="font-medium text-gray-900 mb-2">
-                          {isTextQuestion ? "AI Feedback:" : "Correct Answer:"}
+                          {isTextQuestion ? "FeedBack:" : "Correct Answer:"}
                         </h5>
                         <p className="p-3 bg-blue-100 text-blue-800 rounded-md">
                           {isTextQuestion
