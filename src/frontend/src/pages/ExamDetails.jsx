@@ -226,7 +226,7 @@ const ExamDetails = () => {
         {/* Back Button */}
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate("/take-exam")}
+            onClick={() => navigate("/public-exams")}
             className="text-pink-600 hover:text-pink-700 font-medium"
           >
             ← Back to Browse Exams
