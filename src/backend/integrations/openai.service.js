@@ -1,8 +1,8 @@
-import OpenAI from "openai";
+//import OpenAI from "openai";
 import Together from "together-ai";
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 const togetherAI = new Together({
   apiKey: process.env.TOGETHERAI_API_KEY,
