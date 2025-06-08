@@ -20,8 +20,7 @@ process.once("exit", () => {
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://examinator-frontend-dev.onrender.com",
-  "https://examinator-frontend.onrender.com",
+  "https://examinator-dev.onrender.com",
 ];
 
 app.use((req, res, next) => {
