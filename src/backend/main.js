@@ -21,6 +21,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://examinator-dev.onrender.com",
+  "examinator-dev.onrender.com",
 ];
 
 app.use((req, res, next) => {
