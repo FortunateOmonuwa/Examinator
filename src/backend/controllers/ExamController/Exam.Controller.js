@@ -6,6 +6,7 @@ import {
   GetPublicExams,
   CheckExamAttempts,
   ToggleExamPublicStatus,
+  UpdateExam,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
 
@@ -119,6 +120,26 @@ const CheckExamAttemptsAsync = async (req, res) => {
   }
 };
 
+const UpdateExamAsync = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
+  const { exam } = body;
+
+  try {
+    const response = await UpdateExam(id, exam);
+
+    if (response.isSuccessful) {
+      return res.status(200).json({ response: response });
+    } else {
+      return res.status(response.resultCode).json({ response: response });
+    }
+  } catch (e) {
+    return res.status(500).json({
+      response: Response.Unsuccessful(),
+    });
+  }
+};
+
 const ToggleExamPublicStatusAsync = async (req, res) => {
   const { examId } = req.params;
   const { examinerId } = req.body;
@@ -152,5 +173,6 @@ export {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  UpdateExamAsync,
   ToggleExamPublicStatusAsync,
 };

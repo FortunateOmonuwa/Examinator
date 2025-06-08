@@ -11,6 +11,7 @@ import {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  UpdateExamAsync,
   ToggleExamPublicStatusAsync,
 } from "../controllers/ExamController/Exam.Controller.js";
 import {
@@ -25,6 +26,7 @@ import {
   ConfirmUser,
   Logout,
 } from "./ServicesImports.js";
+import { CalculateScoreAsync } from "../controllers/IntegrationControllers/Integration.Controller.js";
 export {
   RegisterAdminAsync,
   RegisterExaminerAsync,
@@ -36,6 +38,7 @@ export {
   GetAllExamsAsync,
   GetPublicExamsAsync,
   CheckExamAttemptsAsync,
+  UpdateExamAsync,
   ToggleExamPublicStatusAsync,
   CreateExamAttemptAsync,
   GetExamAttemptsAsync,
@@ -44,4 +47,5 @@ export {
   RefreshAccessToken,
   ConfirmUser,
   Logout,
+  CalculateScoreAsync,
 };
