@@ -20,6 +20,7 @@ export default defineConfig({
   server: {
     allowedHosts: [
       "https://examinator-dev.onrender.com",
+      "examinator-dev.render.com",
       // add other domains if needed
     ],
   },
