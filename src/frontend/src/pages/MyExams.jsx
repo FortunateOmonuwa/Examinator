@@ -136,19 +136,19 @@ const MyExams = () => {
     setRecipients(newRecipients);
   };
 
-  // Share exam via email using real API endpoint
+  
   const handleShareExam = async (e) => {
     e.preventDefault();
 
     // Filter out empty recipients
-    const validRecipients = recipients.filter((email) => email.trim() !== "");
+    const validRecipients = recipients.filter((email) => email.trim().toLowerCase() !== "");
 
     if (validRecipients.length === 0) {
       toast.error("Please enter at least one email address");
       return;
     }
 
-    // Validate email format
+   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const invalidEmails = validRecipients.filter(
       (email) => !emailRegex.test(email)
