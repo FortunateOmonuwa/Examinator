@@ -32,7 +32,7 @@ const sendMail = async ({ receiver, subject, body, attachments }) => {
     // console.log("Body:", body);
 
     const info = await transporter.sendMail({
-      from: process.env.SENDGRID_FROM_EMAIL || "noreply@yourdomain.com", // Use your authenticated domain
+      from: process.env.SENDGRID_FROM_EMAIL || "noreply.examinator@gmail.com",
       to: receiver,
       subject,
       html: body,
