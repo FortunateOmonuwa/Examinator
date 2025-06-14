@@ -75,7 +75,7 @@ const baseEmailTemplate = ({ name, bodyContent }) => `
           <div style="color: #6c757d; font-size: 14px;">Professional Examination System</div>
         </div>
 
-        <p>Dear ${name},</p>
+        <p>Hi there ${name === "" ? "" : name},</p>
         ${bodyContent}
 
         <div class="footer">

@@ -166,7 +166,7 @@ const MyExams = () => {
 
       const res = await api.post(`/api/mailer/send-exam-link`, {
         recipients: validRecipients,
-        name: user.name || "Examiner",
+        name: "",
         examName: currentExam.title,
         link: examLink,
       });
