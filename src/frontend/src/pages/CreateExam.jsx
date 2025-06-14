@@ -574,19 +574,9 @@ const CreateExam = () => {
 
                 {question.type !== "text" && (
                   <div className="space-y-2 options-container">
-                    <div className="flex justify-between items-center">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Options
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => addOption(question.id)}
-                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                      >
-                        <Plus className="mr-1 h-3 w-3" />
-                        Add Option
-                      </button>
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Options
+                    </label>
 
                     {question.options.map((option) => (
                       <div
@@ -647,6 +637,17 @@ const CreateExam = () => {
                         </button>
                       </div>
                     ))}
+
+                    <div className="flex justify-start mt-2">
+                      <button
+                        type="button"
+                        onClick={() => addOption(question.id)}
+                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                      >
+                        <Plus className="mr-1 h-3 w-3" />
+                        Add Option
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

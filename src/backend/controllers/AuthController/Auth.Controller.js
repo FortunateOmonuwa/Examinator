@@ -5,6 +5,7 @@ import {
   Logout,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
+import { SendLoginMail } from "../../imports/ServicesImports.js";
 const LoginAsync = async (req, res) => {
   const { body } = req;
   const { email, password } = body;
@@ -31,6 +32,20 @@ const LoginAsync = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
+      const sendMail = await SendLoginMail({
+        to: user.email.toLowerCase(),
+        name: user.examiner?.name ?? user.student?.name,
+      });
+      if (!sendMail.isSuccessful) {
+        console.log(sendMail.message);
+        return res.status(500).json({
+          response: Response.Unsuccessful({
+            message: " login failed",
+            resultCode: 500,
+          }),
+        });
+      }
+      console.log("Login mail sent successfully");
       return res.status(200).json({
         response: Response.Successful({
           message: "Login successful",

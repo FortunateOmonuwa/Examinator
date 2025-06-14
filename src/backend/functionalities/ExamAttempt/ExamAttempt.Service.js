@@ -1,5 +1,6 @@
 import { database } from "../../imports/UtilityImports.js";
 import Response from "../../utilities/Response.js";
+import { SendExamResultsMail } from "../Mail.Service.js";
 
 const CreateExamAttempt = async (examAttemptData) => {
   const {
@@ -106,6 +107,28 @@ const CreateExamAttempt = async (examAttemptData) => {
         },
       },
     });
+
+    // Send exam results email to the participant
+    try {
+      const baseUrl =
+        process.env.NODE_ENV === "production"
+          ? process.env.VITE_BASE_URL || "https://yourdomain.com"
+          : "http://localhost:5173";
+
+      const resultLink = `${baseUrl}/exam-results/${examId}`;
+
+      await SendExamResultsMail({
+        receiver: responderEmail,
+        name: responderName || responderEmail.split("@")[0],
+        examName: exam.title,
+        link: resultLink,
+      });
+
+      // console.log("Result email sent successfully to:", responderEmail);
+    } catch (emailError) {
+      // Don't fail the exam submission if email fails
+      console.error("Failed to send result email:", emailError);
+    }
 
     return Response.Successful({
       message: "Exam attempt saved successfully",

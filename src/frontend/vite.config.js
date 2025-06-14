@@ -21,6 +21,9 @@ export default defineConfig({
     allowedHosts: [
       "https://examinator-dev.onrender.com",
       "examinator-dev.onrender.com",
+      "https://examinatorr.netlify.app/",
+      "https://examinatorr.netlify.app",
+      "examinatorr.netlify.app",
     ],
   },
 });

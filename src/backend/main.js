@@ -6,6 +6,7 @@ import { ExamRouter } from "./imports/RouteImports.js";
 import { AuthRouter } from "./imports/RouteImports.js";
 import { ExamAttemptRouter } from "./imports/RouteImports.js";
 import { IntegrationRouter } from "./imports/RouteImports.js";
+import { MailerRouter } from "./imports/RouteImports.js";
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,9 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://examinator-dev.onrender.com",
   "examinator-dev.onrender.com",
+  "https://examinatorr.netlify.app/",
+  "https://examinatorr.netlify.app",
+  "examinatorr.netlify.app",
 ];
 
 app.use((req, res, next) => {
@@ -49,13 +53,14 @@ app.use("/api/exam", ExamRouter);
 app.use("/api/auth", AuthRouter);
 app.use("/api/exam-attempt", ExamAttemptRouter);
 app.use("/api/integration", IntegrationRouter);
+app.use("/api/mailer", MailerRouter);
 
 try {
   app.listen(port, () => {
-    // console.log(`App is listening on ${port}`);
+    console.log(`App is listening on ${port}`);
   });
 } catch (e) {
-  // console.error(e.message);
+  console.log("Error starting server:", e.message);
 }
 
 export default app;

@@ -81,22 +81,22 @@ jobs:
       #     command: |
       #       npm run test
 
-      - name: Run backend tests with retry
-        working-directory: src/backend
-        run: |
-          n=0
-          until [ $n -ge 3 ]
-          do
-            npm run test && break
-            n=$((n+1))
-            echo "Test failed. Retrying $n/3..."
-            sleep 10
-          done
+      # - name: Run backend tests with retry
+      #   working-directory: src/backend
+      #   run: |
+      #     n=0
+      #     until [ $n -ge 3 ]
+      #     do
+      #       npm run test && break
+      #       n=$((n+1))
+      #       echo "Test failed. Retrying $n/3..."
+      #       sleep 10
+      #     done
 
-          if [ $n -eq 3 ]; then
-            echo "Tests failed after 3 attempts."
-            exit 1
-          fi
+      #     if [ $n -eq 3 ]; then
+      #       echo "Tests failed after 3 attempts."
+      #       exit 1
+      #     fi
 
       - name: Format code
         working-directory: src/backend

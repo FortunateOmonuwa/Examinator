@@ -26,6 +26,15 @@ import {
   ConfirmUser,
   Logout,
 } from "../functionalities/User/Authentication.Service.js";
+import {
+  SendLoginMail,
+  SendRegisterMail,
+  SendConfirmationMail,
+  SendResetPasswordMail,
+  SendExamSubmissionMail,
+  SendExamResultsMail,
+  SendExamLinkMail,
+} from "../functionalities/Mail.Service.js";
 export {
   RegisterAdmin,
   RegisterExaminer,
@@ -47,4 +56,11 @@ export {
   RefreshAccessToken,
   ConfirmUser,
   Logout,
+  SendLoginMail,
+  SendRegisterMail,
+  SendConfirmationMail,
+  SendResetPasswordMail,
+  SendExamSubmissionMail,
+  SendExamResultsMail,
+  SendExamLinkMail,
 };

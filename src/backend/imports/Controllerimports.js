@@ -27,6 +27,13 @@ import {
   Logout,
 } from "./ServicesImports.js";
 import { CalculateScoreAsync } from "../controllers/IntegrationControllers/Integration.Controller.js";
+import {
+  SendMailAsync,
+  SendConfirmationMailAsync,
+  SendResetPasswordMailAsync,
+  SendExamResultsMailAsync,
+  SendExamLinkMailAsync,
+} from "../controllers/IntegrationControllers/Mailer.controller.js";
 export {
   RegisterAdminAsync,
   RegisterExaminerAsync,
@@ -48,4 +55,9 @@ export {
   ConfirmUser,
   Logout,
   CalculateScoreAsync,
+  SendMailAsync,
+  SendConfirmationMailAsync,
+  SendResetPasswordMailAsync,
+  SendExamResultsMailAsync,
+  SendExamLinkMailAsync,
 };

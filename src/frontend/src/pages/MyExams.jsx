@@ -11,6 +11,8 @@ import {
   Globe,
   Lock,
   Users,
+  Plus,
+  X,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { api, examService } from "../services/api";
@@ -25,7 +27,7 @@ const MyExams = () => {
   const [loading, setLoading] = useState(true);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [currentExam, setCurrentExam] = useState(null);
-  const [shareEmail, setShareEmail] = useState("");
+  const [recipients, setRecipients] = useState([""]);
   const [shareLoading, setShareLoading] = useState(false);
 
   useEffect(() => {
@@ -41,17 +43,22 @@ const MyExams = () => {
         //   }
         // }
 
-        const exams = await GetAllExams(user.userId);
-        setExams(exams);
+        const examsData = await GetAllExams(user.userId);
+        setExams(Array.isArray(examsData) ? examsData : []);
       } catch (error) {
         console.error("Error fetching exams:", error);
         toast.error("Failed to load exams");
+        setExams([]); // Ensure exams is always an array
       } finally {
         setLoading(false);
       }
     };
 
-    fetchExams();
+    if (user && user.userId) {
+      fetchExams();
+    } else {
+      setLoading(false);
+    }
   }, [user]);
 
   const handleDeleteExam = async (examId) => {
@@ -59,7 +66,11 @@ const MyExams = () => {
       try {
         const response = await api.delete(`/api/exam/${examId}`);
         if (response.data.response.isSuccessful) {
-          setExams(exams.filter((exam) => exam.id !== examId));
+          setExams((prevExams) =>
+            Array.isArray(prevExams)
+              ? prevExams.filter((exam) => exam.id !== examId)
+              : []
+          );
           toast.success("Exam deleted successfully");
         } else {
           toast.error(
@@ -86,7 +97,11 @@ const MyExams = () => {
           ...exam,
           isPublic: response.response.body.isPublic,
         };
-        setExams(exams.map((e) => (e.id === exam.id ? updatedExam : e)));
+        setExams((prevExams) =>
+          Array.isArray(prevExams)
+            ? prevExams.map((e) => (e.id === exam.id ? updatedExam : e))
+            : [updatedExam]
+        );
         toast.success(response.response.message);
       } else {
         toast.error(
@@ -101,50 +116,75 @@ const MyExams = () => {
 
   const openShareModal = (exam) => {
     setCurrentExam(exam);
+    setRecipients([""]);
     setShareModalOpen(true);
   };
 
-  //Share exaam via email
-  //Hasn't been implemented yet. This is just a simulation
+  const addRecipient = () => {
+    setRecipients([...recipients, ""]);
+  };
+
+  const removeRecipient = (index) => {
+    if (recipients.length > 1) {
+      setRecipients(recipients.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateRecipient = (index, value) => {
+    const newRecipients = [...recipients];
+    newRecipients[index] = value;
+    setRecipients(newRecipients);
+  };
+
+  // Share exam via email using real API endpoint
   const handleShareExam = async (e) => {
     e.preventDefault();
 
-    if (!shareEmail.trim()) {
-      toast.error("Please enter an email address");
+    // Filter out empty recipients
+    const validRecipients = recipients.filter((email) => email.trim() !== "");
+
+    if (validRecipients.length === 0) {
+      toast.error("Please enter at least one email address");
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const invalidEmails = validRecipients.filter(
+      (email) => !emailRegex.test(email)
+    );
+
+    if (invalidEmails.length > 0) {
+      toast.error("Please enter valid email addresses");
       return;
     }
 
     setShareLoading(true);
 
     try {
-      // Simulate sending email
-      // const res = await api.post(`/api/services/send-mail`, {
-      //   email: {
-      //     to: shareEmail,
-      //     subject: `Check out this exam from ${user.name}`,
-      //     body: `Hey there! ${user.name} has shared an exam with you. Click the link below to take the exam: ${window.location.origin}/exam/${currentExam.id}`
-      //   }
-      // })
+      const examLink = `${window.location.origin}/exam/${currentExam.id}`;
 
-      // if (res.data.response.isSuccessful) {
-      //   toast.success(`Exam link sent to ${shareEmail}`);
-      //   setShareModalOpen(false);
-      //   setShareEmail("");
-      //   setShareLoading(false);
-      // } else {
-      //   toast.error(res.data.response.message || "Failed to share exam");
-      //   setShareLoading(false);
-      // }
+      const res = await api.post(`/api/mailer/send-exam-link`, {
+        recipients: validRecipients,
+        name: user.name || "Examiner",
+        examName: currentExam.title,
+        link: examLink,
+      });
 
-      setTimeout(() => {
-        toast.success(`Exam link sent to ${shareEmail}`);
+      if (res.data.response.isSuccessful) {
+        const recipientCount = validRecipients.length;
+        toast.success(
+          `Exam link sent successfully to ${recipientCount} recipient${recipientCount > 1 ? "s" : ""}`
+        );
         setShareModalOpen(false);
-        setShareEmail("");
-        setShareLoading(false);
-      }, 1000);
+        setRecipients([""]);
+      } else {
+        toast.error(res.data.response.message || "Failed to share exam");
+      }
     } catch (error) {
-      console.error("Error sharing exam:", error);
-      toast.error("Failed to share exam");
+      // console.error("Error sharing exam:", error);
+      toast.error("Failed to share exam. Please try again.");
+    } finally {
       setShareLoading(false);
     }
   };
@@ -165,7 +205,7 @@ const MyExams = () => {
         <h1 className="text-2xl font-bold text-gray-900">My Exams</h1>
       </div>
 
-      {exams.length === 0 ? (
+      {!exams || exams.length === 0 ? (
         <div className="text-center py-12 empty-state">
           <h3 className="mt-2 text-lg font-medium text-gray-900">
             No exams found
@@ -313,20 +353,43 @@ const MyExams = () => {
 
             <form onSubmit={handleShareExam}>
               <div className="mb-4">
-                <label
-                  htmlFor="share-email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Share via Email
                 </label>
-                <input
-                  id="share-email"
-                  type="email"
-                  value={shareEmail}
-                  onChange={(e) => setShareEmail(e.target.value)}
-                  placeholder="Enter recipient's email"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
+                <div className="space-y-2">
+                  {recipients.map((email, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => updateRecipient(index, e.target.value)}
+                        placeholder="Enter recipient's email"
+                        className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      />
+                      {recipients.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeRecipient(index)}
+                          className="p-2 text-red-600 hover:text-red-800"
+                          title="Remove recipient"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mb-4">
+                <button
+                  type="button"
+                  onClick={addRecipient}
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-pink-600 bg-pink-100 hover:bg-pink-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                >
+                  <Plus className="mr-1 h-4 w-4" />
+                  Add Recipient
+                </button>
               </div>
 
               <div className="flex justify-end space-x-3">

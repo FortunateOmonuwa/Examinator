@@ -424,6 +424,34 @@ const ExamResults = () => {
           </button>
         </div>
 
+        {/* Email Notification */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-blue-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-blue-800">
+                Results Sent to Your Email
+              </h3>
+              <div className="mt-1 text-sm text-blue-700">
+                <p>
+                  A link to your exam results has been sent to{" "}
+                  <strong>{results.studentEmail}</strong>. You can access your
+                  results anytime using the link in your email.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Debug Information
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
           <h4 className="font-medium text-yellow-800 mb-2">
