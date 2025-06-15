@@ -1,5 +1,5 @@
 import axios from "axios";
-
+//console.log("BASE URL:", import.meta.env.VITE_BASE_URL);
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   //baseURL: "http://localhost:5001",
@@ -10,6 +10,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+//console.log("Axios baseURL:", api.defaults.baseURL);
 
 // api.interceptors.request.use(
 //   (config) => {

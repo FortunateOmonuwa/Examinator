@@ -27,6 +27,7 @@ import PublicExams from "./pages/PublicExams";
 import AccountLocked from "./pages/AccountLocked";
 
 function App() {
+  //console.log(import.meta.env.VITE_BASE_URL);
   return (
     <AuthProvider>
       <Router>

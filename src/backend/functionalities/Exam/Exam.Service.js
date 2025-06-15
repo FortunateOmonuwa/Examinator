@@ -1,4 +1,4 @@
-import { database, baseUrl } from "../../imports/UtilityImports.js";
+import { database } from "../../imports/UtilityImports.js";
 import { Exam, Question, Option } from "../../imports/ModelImports.js";
 import Response from "../../utilities/Response.js";
 import { checkExaminerId } from "../User/User.Service.js";
@@ -116,7 +116,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
       },
     });
 
-    const examLink = `${baseUrl}/exam/${newExam.id}`;
+    const examLink = `https://examinatorr.netlify.app/exam/${newExam.id}`;
 
     const updatedExam = await database.Exam.update({
       where: { id: newExam.id },

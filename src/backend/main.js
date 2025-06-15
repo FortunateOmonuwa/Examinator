@@ -58,6 +58,7 @@ app.use("/api/mailer", MailerRouter);
 try {
   app.listen(port, () => {
     console.log(`App is listening on ${port}`);
+   
   });
 } catch (e) {
   console.log("Error starting server:", e.message);
