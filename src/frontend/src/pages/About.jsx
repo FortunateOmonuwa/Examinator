@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { Users, Award, Shield, BookOpen } from "lucide-react";
 import "../styles/about.scss";
+import storyImage from "../images/story.png";
 
 const About = () => {
   return (
     <div className="about-page">
-      <div className="hero-section bg-pink-600 text-white py-16 md:py-24">
+      <div className="bg-pink-600 text-white py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             About Exerminator
@@ -39,8 +40,8 @@ const About = () => {
           </div>
           <div className="about-image">
             <img
-              src="/images/about-team.png"
-              alt="Exerminator Team"
+              src={storyImage}
+              alt="Examinator Team"
               className="w-full h-auto rounded-lg shadow-lg"
             />
           </div>
