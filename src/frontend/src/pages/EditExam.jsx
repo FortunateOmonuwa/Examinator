@@ -42,6 +42,9 @@ const EditExam = () => {
               id: String(qIndex + 1),
               text: q.text,
               required: q.required,
+              type: q.type?.toLowerCase() || "singlechoice", // Convert SINGLECHOICE to singlechoice
+              expectedAnswer: q.expectedAnswer || "",
+              score: q.score || 1,
               options: q.options.map((o, oIndex) => ({
                 id: `${qIndex + 1}-${oIndex + 1}`,
                 text: o.text,
@@ -75,6 +78,9 @@ const EditExam = () => {
         id: newId,
         text: "",
         required: true,
+        type: "singlechoice",
+        expectedAnswer: "",
+        score: 1,
         options: [
           { id: `${newId}-1`, text: "", isCorrect: false },
           { id: `${newId}-2`, text: "", isCorrect: false },
@@ -100,6 +106,44 @@ const EditExam = () => {
   const updateQuestionRequired = (questionId, required) => {
     setQuestions(
       questions.map((q) => (q.id === questionId ? { ...q, required } : q))
+    );
+  };
+
+  const updateQuestionScore = (questionId, score) => {
+    const numericScore = Math.max(0, parseInt(score) || 1);
+    setQuestions(
+      questions.map((q) =>
+        q.id === questionId ? { ...q, score: numericScore } : q
+      )
+    );
+  };
+
+  const updateQuestionType = (questionId, type) => {
+    setQuestions(
+      questions.map((q) =>
+        q.id === questionId
+          ? {
+              ...q,
+              type,
+              expectedAnswer: q.expectedAnswer || "",
+              options:
+                type === "text"
+                  ? []
+                  : q.options.length >= 2
+                    ? q.options
+                    : [
+                        { id: `${questionId}-1`, text: "", isCorrect: false },
+                        { id: `${questionId}-2`, text: "", isCorrect: false },
+                      ],
+            }
+          : q
+      )
+    );
+  };
+
+  const updateQuestionExpectedAnswer = (questionId, expectedAnswer) => {
+    setQuestions(
+      questions.map((q) => (q.id === questionId ? { ...q, expectedAnswer } : q))
     );
   };
 
@@ -159,13 +203,24 @@ const EditExam = () => {
     setQuestions(
       questions.map((q) => {
         if (q.id === questionId) {
-          return {
-            ...q,
-            options: q.options.map((o) => ({
-              ...o,
-              isCorrect: o.id === optionId,
-            })),
-          };
+          if (q.type === "singlechoice") {
+            // For single choice, only one option can be correct
+            return {
+              ...q,
+              options: q.options.map((o) => ({
+                ...o,
+                isCorrect: o.id === optionId,
+              })),
+            };
+          } else {
+            // For multichoice, toggle the option
+            return {
+              ...q,
+              options: q.options.map((o) =>
+                o.id === optionId ? { ...o, isCorrect: !o.isCorrect } : o
+              ),
+            };
+          }
         }
         return q;
       })
@@ -190,6 +245,11 @@ const EditExam = () => {
       if (!question.text.trim()) {
         toast.error("All questions must have text");
         return false;
+      }
+
+      if (question.type === "text") {
+        // Text questions don't need options validation
+        continue;
       }
 
       let hasCorrectOption = false;
@@ -229,6 +289,9 @@ const EditExam = () => {
       const formattedQuestions = questions.map((q) => ({
         text: q.text,
         required: q.required,
+        type: q.type.toUpperCase(), // Convert singlechoice to SINGLECHOICE
+        expectedAnswer: q.expectedAnswer || "",
+        score: q.score || 1,
         options: q.options.map((o) => ({
           text: o.text,
           isCorrect: o.isCorrect,
@@ -256,7 +319,7 @@ const EditExam = () => {
       }
 
       toast.success("Exam updated successfully");
-      navigate(`/dashboard/exams/${examId}`);
+      navigate("/dashboard/my-exams");
     } catch (error) {
       console.error("Error updating exam:", error);
       toast.error("Failed to update exam");
@@ -397,14 +460,6 @@ const EditExam = () => {
         <div className="space-y-6 questions-section">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-900">Questions</h2>
-            <button
-              type="button"
-              onClick={addQuestion}
-              className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-            >
-              <Plus className="mr-1 h-4 w-4" />
-              Add Question
-            </button>
           </div>
 
           {questions.map((question, qIndex) => (
@@ -416,17 +471,58 @@ const EditExam = () => {
                 <h3 className="text-lg font-medium text-gray-900">
                   Question {qIndex + 1}
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => removeQuestion(question.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <label
+                      htmlFor={`score-${question.id}`}
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Score:
+                    </label>
+                    <input
+                      type="number"
+                      id={`score-${question.id}`}
+                      value={question.score || 1}
+                      onChange={(e) =>
+                        updateQuestionScore(question.id, e.target.value)
+                      }
+                      min="0"
+                      step="1"
+                      className="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeQuestion(question.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-4">
                 <div>
+                  <label
+                    htmlFor={`question-type-${question.id}`}
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Question Type
+                  </label>
+                  <select
+                    id={`question-type-${question.id}`}
+                    value={question.type}
+                    onChange={(e) =>
+                      updateQuestionType(question.id, e.target.value)
+                    }
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                  >
+                    <option value="singlechoice">Single Choice</option>
+                    <option value="multichoice">Multiple Choice</option>
+                    <option value="text">Text Answer</option>
+                  </select>
+                </div>
+                <div className="mb-4">
                   <label
                     htmlFor={`question-${question.id}`}
                     className="block text-sm font-medium text-gray-700"
@@ -463,79 +559,121 @@ const EditExam = () => {
                   </label>
                 </div>
 
-                <div className="space-y-2 options-container">
-                  <div className="flex justify-between items-center">
+                {question.type === "text" && (
+                  <div>
+                    <label
+                      htmlFor={`expected-answer-${question.id}`}
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Expected Answer (Optional)
+                    </label>
+                    <textarea
+                      id={`expected-answer-${question.id}`}
+                      value={question.expectedAnswer || ""}
+                      onChange={(e) =>
+                        updateQuestionExpectedAnswer(
+                          question.id,
+                          e.target.value
+                        )
+                      }
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                      placeholder="Enter expected answer for reference (optional)"
+                      rows={2}
+                    />
+                  </div>
+                )}
+
+                {question.type !== "text" && (
+                  <div className="space-y-2 options-container">
                     <label className="block text-sm font-medium text-gray-700">
                       Options
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => addOption(question.id)}
-                      className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                    >
-                      <Plus className="mr-1 h-3 w-3" />
-                      Add Option
-                    </button>
-                  </div>
 
-                  {question.options.map((option) => (
-                    <div
-                      key={option.id}
-                      className="flex items-center space-x-2 option-item"
-                    >
-                      <input
-                        type="radio"
-                        id={`option-${option.id}`}
-                        name={`correct-${question.id}`}
-                        checked={option.isCorrect}
-                        onChange={() =>
-                          updateOptionCorrect(question.id, option.id)
-                        }
-                        className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={option.text}
-                        onChange={(e) =>
-                          updateOptionText(
-                            question.id,
-                            option.id,
-                            e.target.value
-                          )
-                        }
-                        className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-                        placeholder="Option text"
-                      />
+                    {question.options.map((option) => (
+                      <div
+                        key={option.id}
+                        className="flex items-center space-x-2 option-item"
+                      >
+                        <input
+                          type={
+                            question.type === "singlechoice"
+                              ? "radio"
+                              : "checkbox"
+                          }
+                          id={`option-${option.id}`}
+                          name={`correct-${question.id}`}
+                          checked={option.isCorrect}
+                          onChange={() =>
+                            updateOptionCorrect(question.id, option.id)
+                          }
+                          className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
+                        />
+                        <input
+                          type="text"
+                          value={option.text}
+                          onChange={(e) =>
+                            updateOptionText(
+                              question.id,
+                              option.id,
+                              e.target.value
+                            )
+                          }
+                          className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                          placeholder="Option text"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeOption(question.id, option.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+
+                    <div className="flex justify-start mt-2">
                       <button
                         type="button"
-                        onClick={() => removeOption(question.id, option.id)}
-                        className="text-red-600 hover:text-red-800"
+                        onClick={() => addOption(question.id)}
+                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Plus className="mr-1 h-3 w-3" />
+                        Add Option
                       </button>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end form-actions">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0 sm:space-x-4 form-actions">
           <button
             type="button"
-            onClick={() => navigate(-1)}
-            className="mr-4 inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            onClick={addQuestion}
+            className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
           >
-            Cancel
+            <Plus className="mr-1 h-4 w-4" />
+            Add Question
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
-          >
-            {isSubmitting ? "Saving..." : "Save Changes"}
-          </button>
+
+          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
+            >
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
         </div>
       </form>
     </div>

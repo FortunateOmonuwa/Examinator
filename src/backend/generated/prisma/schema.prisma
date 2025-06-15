@@ -83,7 +83,7 @@ model StudentExam {
   startedAt   DateTime?
   completedAt DateTime?
   timeSpent   Int
-  score       Float?
+  score       String?
 
   @@unique([studentId, examId])
 }
@@ -98,6 +98,7 @@ model Question {
   required       Boolean
   type           QuestionType
   expectedAnswer String?
+  score          Int          @default(1)
 }
 
 model Option {

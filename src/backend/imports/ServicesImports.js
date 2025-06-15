@@ -12,6 +12,7 @@ import {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  UpdateExam,
   ToggleExamPublicStatus,
 } from "../functionalities/Exam/Exam.Service.js";
 import {
@@ -25,6 +26,15 @@ import {
   ConfirmUser,
   Logout,
 } from "../functionalities/User/Authentication.Service.js";
+import {
+  SendLoginMail,
+  SendRegisterMail,
+  SendConfirmationMail,
+  SendResetPasswordMail,
+  SendExamSubmissionMail,
+  SendExamResultsMail,
+  SendExamLinkMail,
+} from "../functionalities/Mail.Service.js";
 export {
   RegisterAdmin,
   RegisterExaminer,
@@ -37,6 +47,7 @@ export {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  UpdateExam,
   ToggleExamPublicStatus,
   CreateExamAttempt,
   GetExamAttempts,
@@ -45,4 +56,11 @@ export {
   RefreshAccessToken,
   ConfirmUser,
   Logout,
+  SendLoginMail,
+  SendRegisterMail,
+  SendConfirmationMail,
+  SendResetPasswordMail,
+  SendExamSubmissionMail,
+  SendExamResultsMail,
+  SendExamLinkMail,
 };

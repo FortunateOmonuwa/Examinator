@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
-import "../styles/faqs.scss"
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import "../styles/faqs.scss";
 
 const FAQs = () => {
-  const [openFaq, setOpenFaq] = useState(null)
+  const [openFaq, setOpenFaq] = useState(null);
 
   const toggleFaq = (index) => {
-    setOpenFaq(openFaq === index ? null : index)
-  }
+    setOpenFaq(openFaq === index ? null : index);
+  };
 
   const faqs = [
     {
-      question: "What is Exerminator?",
+      question: "What is Examinator?",
       answer:
-        "Exerminator is an online examination platform that allows educators to create, manage, and conduct exams while providing students with a seamless exam-taking experience.",
+        "Examinator is an online examination platform that allows educators to create, manage, and conduct exams while providing students with a seamless exam-taking experience.",
     },
     {
       question: "How do I create an exam?",
@@ -49,25 +49,28 @@ const FAQs = () => {
     },
     {
       question: "Is there a limit to how many exams I can create?",
-      answer: "In the current version, there is no limit to the number of exams you can create as an examiner.",
+      answer:
+        "In the current version, there is no limit to the number of exams you can create as an examiner.",
     },
     {
       question: "How do I view the results of my exams?",
       answer:
         "As an examiner, you can view detailed results and analytics for each exam from your dashboard. Select the exam and click on 'View Results' to see individual and aggregate performance data.",
     },
-    {
-      question: "Is my data secure on Exerminator?",
-      answer:
-        "Yes, we take data security very seriously. All data is encrypted, and we follow industry best practices to ensure the security and privacy of your information.",
-    },
-  ]
+    // {
+    //   question: "Is my data secure on Exerminator?",
+    //   answer:
+    //     "Yes, we take data security very seriously. All data is encrypted, and we follow industry best practices to ensure the security and privacy of your information.",
+    // },
+  ];
 
   return (
     <div className="faqs-page">
-      <div className="hero-section bg-pink-600 text-white py-16">
+      <div className=" bg-pink-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
+          <h1 className="text-4xl font-bold mb-4">
+            Frequently Asked Questions
+          </h1>
           <p className="text-xl max-w-2xl mx-auto">
             Find answers to common questions about Exerminator and how it works.
           </p>
@@ -86,14 +89,18 @@ const FAQs = () => {
                   className="w-full text-left p-6 flex justify-between items-center focus:outline-none"
                   onClick={() => toggleFaq(index)}
                 >
-                  <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {faq.question}
+                  </h3>
                   {openFaq === index ? (
                     <ChevronUp className="h-5 w-5 text-pink-600" />
                   ) : (
                     <ChevronDown className="h-5 w-5 text-gray-500" />
                   )}
                 </button>
-                <div className={`faq-answer px-6 pb-6 ${openFaq === index ? "block" : "hidden"}`}>
+                <div
+                  className={`faq-answer px-6 pb-6 ${openFaq === index ? "block" : "hidden"}`}
+                >
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
               </div>
@@ -101,9 +108,12 @@ const FAQs = () => {
           </div>
 
           <div className="mt-12 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Still Have Questions?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Still Have Questions?
+            </h2>
             <p className="text-gray-600 mb-6">
-              If you couldn't find the answer to your question, feel free to contact us.
+              If you couldn't find the answer to your question, feel free to
+              contact us.
             </p>
             <a
               href="mailto:support@exerminator.com"
@@ -115,7 +125,7 @@ const FAQs = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FAQs
+export default FAQs;
