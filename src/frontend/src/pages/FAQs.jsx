@@ -13,9 +13,9 @@ const FAQs = () => {
 
   const faqs = [
     {
-      question: "What is Exerminator?",
+      question: "What is Examinator?",
       answer:
-        "Exerminator is an online examination platform that allows educators to create, manage, and conduct exams while providing students with a seamless exam-taking experience.",
+        "Examinator is an online examination platform that allows educators to create, manage, and conduct exams while providing students with a seamless exam-taking experience.",
     },
     {
       question: "How do I create an exam?",
@@ -57,11 +57,11 @@ const FAQs = () => {
       answer:
         "As an examiner, you can view detailed results and analytics for each exam from your dashboard. Select the exam and click on 'View Results' to see individual and aggregate performance data.",
     },
-    {
-      question: "Is my data secure on Exerminator?",
-      answer:
-        "Yes, we take data security very seriously. All data is encrypted, and we follow industry best practices to ensure the security and privacy of your information.",
-    },
+    // {
+    //   question: "Is my data secure on Exerminator?",
+    //   answer:
+    //     "Yes, we take data security very seriously. All data is encrypted, and we follow industry best practices to ensure the security and privacy of your information.",
+    // },
   ];
 
   return (

@@ -21,7 +21,9 @@ const About = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-10">
+              Our Story
+            </h2>
             <p className="text-gray-600 mb-4">
               Examinator was founded in 2025 with a simple goal: to make
               examination processes more efficient, accessible, and fair for
