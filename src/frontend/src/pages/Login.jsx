@@ -41,9 +41,12 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 auth-container">
       <div className="max-w-md w-full space-y-8 auth-form">
         <div>
-          <h1 className="text-center text-3xl font-extrabold text-pink-600">
-            Examinator
-          </h1>
+          <Link to="/" className="flex-shrink-0">
+            <h1 className="text-center text-3xl font-extrabold text-pink-600">
+              Examinator
+            </h1>
+          </Link>
+
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
