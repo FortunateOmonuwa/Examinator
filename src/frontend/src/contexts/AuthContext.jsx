@@ -42,7 +42,18 @@ export const AuthProvider = ({ children }) => {
         throw new Error(res.data.response.message || "Login failed");
       }
     } catch (err) {
-      throw err.response?.data?.response?.message || err.message;
+      const errorResponse = err.response?.data?.response;
+
+      // Check if account is locked
+      if (errorResponse?.resultCode === 403 && errorResponse?.body?.isLocked) {
+        // Create a special error object for account locked
+        const accountLockedError = new Error(errorResponse.message);
+        accountLockedError.isAccountLocked = true;
+        accountLockedError.lockedUntil = errorResponse.body.lockedUntil;
+        throw accountLockedError;
+      }
+
+      throw new Error(errorResponse?.message || err.message || "Login failed");
     }
   };
 

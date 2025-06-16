@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { publicExamService } from "../services/api";
+import { examService, publicExamService } from "../services/api";
 
 const ExamDetails = () => {
   const { examId } = useParams();
@@ -20,16 +20,14 @@ const ExamDetails = () => {
   const fetchExamDetails = async () => {
     try {
       setLoading(true);
-      const response = await publicExamService.getPublicExams();
+      const response = await examService.getExam(examId);
 
       if (response.response && response.response.isSuccessful) {
-        const foundExam = response.response.body.find((e) => e.id === examId);
-        if (foundExam) {
-          setExam(foundExam);
-        } else {
-          toast.error("Exam not found");
-          navigate("/take-exam");
-        }
+        const examData = response.response.body;
+        setExam(examData);
+      } else {
+        toast.error("Exam not found");
+        navigate("/take-exam");
       }
     } catch (error) {
       // console.error("Error fetching exam details:", error);
@@ -228,7 +226,7 @@ const ExamDetails = () => {
         {/* Back Button */}
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate("/take-exam")}
+            onClick={() => navigate("/public-exams")}
             className="text-pink-600 hover:text-pink-700 font-medium"
           >
             ← Back to Browse Exams

@@ -23,8 +23,11 @@ import ExamResults from "./pages/ExamResults";
 import ExamAttempts from "./pages/ExamAttempts";
 import ExamAttemptDetail from "./pages/ExamAttemptDetail";
 import ExamDetails from "./pages/ExamDetails";
+import PublicExams from "./pages/PublicExams";
+import AccountLocked from "./pages/AccountLocked";
 
 function App() {
+  //console.log(import.meta.env.VITE_BASE_URL);
   return (
     <AuthProvider>
       <Router>
@@ -33,7 +36,9 @@ function App() {
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
             <Route path="take-exam" element={<TakeExam />} />
+            <Route path="public-exams" element={<PublicExams />} />
             <Route path="exam/:examId" element={<ExamDetails />} />
+            <Route path="account-locked" element={<AccountLocked />} />
             <Route path="about" element={<About />} />
             <Route path="faqs" element={<FAQs />} />
           </Route>

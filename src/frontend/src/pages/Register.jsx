@@ -16,11 +16,24 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const passwordCriteria = {
+    length: password.length >= 7,
+    number: /\d/.test(password),
+    special: /[#?!@$%^&*-]/.test(password),
+  };
+
+  const showPasswordRequirements = password.length > 0;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
+      return;
+    }
+
+    if (!Object.values(passwordCriteria).every(Boolean)) {
+      toast.error("Password doesn't meet requirements");
       return;
     }
 
@@ -101,6 +114,7 @@ const Register = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div>
               <label htmlFor="password" className="sr-only">
                 Password
@@ -117,6 +131,33 @@ const Register = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
+            {showPasswordRequirements && (
+              <div className="text-sm mt-2 ml-1">
+                <p
+                  className={`${
+                    passwordCriteria.length ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  • At least 7 characters
+                </p>
+                <p
+                  className={`${
+                    passwordCriteria.number ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  • Contains at least one number
+                </p>
+                <p
+                  className={`${
+                    passwordCriteria.special ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  • Contains at least one special character
+                </p>
+              </div>
+            )}
+
             <div>
               <label htmlFor="confirm-password" className="sr-only">
                 Confirm Password

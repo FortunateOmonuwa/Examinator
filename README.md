@@ -231,7 +231,7 @@ We welcome contributions to the Examinator project! To ensure code quality and c
 6. Run linting: `npm run lint`
 7. Commit your changes (`git commit -m 'Add some amazing feature'`)
 8. Push to the branch (`git push origin feature/amazing-feature`)
-9. Open a Pull Request with:
+9. Open a Pull Request to the dev branch with:
    - Clear description of changes
    - Test coverage report
    - Screenshots for UI changes (if applicable)

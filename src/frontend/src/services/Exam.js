@@ -31,9 +31,10 @@ const GetAllExams = async (examinerId) => {
   try {
     let response = await api.get(`/api/exam/exams/${examinerId}`);
 
-    return response.data.response.body;
+    return response.data.response.body || [];
   } catch (error) {
     // console.log(error);
+    return [];
   }
 };
 
