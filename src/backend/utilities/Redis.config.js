@@ -1,6 +1,6 @@
 // redisClient.ts (or .js if you're not on TS)
 import Redis from "ioredis";
-import { redisHost, redisPort } from "../../../Config";
+import { redisHost, redisPort } from "../../../Config.js";
 const client = new Redis({
   host: redisHost,
   port: redisPort,
