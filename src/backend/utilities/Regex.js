@@ -1,5 +1,6 @@
+import isEmail from "validator/lib/isEmail.js";
 const nameRegex = /^[a-zA-Z\s]+$/;
 const passwordRegex = /^(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{7,}$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = isEmail;
 
 export { nameRegex, passwordRegex, emailRegex };

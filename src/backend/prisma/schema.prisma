@@ -46,6 +46,7 @@ model UserProfile {
   email String @unique
   passwordHash String
   role Role
+  isVerified Boolean @default(false)
   authManager AuthManager? 
   examiner Examiner?
   student Student?

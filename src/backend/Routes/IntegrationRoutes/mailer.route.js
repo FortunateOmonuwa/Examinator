@@ -1,6 +1,7 @@
 import { express } from "../../imports/PackageImports.js";
 import {
   SendMailAsync,
+  ResendVerificationMailAsync,
   SendConfirmationMailAsync,
   SendResetPasswordMailAsync,
   SendExamResultsMailAsync,
@@ -13,8 +14,9 @@ import {
 const router = express.Router();
 
 router.post("/send-mail", SendMailAsync);
-router.post("/send-confirmation", SendConfirmationMailAsync);
-router.post("/send-reset-password", SendResetPasswordMailAsync);
+router.post("/resend-verification-mail", ResendVerificationMailAsync);
+router.post("/send-verification-mail", SendConfirmationMailAsync);
+router.post("/reset-password", SendResetPasswordMailAsync);
 router.post("/send-exam-results", SendExamResultsMailAsync);
 router.post(
   "/send-exam-link",

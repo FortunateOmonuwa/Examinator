@@ -6,7 +6,9 @@ import {
 } from "../../imports/UtilityImports.js";
 import Response from "../../utilities/Response.js";
 import jwt from "jsonwebtoken";
+import { VerifyAccount } from "./User.Service.js";
 const Login = async ({ email, password }) => {
+  console.log(`Login attempt by ${email}`);
   if (!email || !password) {
     return Response.Unsuccessful({
       message: "Missing required fields",
@@ -15,6 +17,7 @@ const Login = async ({ email, password }) => {
   }
 
   try {
+    console.log(`Fetching details for: ${email}`);
     const user = await database.UserProfile.findUnique({
       where: {
         email: email.toUpperCase(),
@@ -25,13 +28,15 @@ const Login = async ({ email, password }) => {
         authManager: true,
       },
     });
-
+    console.log("User", user);
     if (!user) {
+      console.log(`User not found`);
       return Response.Unsuccessful({
         message: "Email or password is incorrect",
         resultCode: 401,
       });
     }
+    //console.log("Email found");
     const isAccountLocked =
       user.authManager?.isLocked &&
       user.authManager?.lockedUntil > new Date(Date.now());
@@ -52,6 +57,7 @@ const Login = async ({ email, password }) => {
         },
       });
 
+      console.log(`${email} Account locked`);
       return Response.Unsuccessful({
         message: `Your account has been locked due to too many login attempts. Please try again in 1 hour.`,
         resultCode: 403,
@@ -77,10 +83,9 @@ const Login = async ({ email, password }) => {
           },
         });
       }
-
       const remainingAttempts = Math.max(0, 5 - updatedAttempts);
       let message = "Email or password is incorrect";
-
+      console.log(message);
       if (updatedAttempts >= 3 && updatedAttempts < 5) {
         message += `. You have ${remainingAttempts} attempt${remainingAttempts !== 1 ? "s" : ""} left before your account is locked.`;
       }
@@ -93,6 +98,18 @@ const Login = async ({ email, password }) => {
           remainingAttempts: remainingAttempts,
           loginSuccessful: false,
         },
+      });
+    }
+
+    console.log(`${email} Password correct`);
+    //console.log("Correct status", user.isVerified);
+    if (user.isVerified === false) {
+      console.log(`${email} Account not verified`);
+      return Response.Unsuccessful({
+        message:
+          "Your account is not verified. Please verify your account before logging in.",
+        resultCode: 401,
+        error: "Unverified",
       });
     }
 
@@ -127,6 +144,7 @@ const Login = async ({ email, password }) => {
       },
     });
 
+    console.log(`${email} Login successful`);
     return Response.Successful({
       message: "Login successful",
       body: {
@@ -134,6 +152,7 @@ const Login = async ({ email, password }) => {
         accessToken: token,
         refreshToken: refreshToken,
         userId: user_Id,
+        isVerified: user.authManager.isVerified,
       },
     });
   } catch (error) {

@@ -25,6 +25,12 @@ import ExamAttemptDetail from "./pages/ExamAttemptDetail";
 import ExamDetails from "./pages/ExamDetails";
 import PublicExams from "./pages/PublicExams";
 import AccountLocked from "./pages/AccountLocked";
+import Verify from "./pages/Verification-Pages/Verify";
+import Success from "./pages/Verification-Pages/Success";
+import AlreadyVerified from "./pages/Verification-Pages/Already-Verfied";
+import Failed from "./pages/Verification-Pages/Failed";
+import VerificationError from "./pages/Verification-Pages/VerificationError";
+import Error from "./pages/Error";
 
 function App() {
   //console.log(import.meta.env.VITE_BASE_URL);
@@ -45,7 +51,15 @@ function App() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/verification/success" element={<Success />} />
+          <Route
+            path="/verification/already-verified"
+            element={<AlreadyVerified />}
+          />
+          <Route path="/verification/failed" element={<Failed />} />
+          <Route path="/verification/error" element={<VerificationError />} />
+          <Route path="/error" element={<Error />} />
           <Route path="/dashboard" element={<Layout />}>
             <Route
               index

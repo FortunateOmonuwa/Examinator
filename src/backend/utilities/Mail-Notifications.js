@@ -1,3 +1,5 @@
+import { baseUrl } from "../../../Config.js";
+
 const baseEmailTemplate = ({ name, bodyContent }) => `
   <html>
     <head>
@@ -90,12 +92,13 @@ const baseEmailTemplate = ({ name, bodyContent }) => `
   </html>
 `;
 
-const ConfirmMail = ({ receiver, name, confirmationToken }) => {
-  const subject = "Confirm Your Examinator Account";
-  const confirmationLink = `${process.env.VITE_BASE_URL}/api/auth/confirm?token=${confirmationToken}`;
+const ConfirmMail = ({ id, receiver, name, confirmationToken }) => {
+  console.log("ConfirmMail:", id, receiver, name, confirmationToken);
+  const subject = "Verify Your Examinator Account";
+  const confirmationLink = `${baseUrl}/api/account/verify?id=${id}&token=${confirmationToken}`;
   const bodyContent = `
-      <p>Thank you for registering with Examinator. Please confirm your account by clicking the button below:</p>
-      <a class="button" href="${confirmationLink}">Confirm Your Account</a>
+      <p>Thank you for registering with Examinator. Please verify your account by clicking the button below:</p>
+      <a class="button" href="${confirmationLink}">Verify Your Account</a>
     `;
 
   return {

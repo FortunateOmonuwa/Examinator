@@ -2,6 +2,7 @@ import {
   CreateHash,
   CompareHash,
   Generate64BaeHexString,
+  GenerateOTP,
 } from "../utilities/Encrypt.js";
 import Response from "../utilities/Response.js";
 import { nameRegex, passwordRegex, emailRegex } from "../utilities/Regex.js";
@@ -24,11 +25,11 @@ export {
   database,
   CompareHash,
   Generate64BaeHexString,
- 
   RegisterMail,
   ConfirmMail,
   ResetPasswordMail,
   LoginMail,
   ExamSubmissionMail,
   ExamResultsMail,
+  GenerateOTP,
 };

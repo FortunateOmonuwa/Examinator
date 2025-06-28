@@ -34,7 +34,9 @@ import {
   SendExamSubmissionMail,
   SendExamResultsMail,
   SendExamLinkMail,
+  ResendVerificationMail,
 } from "../functionalities/Mail.Service.js";
+import { VerifyAccount } from "../functionalities/User/User.Service.js";
 export {
   RegisterAdmin,
   RegisterExaminer,
@@ -58,9 +60,11 @@ export {
   Logout,
   SendLoginMail,
   SendRegisterMail,
+  ResendVerificationMail,
   SendConfirmationMail,
   SendResetPasswordMail,
   SendExamSubmissionMail,
   SendExamResultsMail,
   SendExamLinkMail,
+  VerifyAccount,
 };

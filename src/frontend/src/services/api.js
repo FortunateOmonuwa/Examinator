@@ -1,11 +1,13 @@
 import axios from "axios";
+import { baseUrl } from "../../../../Config";
+
 //console.log("BASE URL:", import.meta.env.VITE_BASE_URL);
 const api = axios.create({
   //baseURL: import.meta.env.VITE_BASE_URL,
   //baseURL: "http://localhost:5001",
-  baseURL: "https://examinator-backend-dev.onrender.com",
+  baseURL: baseUrl,
 
-  timeout: 10000,
+  timeout: 20000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

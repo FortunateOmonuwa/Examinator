@@ -5,6 +5,7 @@ import {
   SendResetPasswordMail,
   SendExamResultsMail,
   SendExamLinkMail,
+  ResendVerificationMail,
 } from "../../imports/ServicesImports.js";
 
 const SendMailAsync = async (req, res) => {
@@ -30,15 +31,34 @@ const SendMailAsync = async (req, res) => {
   }
 };
 
+const ResendVerificationMailAsync = async (req, res) => {
+  const { body: requestBody } = req;
+  const { email } = requestBody;
+
+  try {
+    
+    const response = await ResendVerificationMail({ email: email });
+    if (response.isSuccessful) {
+      return res.status(200).json({ response: response });
+    } else {
+      return res.status(response.resultCode).json({ response: response });
+    }
+  } catch (e) {
+    return res.status(500).json({
+      response: Response.Unsuccessful(),
+    });
+  }
+};
+
 const SendConfirmationMailAsync = async (req, res) => {
   const { body: requestBody } = req;
-  const { receiver, name, confirmationToken } = requestBody;
+  const { id, receiver, name } = requestBody;
 
   try {
     const response = await SendConfirmationMail({
+      id: id,
       receiver: receiver,
       name: name,
-      confirmationToken: confirmationToken,
     });
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });
@@ -146,6 +166,7 @@ const SendExamLinkMailAsync = async (req, res) => {
 
 export {
   SendMailAsync,
+  ResendVerificationMailAsync,
   SendConfirmationMailAsync,
   SendResetPasswordMailAsync,
   SendExamResultsMailAsync,

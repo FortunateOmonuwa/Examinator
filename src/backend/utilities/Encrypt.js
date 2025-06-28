@@ -16,4 +16,11 @@ const Generate64BaeHexString = async () => {
   const hexString = crypto.randomBytes(64).toString("hex");
   return hexString;
 };
-export { CreateHash, CompareHash, Generate64BaeHexString };
+
+async function GenerateOTP() {
+  const otp = crypto.randomInt(100000, 1000000);
+  return otp.toString();
+}
+
+console.log("OTP:", GenerateOTP());
+export { CreateHash, CompareHash, Generate64BaeHexString, GenerateOTP };

@@ -7,6 +7,7 @@ import { AuthRouter } from "./imports/RouteImports.js";
 import { ExamAttemptRouter } from "./imports/RouteImports.js";
 import { IntegrationRouter } from "./imports/RouteImports.js";
 import { MailerRouter } from "./imports/RouteImports.js";
+import { UserRouter } from "./imports/RouteImports.js";
 
 const app = express();
 dotenv.config();
@@ -54,11 +55,11 @@ app.use("/api/auth", AuthRouter);
 app.use("/api/exam-attempt", ExamAttemptRouter);
 app.use("/api/integration", IntegrationRouter);
 app.use("/api/mailer", MailerRouter);
+app.use("/api/account", UserRouter);
 
 try {
   app.listen(port, () => {
     console.log(`App is listening on ${port}`);
-   
   });
 } catch (e) {
   console.log("Error starting server:", e.message);

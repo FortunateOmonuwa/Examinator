@@ -17,4 +17,5 @@ const corsConfig = () => {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 };
+
 export { environment, dotenv, port, corsConfig };

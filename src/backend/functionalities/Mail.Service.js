@@ -9,6 +9,8 @@ import {
   ExamResultsMail,
   ExamLinkMail,
 } from "../utilities/Mail-Notifications.js";
+import client from "../utilities/Redis.config.js";
+import { GenerateOTP, database } from "../imports/UtilityImports.js";
 
 const SendLoginMail = async ({ to, name }) => {
   try {
@@ -35,7 +37,7 @@ const SendRegisterMail = async ({ to, name }) => {
     await sendMail({ receiver, subject, body: html });
 
     return Response.Successful({
-      message: "Register mail sent successfully",
+      message: "Registeration mail sent successfully",
     });
   } catch (error) {
     return Response.Unsuccessful({
@@ -46,23 +48,114 @@ const SendRegisterMail = async ({ to, name }) => {
   }
 };
 
-const SendConfirmationMail = async ({ receiver, name, confirmationToken }) => {
+const ResendVerificationMail = async ({ email }) => {
   try {
-    const mail = ConfirmMail({ receiver, name, confirmationToken });
-    const { receiver: mailReceiver, subject, html } = mail;
-    await sendMail({
-      receiver: mailReceiver,
-      subject,
-      body: html,
+    console.log(`Attempting to resend verification mail to ${email}`);
+    const user = await database.UserProfile.findUnique({
+      where: { email: email.toUpperCase() },
+      include: {
+        examiner: true,
+        student: true,
+      },
     });
+    if (!user) {
+      return Response.Unsuccessful({
+        message: "User not found",
+        resultCode: 404,
+      });
+    }
 
+    //console.log("User receiving resent verfication mail:", user);
+    const cancellationToken = await GenerateOTP();
+    await client.set(`Verify:${user.id}`, cancellationToken, "EX", 600, "NX");
+    let userDetail = {
+      id: user.id,
+      receiver: user.email,
+      name: user.examiner?.name ?? user.student?.name,
+    };
+    await client.set(`${user.id}`, JSON.stringify(userDetail), "EX", 600, "NX");
+
+    const mail = ConfirmMail({
+      id: user.id,
+      receiver: user.email,
+      name: user.examiner?.name ?? user.student?.name,
+      confirmationToken: cancellationToken,
+    });
+    const { receiver, subject, html } = mail;
+    await sendMail({ receiver, subject, body: html });
+    console.log("Verification mail sent successfully");
     return Response.Successful({
-      message: "Confirm mail sent successfully",
+      message: "Verification mail sent successfully",
     });
   } catch (error) {
     return Response.Unsuccessful({
       message: "An internal server error occurred",
       resultCode: 500,
+      error: error,
+    });
+  }
+};
+
+const SendConfirmationMail = async ({ id, receiver, name }) => {
+  // console.log("sending confirmation mail");
+  // console.log("id:", id);
+  // console.log("receiver:", receiver);
+  // console.log("name:", name);
+  try {
+    const confirmationToken = await GenerateOTP();
+    let user;
+    if (id || receiver || name) {
+      // console.log("setting cache on redis");
+      await client.set(`Verify:${id}`, confirmationToken, "EX", 600, "NX");
+
+      // console.log("cache set for token");
+      user = {
+        id,
+        receiver,
+        name,
+      };
+      await client.set(`${id}`, JSON.stringify(user), "EX", 600, "NX");
+    }
+    console.log("User to send confirmation mail to:", user);
+    if (id === null || receiver === null || name === null) {
+      const cachedResult = await client.get(id);
+      console.log("CachedResult:", cachedResult);
+      if (!cachedResult) {
+        return Response.Unsuccessful({
+          message: "Error retrieving user details to send verification mail",
+          resultCode: 404,
+        });
+      }
+      user = JSON.parse(cachedResult);
+    }
+    console.log("User from cache:", user);
+
+    const mail = ConfirmMail({
+      id: user.id,
+      receiver: user.receiver,
+      name: user.name,
+      confirmationToken: confirmationToken,
+    });
+    //console.log("Mail:", mail);
+    let { receiver: mailReceiver, subject, html } = mail;
+
+    let mailReceipient = mailReceiver.toLowerCase();
+
+    const mailRes = await sendMail({
+      receiver: mailReceipient,
+      subject,
+      body: html,
+    });
+    console.log(mailRes);
+
+    return Response.Successful({
+      message: "Verification mail sent successfully",
+    });
+  } catch (error) {
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+      error: error,
     });
   }
 };
@@ -159,6 +252,7 @@ const SendExamLinkMail = async ({ receiver, name, examName, link }) => {
 export {
   SendLoginMail,
   SendRegisterMail,
+  ResendVerificationMail,
   SendConfirmationMail,
   SendResetPasswordMail,
   SendExamSubmissionMail,

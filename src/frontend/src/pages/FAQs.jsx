@@ -57,11 +57,7 @@ const FAQs = () => {
       answer:
         "As an examiner, you can view detailed results and analytics for each exam from your dashboard. Select the exam and click on 'View Results' to see individual and aggregate performance data.",
     },
-    // {
-    //   question: "Is my data secure on Exerminator?",
-    //   answer:
-    //     "Yes, we take data security very seriously. All data is encrypted, and we follow industry best practices to ensure the security and privacy of your information.",
-    // },
+   
   ];
 
   return (
@@ -72,7 +68,7 @@ const FAQs = () => {
             Frequently Asked Questions
           </h1>
           <p className="text-xl max-w-2xl mx-auto">
-            Find answers to common questions about Exerminator and how it works.
+            Find answers to common questions about Examinator and how it works.
           </p>
         </div>
       </div>
@@ -116,7 +112,7 @@ const FAQs = () => {
               contact us.
             </p>
             <a
-              href="mailto:support@exerminator.com"
+              href="noreply.examinator@gmail.com"
               className="inline-block px-6 py-3 bg-pink-600 text-white font-medium rounded-md hover:bg-pink-700 transition-colors"
             >
               Contact Support

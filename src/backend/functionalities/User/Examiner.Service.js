@@ -1,5 +1,6 @@
 import { Examiner } from "../../imports/ModelImports.js";
 import { checkIfUserExists } from "./User.Service.js";
+import { SendConfirmationMail } from "../Mail.Service.js";
 import {
   CreateHash,
   Response,
@@ -7,7 +8,10 @@ import {
   nameRegex,
   emailRegex,
   passwordRegex,
+  GenerateOTP,
 } from "../../imports/UtilityImports.js";
+import { generateKey } from "crypto";
+import client from "../../utilities/Redis.config.js";
 
 const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   if (!firstname || !lastname || !email || !password) {
@@ -24,7 +28,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
     });
   }
 
-  if (!emailRegex.test(email)) {
+  if (!emailRegex(email)) {
     return Response.Unsuccessful({
       message: "Invalid email format",
       resultCode: 400,
@@ -56,37 +60,49 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   });
 
   try {
-    const newProfileQuery = await database.UserProfile.create({
-      data: {
-        email: newExaminer.email,
-        passwordHash: newExaminer.password,
-        role: newExaminer.role,
-      },
+    
+    const { newProfileQuery, newExaminerQuery } = await database.$transaction(
+      async (tx) => {
+        const newProfileQuery = await tx.UserProfile.create({
+          data: {
+            email: newExaminer.email,
+            passwordHash: newExaminer.password,
+            role: newExaminer.role,
+          },
+        });
+
+        const newExaminerQuery = await tx.Examiner.create({
+          data: {
+            name: newExaminer.name,
+            profileId: newProfileQuery.id,
+          },
+        });
+
+        return { newProfileQuery, newExaminerQuery };
+      }
+    );
+
+   
+    const confirmEmail = await SendConfirmationMail({
+      id: newProfileQuery.id,
+      receiver: newExaminer.email,
+      name: newExaminer.name,
     });
-    if (!newProfileQuery) {
+
+    if (!confirmEmail.isSuccessful) {
+      console.error(confirmEmail.message);
       return Response.Unsuccessful({
-        message: "An error occurred while trying to create your profile",
+        message: `An error occurred while sending a verification mail to ${newExaminer.email}`,
       });
     }
 
-    const newExaminerQuery = await database.Examiner.create({
-      data: {
-        name: newExaminer.name,
-        profileId: newProfileQuery.id,
-      },
-    });
-
-    if (newExaminerQuery) {
-      return Response.Successful({
-        message: `Profile created successfully`,
-        body: newExaminerQuery,
-      });
-    }
-
-    return Response.Unsuccessful({
-      message: "An error occurred while trying to create your profile",
+  
+    return Response.Successful({
+      message: `Profile created successfully. Please check your mail to verify your account.`,
+      body: newExaminerQuery,
     });
   } catch (error) {
+    console.error("Transaction or email process failed:", error);
     return Response.Unsuccessful({
       message: "An internal server error occurred",
       resultCode: 500,
@@ -94,6 +110,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   } finally {
     await database.$disconnect();
   }
+  
 };
 
 const GetExaminerDetails = async (examinerId) => {
@@ -140,16 +157,16 @@ const GetExaminerDetails = async (examinerId) => {
 
 const DeleteExaminer = async (examinerId) => {
   try {
-    const deletedExaminer = await database.Examiner.delete({
+    const examiner = await database.Examiner.delete({
       where: {
         id: examinerId,
       },
     });
 
-    if (deletedExaminer) {
+    if (examiner) {
       await database.UserProfile.delete({
         where: {
-          id: deletedExaminer.profileId,
+          id: examiner.profileId,
         },
       });
       return Response.Successful({

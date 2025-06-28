@@ -5,3 +5,4 @@ export { AuthRouter } from "../Routes/AuthenticationRoute/Auth.route.js";
 export { ExamAttemptRouter } from "../Routes/ExamAttemptRoutes/ExamAttempt.route.js";
 export { IntegrationRouter } from "../Routes/IntegrationRoutes/integration.route.js";
 export { MailerRouter } from "../Routes/IntegrationRoutes/mailer.route.js";
+export { UserRouter } from "../Routes/UserRoutes/User.route.js";

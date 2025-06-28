@@ -9,7 +9,7 @@ const About = () => {
       <div className="bg-pink-600 text-white py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            About Exerminator
+            About Examinator
           </h1>
           <p className="text-xl max-w-3xl mx-auto">
             We're on a mission to revolutionize the way exams are created,
@@ -104,7 +104,7 @@ const About = () => {
             Join Us Today
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Experience the future of examinations with Exerminator. Whether
+            Experience the future of examinations with Examinator. Whether
             you're an educator or a student, our platform is designed to meet
             your needs.
           </p>

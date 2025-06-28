@@ -431,11 +431,16 @@ const CreateExam = () => {
                 />
                 <label
                   htmlFor="isPublic"
-                  className="ml-2 block text-sm text-gray-700"
+                  className="ml-2 block text-sm text-gray-700 mb-3"
                 >
                   Make this exam public (can be discovered by subject search)
                 </label>
               </div>
+              <i className="text-xs text-pink-800">
+                For single choice questions, select exactly one correct answer.
+                For multiple choice questions, select at least one correct
+                answer from your options.
+              </i>
             </div>
           </div>
         </div>
@@ -563,12 +568,12 @@ const CreateExam = () => {
                         );
                       }}
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-                      placeholder="Enter the expected answer or guidelines for grading this text question"
+                      placeholder="Enter the expected answer for grading this question"
                       rows={3}
                     />
-                    <p className="mt-1 text-xs text-gray-500">
+                    {/* <p className="mt-1 text-xs text-gray-500">
                       This will help with manual grading of text responses.
-                    </p>
+                    </p> */}
                   </div>
                 )}
 
@@ -626,7 +631,9 @@ const CreateExam = () => {
                             )
                           }
                           className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-                          placeholder="Option text"
+                          placeholder={`option ${
+                            question.options.indexOf(option) + 1
+                          }`}
                         />
                         <button
                           type="button"

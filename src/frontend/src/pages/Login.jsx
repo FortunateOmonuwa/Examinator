@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import "../styles/auth.scss";
-
+import isEmail from "validator/lib/isEmail.js";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,20 +19,33 @@ const Login = () => {
     setIsLoading(true);
 
     try {
+      if (!isEmail(email)) {
+        toast.error("Invalid email address");
+        setIsLoading(false);
+        return;
+      }
       await login(email, password);
-      navigate("/");
       toast.success("Logged in successfully!");
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
     } catch (error) {
       if (error.isAccountLocked) {
         // Redirect to account locked page with locked until time
-        navigate("/account-locked", {
-          state: { lockedUntil: error.lockedUntil },
-          replace: true,
-        });
-        return;
+        setTimeout(() => {
+          navigate("/account-locked", {
+            state: { lockedUntil: error.lockedUntil },
+            replace: true,
+          });
+        }, 3000);
+      } else if (error === "Unverified") {
+        toast.error("Account not verified");
+        setTimeout(() => {
+          navigate("/verification/error");
+        }, 3000);
+      } else {
+        toast.error("Invalid email or password");
       }
-
-      toast.error(error instanceof Error ? error.message : "Failed to login");
     } finally {
       setIsLoading(false);
     }
@@ -41,6 +55,13 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 auth-container">
       <div className="max-w-md w-full space-y-8 auth-form">
         <div>
+          <Link
+            to="/"
+            className="absolute top-4 left-4 flex items-center text-sm text-pink-600 hover:underline hover:text-pink-700 transition"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Home Page
+          </Link>
           <Link to="/" className="flex-shrink-0">
             <h1 className="text-center text-3xl font-extrabold text-pink-600">
               Examinator

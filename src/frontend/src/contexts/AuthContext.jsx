@@ -51,6 +51,8 @@ export const AuthProvider = ({ children }) => {
         accountLockedError.isAccountLocked = true;
         accountLockedError.lockedUntil = errorResponse.body.lockedUntil;
         throw accountLockedError;
+      } else if (errorResponse?.error === "Unverified") {
+        throw errorResponse?.error;
       }
 
       throw new Error(errorResponse?.message || err.message || "Login failed");
@@ -106,7 +108,8 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.data.response.isSuccessful) {
-        await login(email, password);
+        return response.data.response;
+        //await login(email, password);
       } else {
         throw new Error(
           response.data.response.message || "Registration failed"
@@ -125,6 +128,23 @@ export const AuthProvider = ({ children }) => {
   // const logout = () => {
   //   setUser(null);
   //   localStorage.removeItem("user");
+  // };
+  // const verify = async (id, token) => {
+  //   try {
+  //     const response = await api.post("/api/account/verify", { id, token });
+  //     if (response.data.response.isSuccessful) {
+  //       return true;
+  //     } else {
+  //       throw new Error(response.data.response.message || "Verification failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Verification error:", error);
+  //     throw (
+  //       error.response?.data?.response?.message ||
+  //       error.message ||
+  //       "Verification failed"
+  //     );
+  //   }
   // };
 
   return (

@@ -29,11 +29,14 @@ import {
 import { CalculateScoreAsync } from "../controllers/IntegrationControllers/Integration.Controller.js";
 import {
   SendMailAsync,
+  ResendVerificationMailAsync,
   SendConfirmationMailAsync,
   SendResetPasswordMailAsync,
   SendExamResultsMailAsync,
   SendExamLinkMailAsync,
 } from "../controllers/IntegrationControllers/Mailer.controller.js";
+import { VerifyAccountAsync } from "../controllers/UserControllers/User.Controller.js";
+
 export {
   RegisterAdminAsync,
   RegisterExaminerAsync,
@@ -56,8 +59,10 @@ export {
   Logout,
   CalculateScoreAsync,
   SendMailAsync,
+  ResendVerificationMailAsync,
   SendConfirmationMailAsync,
   SendResetPasswordMailAsync,
   SendExamResultsMailAsync,
   SendExamLinkMailAsync,
+  VerifyAccountAsync,
 };

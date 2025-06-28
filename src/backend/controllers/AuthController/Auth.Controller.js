@@ -11,6 +11,7 @@ const LoginAsync = async (req, res) => {
   const { email, password } = body;
 
   try {
+    
     const response = await Login({ email: email, password: password });
     if (response.isSuccessful) {
       const { accessToken, user, refreshToken, userId } = response.body;
@@ -32,20 +33,20 @@ const LoginAsync = async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      const sendMail = await SendLoginMail({
-        to: user.email.toLowerCase(),
-        name: user.examiner?.name ?? user.student?.name,
-      });
-      if (!sendMail.isSuccessful) {
-        console.log(sendMail.message);
-        return res.status(500).json({
-          response: Response.Unsuccessful({
-            message: " login failed",
-            resultCode: 500,
-          }),
-        });
-      }
-      console.log("Login mail sent successfully");
+      // const sendMail = await SendLoginMail({
+      //   to: user.email.toLowerCase(),
+      //   name: user.examiner?.name ?? user.student?.name,
+      // });
+      // if (!sendMail.isSuccessful) {
+      //   console.log(sendMail.message);
+      //   return res.status(500).json({
+      //     response: Response.Unsuccessful({
+      //       message: " login failed",
+      //       resultCode: 500,
+      //     }),
+      //   });
+      // }
+      // console.log("Login mail sent successfully");
       return res.status(200).json({
         response: Response.Successful({
           message: "Login successful",
@@ -56,6 +57,15 @@ const LoginAsync = async (req, res) => {
             name: user.examiner?.name ?? user.student?.name,
             userId: userId,
           },
+        }),
+      });
+    } else if (response.error === "unverified") {
+      return res.status(401).json({
+        response: Response.Unsuccessful({
+          message:
+            "Your account is not verified. Please verify your account before logging in.",
+          resultCode: 401,
+          error: "Unverified",
         }),
       });
     } else {

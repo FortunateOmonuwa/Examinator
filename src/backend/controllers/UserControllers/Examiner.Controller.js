@@ -19,14 +19,14 @@ const RegisterExaminerAsync = async (req, res) => {
     });
 
     if (response.isSuccessful) {
-      const sendMail = await SendRegisterMail({
-        to: email.toLowerCase(),
-        name: firstname + " " + lastname,
-      });
-      if (!sendMail.isSuccessful) {
-        console.log(sendMail.message);
-      }
-      console.log("Register mail sent successfully");
+      // const sendMail = await SendRegisterMail({
+      //   to: email.toLowerCase(),
+      //   name: firstname + " " + lastname,
+      // });
+      // if (!sendMail.isSuccessful) {
+      //   console.log(sendMail.message);
+      // }
+      // console.log("Registeration mail sent successfully");
       return res.status(200).json({ response: response });
     } else {
       return res
