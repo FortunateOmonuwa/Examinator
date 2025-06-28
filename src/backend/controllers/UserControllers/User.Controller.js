@@ -10,7 +10,6 @@ const VerifyAccountAsync = async (req, res) => {
     console.log("Verification attempt by", id);
     const response = await VerifyAccount(id, token);
     if (response.isSuccessful) {
-      //return res.status(200).json({ response: response });
       console.log("Verification successful");
       res.redirect(`${viteBaseUrl}/verification/success`);
     } else if (response.error === "already-verified") {
