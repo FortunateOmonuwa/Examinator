@@ -1,6 +1,6 @@
 import { VerifyAccount } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
-import { clientUrl } from "../../../../Config.js";
+import { clientUrl } from "../../../../shared/Config.js";
 const viteBaseUrl = clientUrl;
 
 const VerifyAccountAsync = async (req, res) => {

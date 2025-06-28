@@ -1,4 +1,4 @@
-import { baseUrl } from "../../../Config.js";
+import { baseUrl } from "../../../shared/Config.js";
 
 const baseEmailTemplate = ({ name, bodyContent }) => `
   <html>
