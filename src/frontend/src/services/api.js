@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl } from "../../../../Config";
+import { baseUrl } from "../../../../shared/Config";
 
 //console.log("BASE URL:", import.meta.env.VITE_BASE_URL);
 const api = axios.create({

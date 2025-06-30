@@ -1,12 +1,8 @@
 // redisClient.ts (or .js if you're not on TS)
 import Redis from "ioredis";
 import { redisHost, redisPort } from "../../../shared/Config.js";
-const client = new Redis({
-  host: redisHost,
-  port: redisPort,
-  // password: process.env.REDIS_PASSWORD || undefined,
+const client = new Redis(process.env.REDIS_HOST, {
   retryStrategy: (times) => {
-    // reconnect after
     const delay = Math.min(times * 50, 2000);
     return delay;
   },
