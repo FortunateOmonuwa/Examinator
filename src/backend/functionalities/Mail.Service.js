@@ -50,13 +50,8 @@ const SendRegisterMail = async ({ to, name }) => {
 
 const ResendVerificationMail = async ({ email }) => {
   try {
-    console.log(`Attempting to resend verification mail to ${email}`);
     const user = await database.UserProfile.findUnique({
-      where: { email: email.toUpperCase() },
-      include: {
-        examiner: true,
-        student: true,
-      },
+      where: { email },
     });
     if (!user) {
       return Response.Unsuccessful({
@@ -65,7 +60,6 @@ const ResendVerificationMail = async ({ email }) => {
       });
     }
 
-    //console.log("User receiving resent verfication mail:", user);
     const cancellationToken = await GenerateOTP();
     await client.set(`Verify:${user.id}`, cancellationToken, "EX", 600, "NX");
     let userDetail = {
@@ -75,15 +69,10 @@ const ResendVerificationMail = async ({ email }) => {
     };
     await client.set(`${user.id}`, JSON.stringify(userDetail), "EX", 600, "NX");
 
-    const mail = ConfirmMail({
-      id: user.id,
-      receiver: user.email,
-      name: user.examiner?.name ?? user.student?.name,
-      confirmationToken: cancellationToken,
-    });
+    const mail = ConfirmMail(user.id, user.email, user.name, cancellationToken);
     const { receiver, subject, html } = mail;
     await sendMail({ receiver, subject, body: html });
-    console.log("Verification mail sent successfully");
+
     return Response.Successful({
       message: "Verification mail sent successfully",
     });
@@ -118,25 +107,24 @@ const SendConfirmationMail = async ({ id, receiver, name }) => {
     }
     console.log("User to send confirmation mail to:", user);
     if (id === null || receiver === null || name === null) {
-      const cachedResult = await client.get(id);
-      console.log("CachedResult:", cachedResult);
-      if (!cachedResult) {
+      const cachedUser = await client.get(id).then((result) => {
+        user = JSON.parse(result);
+      });
+      if (!cachedUser) {
         return Response.Unsuccessful({
           message: "Error retrieving user details to send verification mail",
           resultCode: 404,
         });
       }
-      user = JSON.parse(cachedResult);
     }
-    console.log("User from cache:", user);
 
-    const mail = ConfirmMail({
-      id: user.id,
-      receiver: user.receiver,
-      name: user.name,
-      confirmationToken: confirmationToken,
-    });
-    //console.log("Mail:", mail);
+    const mail = ConfirmMail(
+      user.id,
+      user.receiver,
+      user.name,
+      confirmationToken
+    );
+    console.log("Mail:", mail);
     let { receiver: mailReceiver, subject, html } = mail;
 
     let mailReceipient = mailReceiver.toLowerCase();

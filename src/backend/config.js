@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
+import cors from "cors";
+
 const environment = process.env.NODE_ENV || "development";
 const port = process.env.PORT || 5001;
-import cors from "cors";
 
 const corsConfig = () => {
   return cors({

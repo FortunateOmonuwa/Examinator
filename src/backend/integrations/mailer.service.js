@@ -38,7 +38,7 @@ const sendMail = async ({ receiver, subject, body, attachments }) => {
       ...(attachments ? { attachments } : {}),
     });
 
-    //console.log("Transporter response:", info);
+    console.log("Transporter response:", info);
     return Response.Successful({
       message: "Email sent successfully",
     });

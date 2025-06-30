@@ -93,7 +93,6 @@ const baseEmailTemplate = ({ name, bodyContent }) => `
 `;
 
 const ConfirmMail = ({ id, receiver, name, confirmationToken }) => {
-  console.log("ConfirmMail:", id, receiver, name, confirmationToken);
   const subject = "Verify Your Examinator Account";
   const confirmationLink = `${baseUrl}/api/account/verify?id=${id}&token=${confirmationToken}`;
   const bodyContent = `
