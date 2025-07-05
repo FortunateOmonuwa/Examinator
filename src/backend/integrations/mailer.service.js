@@ -22,7 +22,10 @@ const transporter = nodemailer.createTransport(
 
 const sendMail = async ({ receiver, subject, body, attachments }) => {
   try {
-    if (!receiver || !subject || !body) {
+    console.log("Sending email to:", receiver);
+    console.log("Subject:", subject);
+    console.log("Body:", body);
+    if (receiver === null || subject === null || body === null) {
       throw new Error(
         "Missing required email fields: receiver, subject, or body"
       );
@@ -32,7 +35,7 @@ const sendMail = async ({ receiver, subject, body, attachments }) => {
     // console.log("Body:", body);
     const info = await transporter.sendMail({
       from: `Examinator <${process.env.SENDGRID_FROM_EMAIL || "noreply.examinator@gmail.com"}>`,
-      to: receiver,
+      to: `${receiver}`,
       subject,
       html: body,
       ...(attachments ? { attachments } : {}),

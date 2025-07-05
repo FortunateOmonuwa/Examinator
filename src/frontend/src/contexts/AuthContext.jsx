@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }) => {
         throw accountLockedError;
       } else if (errorResponse?.error === "Unverified") {
         throw errorResponse?.error;
+      } else if(errorResponse?.error === "Invalid Email or Password"){
+        throw errorResponse?.error;
       }
 
       throw new Error(errorResponse?.message || err.message || "Login failed");

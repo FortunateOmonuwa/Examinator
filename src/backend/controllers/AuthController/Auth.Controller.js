@@ -68,7 +68,16 @@ const LoginAsync = async (req, res) => {
           error: "Unverified",
         }),
       });
-    } else {
+    } else if(response.error === "Invalid Email or Password"){
+      return res.status(401).json({
+        response: Response.Unsuccessful({
+          message: "Email or password is incorrect",
+          resultCode: 401,
+          error: "Invalid Email or Password",
+        }),
+      });
+    }
+    else {
       return res
         .status(response.resultCode || 400)
         .json({ response: response });

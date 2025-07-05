@@ -38,5 +38,13 @@ if (env === "local") {
   redisPort = process.env.REDIS_PORT;
 }
 
-
-export { environment, dotenv, port, corsConfig, baseUrl, clientUrl, redisHost, redisPort };
+export {
+  environment,
+  dotenv,
+  port,
+  corsConfig,
+  baseUrl,
+  clientUrl,
+  redisHost,
+  redisPort,
+};

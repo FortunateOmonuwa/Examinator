@@ -34,6 +34,7 @@ const Login = async ({ email, password }) => {
       return Response.Unsuccessful({
         message: "Email or password is incorrect",
         resultCode: 401,
+        error: "Invalid Email or Password"
       });
     }
     //console.log("Email found");
@@ -92,6 +93,7 @@ const Login = async ({ email, password }) => {
 
       return Response.Unsuccessful({
         message: message,
+        error: "Invalid Email or Password",
         resultCode: 401,
         body: {
           loginAttempts: updatedAttempts,

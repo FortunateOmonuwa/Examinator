@@ -36,7 +36,7 @@ const ResendVerificationMailAsync = async (req, res) => {
   const { email } = requestBody;
 
   try {
-    
+    console.log(`Attempting to resend verification mail to ${email}`);
     const response = await ResendVerificationMail({ email: email });
     if (response.isSuccessful) {
       return res.status(200).json({ response: response });

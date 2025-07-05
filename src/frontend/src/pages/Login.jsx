@@ -43,8 +43,10 @@ const Login = () => {
         setTimeout(() => {
           navigate("/verification/error");
         }, 3000);
-      } else {
+      } else if (error === "Invalid Email or Password") {
         toast.error("Invalid email or password");
+      } else {
+        toast.error("An error occured.");
       }
     } finally {
       setIsLoading(false);

@@ -50,8 +50,11 @@ const SendRegisterMail = async ({ to, name }) => {
 
 const ResendVerificationMail = async ({ email }) => {
   try {
+    console.log(
+      `checking the database to resend verification mail to ${email}`
+    );
     const user = await database.UserProfile.findUnique({
-      where: { email },
+      where: { email: email.toUpperCase() },
     });
     if (!user) {
       return Response.Unsuccessful({
@@ -60,18 +63,36 @@ const ResendVerificationMail = async ({ email }) => {
       });
     }
 
-    const cancellationToken = await GenerateOTP();
-    await client.set(`Verify:${user.id}`, cancellationToken, "EX", 600, "NX");
+    console.log("User found:", user);
+    console.log("/n Generating OTP token");
+    const token = await GenerateOTP();
+    console.log("Token:", token);
+
+    await client.set(`Verify:${user.id}`, token, "EX", 600, "NX");
+
     let userDetail = {
       id: user.id,
       receiver: user.email,
       name: user.examiner?.name ?? user.student?.name,
     };
+    console.log("User detail:", userDetail);
     await client.set(`${user.id}`, JSON.stringify(userDetail), "EX", 600, "NX");
 
-    const mail = ConfirmMail(user.id, user.email, user.name, cancellationToken);
+    console.log("Setting verification mail");
+    const mail = ConfirmMail({
+      id: user.id,
+      receiver: user.email,
+      name: userDetail.name ?? "",
+      token,
+    });
+
     const { receiver, subject, html } = mail;
+    console.log("Mail:", mail);
+
+    console.log("Sending verification mail");
+
     await sendMail({ receiver, subject, body: html });
+    console.log("Verification mail sent successfully");
 
     return Response.Successful({
       message: "Verification mail sent successfully",
@@ -118,12 +139,12 @@ const SendConfirmationMail = async ({ id, receiver, name }) => {
       }
     }
 
-    const mail = ConfirmMail(
-      user.id,
-      user.receiver,
-      user.name,
-      confirmationToken
-    );
+    const mail = ConfirmMail({
+      id: user.id,
+      receiver: user.receiver,
+      name: user.name ?? "",
+      confirmationToken: confirmationToken,
+    });
     console.log("Mail:", mail);
     let { receiver: mailReceiver, subject, html } = mail;
 
