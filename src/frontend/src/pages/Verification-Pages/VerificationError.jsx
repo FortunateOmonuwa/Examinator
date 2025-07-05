@@ -59,9 +59,9 @@ const VerificationError = () => {
           <h2 className="mt-4 text-2xl font-bold text-gray-800 text-center">
             Request New Link
           </h2>
-          <p className="text-sm text-gray-600 text-center">
+          {/* <p className="text-sm text-gray-600 text-center">
             Enter your email below to request a new verification link.
-          </p>
+          </p> */}
         </div>
 
         <form onSubmit={handleMailSending} className="space-y-4">

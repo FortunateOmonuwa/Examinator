@@ -13,6 +13,7 @@ import {
 } from "../../middleware/AuthMiddleware.js";
 const router = express.Router();
 
+//https://examinator-backend-dev.onrender.com/api/mailer/resend-verification-mail
 router.post("/send-mail", SendMailAsync);
 router.post("/resend-verification-mail", ResendVerificationMailAsync);
 router.post("/send-verification-mail", SendConfirmationMailAsync);
