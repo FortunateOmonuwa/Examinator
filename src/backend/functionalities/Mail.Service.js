@@ -83,7 +83,7 @@ const ResendVerificationMail = async ({ email }) => {
       id: user.id,
       receiver: user.email,
       name: userDetail.name ?? "",
-      token,
+      confirmationToken: token,
     });
 
     const { receiver, subject, html } = mail;
