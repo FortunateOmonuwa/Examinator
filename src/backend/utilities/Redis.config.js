@@ -1,7 +1,7 @@
 import Redis from "ioredis";
 import { redisHost, redisPort } from "../config.js";
 
-const client = new Redis(process.env.REDIS_HOST, {
+const client = new Redis(redisHost, {
   retryStrategy: (times) => {
     const delay = Math.min(times * 50, 2000);
     return delay;

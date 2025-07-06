@@ -42,15 +42,25 @@ const checkExaminerId = async (examinerId) => {
 const VerifyAccount = async (Id, token) => {
   try {
     console.log("Verifying account");
-    await client.get(`Verify:${Id}`).then(async (result) => {
-      if (result !== token || result === null) {
-        return Response.Unsuccessful({
-          message: "Invalid or expired token",
-          resultCode: 400,
-          error: "Invalid token",
-        });
-      }
-    });
+    const savedToken = await client.get(`Verify:${Id}`);
+    if (savedToken != token) {
+      return Response.Unsuccessful({
+        message: "Invalid or expired token",
+        resultCode: 400,
+        error: "Invalid token",
+      });
+    }
+    console.log(savedToken);
+    // await client.get(`Verify:${Id}`).then(async (result) => {
+    //   if (result !== token || result === null) {
+    //     return Response.Unsuccessful({
+    //       message: "Invalid or expired token",
+    //       resultCode: 400,
+    //       error: "Invalid token",
+    //     });
+    //   }
+    // });
+    console.log("Token valid");
     let account = await database.UserProfile.findUnique({
       where: {
         id: Id,

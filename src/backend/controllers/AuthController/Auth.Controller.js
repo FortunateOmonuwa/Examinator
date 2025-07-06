@@ -11,7 +11,6 @@ const LoginAsync = async (req, res) => {
   const { email, password } = body;
 
   try {
-    
     const response = await Login({ email: email, password: password });
     if (response.isSuccessful) {
       const { accessToken, user, refreshToken, userId } = response.body;
@@ -46,7 +45,7 @@ const LoginAsync = async (req, res) => {
       //     }),
       //   });
       // }
-      // console.log("Login mail sent successfully");
+      console.log("Login successfully and response sent");
       return res.status(200).json({
         response: Response.Successful({
           message: "Login successful",
@@ -68,7 +67,7 @@ const LoginAsync = async (req, res) => {
           error: "Unverified",
         }),
       });
-    } else if(response.error === "Invalid Email or Password"){
+    } else if (response.error === "Invalid Email or Password") {
       return res.status(401).json({
         response: Response.Unsuccessful({
           message: "Email or password is incorrect",
@@ -76,8 +75,7 @@ const LoginAsync = async (req, res) => {
           error: "Invalid Email or Password",
         }),
       });
-    }
-    else {
+    } else {
       return res
         .status(response.resultCode || 400)
         .json({ response: response });
