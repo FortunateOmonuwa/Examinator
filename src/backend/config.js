@@ -23,8 +23,8 @@ let baseUrl = "";
 let clientUrl = "";
 let redisHost;
 let redisPort;
-//const env = "local";
-const env = "dev";
+const env = "local";
+//const env = "dev";
 //-------------------------------------------------
 if (env === "local") {
   baseUrl = "http://localhost:5001";
