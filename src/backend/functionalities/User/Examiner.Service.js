@@ -14,7 +14,9 @@ import { generateKey } from "crypto";
 import client from "../../utilities/Redis.config.js";
 
 const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
+  console.log(`Attempting to register examiner ${firstname} ${lastname}`);
   if (!firstname || !lastname || !email || !password) {
+    console.log("Missing required fields");
     return Response.Unsuccessful({
       message: "Missing required fields",
       resultCode: 400,
@@ -22,6 +24,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   }
 
   if (!nameRegex.test(firstname) || !nameRegex.test(lastname)) {
+    console.log("Invalid name format");
     return Response.Unsuccessful({
       message: "Invalid name format",
       resultCode: 400,
@@ -29,6 +32,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   }
 
   if (!emailRegex(email)) {
+    console.log("Invalid email format");
     return Response.Unsuccessful({
       message: "Invalid email format",
       resultCode: 400,
@@ -36,6 +40,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   }
 
   if (!passwordRegex.test(password)) {
+    console.log("Invalid password format");
     return Response.Unsuccessful({
       message:
         "Invalid password format. Password must be at least 7 characters and contain at least one special character.",
@@ -46,7 +51,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   const upperCaseEmail = email.toUpperCase();
   const checkUserProfile = await checkIfUserExists(upperCaseEmail);
   if (checkUserProfile) {
-    // console.log("Profile already exists");
+    console.log("Profile already exists");
     return Response.Unsuccessful({
       message: `Profile with email: ${email} already exists`,
       resultCode: 400,
@@ -60,7 +65,7 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   });
 
   try {
-    
+    console.log("Adding new examiner details to db:", newExaminer);
     const { newProfileQuery, newExaminerQuery } = await database.$transaction(
       async (tx) => {
         const newProfileQuery = await tx.UserProfile.create({
@@ -70,25 +75,23 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
             role: newExaminer.role,
           },
         });
-
+        console.log("New profile created:", newProfileQuery);
         const newExaminerQuery = await tx.Examiner.create({
           data: {
             name: newExaminer.name,
             profileId: newProfileQuery.id,
           },
         });
-
+        console.log("New examiner created:", newExaminerQuery);
         return { newProfileQuery, newExaminerQuery };
       }
     );
 
-   
     const confirmEmail = await SendConfirmationMail({
       id: newProfileQuery.id,
       receiver: newExaminer.email,
       name: newExaminer.name,
     });
-
     if (!confirmEmail.isSuccessful) {
       console.error(confirmEmail.message);
       return Response.Unsuccessful({
@@ -96,7 +99,8 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
       });
     }
 
-  
+    console.log("Confirmation mail sent:", confirmEmail);
+    console.log("Examiner registered successfully");
     return Response.Successful({
       message: `Profile created successfully. Please check your mail to verify your account.`,
       body: newExaminerQuery,
@@ -110,7 +114,6 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
   } finally {
     await database.$disconnect();
   }
-  
 };
 
 const GetExaminerDetails = async (examinerId) => {

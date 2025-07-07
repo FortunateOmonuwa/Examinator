@@ -41,7 +41,7 @@ const checkExaminerId = async (examinerId) => {
 
 const VerifyAccount = async (Id, token) => {
   try {
-    console.log("Verifying account");
+    console.log("Attempting to Verify account for id:", Id);
     const savedToken = await client.get(`Verify:${Id}`);
     if (savedToken != token) {
       return Response.Unsuccessful({
