@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useSidebar } from "../contexts/SidebarContext";
 import { Menu, User, LogOut, Home } from "lucide-react";
 
 const Header = () => {
   const { user, logout } = useAuth();
+  const { toggleMobileSidebar } = useSidebar();
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
@@ -18,6 +20,7 @@ const Header = () => {
               type="button"
               className="text-gray-500 hover:text-gray-600 lg:hidden"
               aria-label="Open sidebar"
+              onClick={toggleMobileSidebar}
             >
               <Menu size={24} />
             </button>

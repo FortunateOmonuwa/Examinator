@@ -136,19 +136,19 @@ const MyExams = () => {
     setRecipients(newRecipients);
   };
 
-  
   const handleShareExam = async (e) => {
     e.preventDefault();
 
     // Filter out empty recipients
-    const validRecipients = recipients.filter((email) => email.trim().toLowerCase() !== "");
+    const validRecipients = recipients.filter(
+      (email) => email.trim().toLowerCase() !== ""
+    );
 
     if (validRecipients.length === 0) {
       toast.error("Please enter at least one email address");
       return;
     }
 
-   
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const invalidEmails = validRecipients.filter(
       (email) => !emailRegex.test(email)
@@ -229,8 +229,8 @@ const MyExams = () => {
             {exams.map((exam) => (
               <li key={exam.id} className="exam-item">
                 <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                    <div className="flex flex-col mb-4 lg:mb-0">
                       <div className="flex items-center">
                         <h3 className="text-lg font-medium text-gray-900">
                           {exam.title}
@@ -251,19 +251,19 @@ const MyExams = () => {
                       <p className="mt-1 text-sm text-gray-500">
                         {exam.description}
                       </p>
-                      <div className="mt-2 flex items-center text-sm text-gray-500">
-                        <span className="bg-pink-100 text-pink-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                      <div className="mt-2 flex flex-wrap items-center text-sm text-gray-500 gap-2">
+                        <span className="bg-pink-100 text-pink-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                           {exam.subject}
                         </span>
                         <span className="text-xs">
                           Time: {exam.stipulatedTime} minutes
                         </span>
-                        <span className="text-xs ml-2">
+                        <span className="text-xs">
                           Questions: {exam.questions?.length || 0}
                         </span>
                       </div>
                     </div>
-                    <div className="flex space-x-2 action-buttons">
+                    <div className="flex flex-wrap gap-2 action-buttons lg:flex-nowrap lg:space-x-2 lg:gap-0">
                       <button
                         onClick={() => handleTogglePublic(exam)}
                         className={`inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white ${
