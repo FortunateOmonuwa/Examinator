@@ -53,6 +53,8 @@ const Register = () => {
         setTimeout(() => {
           navigate("/verify");
         }, 3000);
+      } else if(response === "conflict"){
+        toast.error("Profile with email: ${email} already exists");
       } else {
         setTimeout(() => {
           toast.error(response.message);

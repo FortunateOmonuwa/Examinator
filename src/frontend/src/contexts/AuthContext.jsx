@@ -111,8 +111,11 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.response.isSuccessful) {
         return response.data.response;
-        //await login(email, password);
-      } else {
+       
+      } else if(response.data.response.resultCode === 409){
+        return "conflict";
+      } 
+      else {
         throw new Error(
           response.data.response.message || "Registration failed"
         );

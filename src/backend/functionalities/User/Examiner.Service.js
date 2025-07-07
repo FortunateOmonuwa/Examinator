@@ -54,7 +54,8 @@ const RegisterExaminer = async ({ firstname, lastname, email, password }) => {
     console.log("Profile already exists");
     return Response.Unsuccessful({
       message: `Profile with email: ${email} already exists`,
-      resultCode: 400,
+      resultCode: 409,
+      error: "conflict",
     });
   }
 
