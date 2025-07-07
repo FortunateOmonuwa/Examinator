@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
         throw accountLockedError;
       } else if (errorResponse?.error === "Unverified") {
         throw errorResponse?.error;
-      } else if(errorResponse?.error === "Invalid Email or Password"){
+      } else if (errorResponse?.error === "Invalid Email or Password") {
         throw errorResponse?.error;
       }
 
@@ -109,27 +109,25 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      if (response.data.response.isSuccessful) {
-        return response.data.response;
-       
-      } else if(response.data.response.resultCode === 409){
-        return "conflict";
-      } 
-      else {
-        throw new Error(
-          response.data.response.message || "Registration failed"
-        );
-      }
+      console.log("Registration Response from server:", response);
+
+      return response.data.response;
     } catch (error) {
+      const status = error.response?.status;
+      const message = error.response?.data?.response?.message;
+
+      console.log("Registration error:", error);
+
+      if (status === 409) {
+        return { status, message };
+      }
+
       console.error("Registration error:", error);
-      throw (
-        error.response?.data?.response?.message ||
-        error.message ||
-        "Registration failed"
-      );
+
+      throw new Error(message || error.message || "Registration failed");
     }
   };
-
+  
   // const logout = () => {
   //   setUser(null);
   //   localStorage.removeItem("user");

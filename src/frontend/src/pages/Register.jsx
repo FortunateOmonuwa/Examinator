@@ -48,13 +48,14 @@ const Register = () => {
 
     try {
       let response = await register(firstname, lastname, email, password);
+
       if (response.isSuccessful) {
         toast.success("Registered successfully");
         setTimeout(() => {
           navigate("/verify");
         }, 3000);
-      } else if(response === "conflict"){
-        toast.error("Profile with email: ${email} already exists");
+      } else if (response.resultCode === 409) {
+        toast.error(`Profile with email: ${email} already exists`);
       } else {
         setTimeout(() => {
           toast.error(response.message);

@@ -6,7 +6,7 @@ const api = axios.create({
   //baseURL: import.meta.env.VITE_BASE_URL,
   //baseURL: "http://localhost:5001",
   baseURL: baseUrl,
-
+ // validateStatus: () => true.
   timeout: 20000,
   withCredentials: true,
   headers: {
