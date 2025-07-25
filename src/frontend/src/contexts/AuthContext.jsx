@@ -42,7 +42,22 @@ export const AuthProvider = ({ children }) => {
         throw new Error(res.data.response.message || "Login failed");
       }
     } catch (err) {
-      throw err.response?.data?.response?.message || err.message;
+      const errorResponse = err.response?.data?.response;
+
+      // Check if account is locked
+      if (errorResponse?.resultCode === 403 && errorResponse?.body?.isLocked) {
+        // Create a special error object for account locked
+        const accountLockedError = new Error(errorResponse.message);
+        accountLockedError.isAccountLocked = true;
+        accountLockedError.lockedUntil = errorResponse.body.lockedUntil;
+        throw accountLockedError;
+      } else if (errorResponse?.error === "Unverified") {
+        throw errorResponse?.error;
+      } else if (errorResponse?.error === "Invalid Email or Password") {
+        throw errorResponse?.error;
+      }
+
+      throw new Error(errorResponse?.message || err.message || "Login failed");
     }
   };
 
@@ -94,26 +109,45 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
-      if (response.data.response.isSuccessful) {
-        await login(email, password);
-      } else {
-        throw new Error(
-          response.data.response.message || "Registration failed"
-        );
-      }
+      console.log("Registration Response from server:", response);
+
+      return response.data.response;
     } catch (error) {
+      const status = error.response?.status;
+      const message = error.response?.data?.response?.message;
+
+      console.log("Registration error:", error);
+
+      if (status === 409) {
+        return { status, message };
+      }
+
       console.error("Registration error:", error);
-      throw (
-        error.response?.data?.response?.message ||
-        error.message ||
-        "Registration failed"
-      );
+
+      throw new Error(message || error.message || "Registration failed");
     }
   };
-
+  
   // const logout = () => {
   //   setUser(null);
   //   localStorage.removeItem("user");
+  // };
+  // const verify = async (id, token) => {
+  //   try {
+  //     const response = await api.post("/api/account/verify", { id, token });
+  //     if (response.data.response.isSuccessful) {
+  //       return true;
+  //     } else {
+  //       throw new Error(response.data.response.message || "Verification failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Verification error:", error);
+  //     throw (
+  //       error.response?.data?.response?.message ||
+  //       error.message ||
+  //       "Verification failed"
+  //     );
+  //   }
   // };
 
   return (

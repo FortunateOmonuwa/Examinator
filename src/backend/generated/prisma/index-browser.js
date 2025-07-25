@@ -152,6 +152,7 @@ exports.Prisma.UserProfileScalarFieldEnum = {
   email: 'email',
   passwordHash: 'passwordHash',
   role: 'role',
+  isVerified: 'isVerified',
   dateCreated: 'dateCreated',
   dateUpdated: 'dateUpdated'
 };
@@ -189,7 +190,8 @@ exports.Prisma.QuestionScalarFieldEnum = {
   examId: 'examId',
   required: 'required',
   type: 'type',
-  expectedAnswer: 'expectedAnswer'
+  expectedAnswer: 'expectedAnswer',
+  score: 'score'
 };
 
 exports.Prisma.OptionScalarFieldEnum = {

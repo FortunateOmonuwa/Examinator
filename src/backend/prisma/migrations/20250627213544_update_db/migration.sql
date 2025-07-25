@@ -4,6 +4,9 @@ CREATE TYPE "Role" AS ENUM ('ADMIN', 'STUDENT', 'EXAMINER');
 -- CreateEnum
 CREATE TYPE "ExamStatus" AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED');
 
+-- CreateEnum
+CREATE TYPE "QuestionType" AS ENUM ('SINGLECHOICE', 'MULTICHOICE', 'TEXT');
+
 -- CreateTable
 CREATE TABLE "Student" (
     "id" UUID NOT NULL,
@@ -23,13 +26,32 @@ CREATE TABLE "Examiner" (
 );
 
 -- CreateTable
+CREATE TABLE "AuthManager" (
+    "id" UUID NOT NULL,
+    "userId" UUID NOT NULL,
+    "refreshToken" TEXT,
+    "refreshTokenExpiresAt" TIMESTAMP(3),
+    "isLoggedIn" BOOLEAN NOT NULL DEFAULT false,
+    "lastLoginAt" TIMESTAMP(3),
+    "lastActivityAt" TIMESTAMP(3),
+    "loginAttempts" INTEGER NOT NULL DEFAULT 0,
+    "isLocked" BOOLEAN NOT NULL DEFAULT false,
+    "lockedUntil" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "AuthManager_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "UserProfile" (
     "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "role" "Role" NOT NULL,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "dateCreated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "dateUpdated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dateUpdated" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "UserProfile_pkey" PRIMARY KEY ("id")
 );
@@ -44,9 +66,11 @@ CREATE TABLE "Exam" (
     "creatorId" UUID NOT NULL,
     "enforceTimeLimit" BOOLEAN NOT NULL DEFAULT false,
     "stipulatedTime" INTEGER NOT NULL,
+    "attemptLimit" INTEGER NOT NULL DEFAULT 1,
     "dateCreated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "dateUpdated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "isPublic" BOOLEAN NOT NULL DEFAULT false,
+    "level" TEXT NOT NULL DEFAULT 'BEGINNER',
 
     CONSTRAINT "Exam_pkey" PRIMARY KEY ("id")
 );
@@ -60,7 +84,7 @@ CREATE TABLE "StudentExam" (
     "startedAt" TIMESTAMP(3),
     "completedAt" TIMESTAMP(3),
     "timeSpent" INTEGER NOT NULL,
-    "score" DOUBLE PRECISION,
+    "score" TEXT,
 
     CONSTRAINT "StudentExam_pkey" PRIMARY KEY ("id")
 );
@@ -71,6 +95,9 @@ CREATE TABLE "Question" (
     "text" TEXT NOT NULL,
     "examId" UUID NOT NULL,
     "required" BOOLEAN NOT NULL,
+    "type" "QuestionType" NOT NULL,
+    "expectedAnswer" TEXT,
+    "score" INTEGER NOT NULL DEFAULT 1,
 
     CONSTRAINT "Question_pkey" PRIMARY KEY ("id")
 );
@@ -125,6 +152,9 @@ CREATE UNIQUE INDEX "Student_profileId_key" ON "Student"("profileId");
 CREATE UNIQUE INDEX "Examiner_profileId_key" ON "Examiner"("profileId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "AuthManager_userId_key" ON "AuthManager"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "UserProfile_email_key" ON "UserProfile"("email");
 
 -- CreateIndex
@@ -138,6 +168,9 @@ ALTER TABLE "Student" ADD CONSTRAINT "Student_profileId_fkey" FOREIGN KEY ("prof
 
 -- AddForeignKey
 ALTER TABLE "Examiner" ADD CONSTRAINT "Examiner_profileId_fkey" FOREIGN KEY ("profileId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AuthManager" ADD CONSTRAINT "AuthManager_userId_fkey" FOREIGN KEY ("userId") REFERENCES "UserProfile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "Examiner"("id") ON DELETE NO ACTION ON UPDATE CASCADE;

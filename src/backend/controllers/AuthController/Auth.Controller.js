@@ -5,6 +5,7 @@ import {
   Logout,
 } from "../../imports/ServicesImports.js";
 import Response from "../../utilities/Response.js";
+import { SendLoginMail } from "../../imports/ServicesImports.js";
 const LoginAsync = async (req, res) => {
   const { body } = req;
   const { email, password } = body;
@@ -13,18 +14,38 @@ const LoginAsync = async (req, res) => {
     const response = await Login({ email: email, password: password });
     if (response.isSuccessful) {
       const { accessToken, user, refreshToken, userId } = response.body;
+
+      const isSecureEnv =
+        process.env.NODE_ENV === "production" || process.env.RENDER === "true";
+
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: isSecureEnv,
+        sameSite: isSecureEnv ? "None" : "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure: isSecureEnv,
+        sameSite: isSecureEnv ? "None" : "Lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
+      // const sendMail = await SendLoginMail({
+      //   to: user.email.toLowerCase(),
+      //   name: user.examiner?.name ?? user.student?.name,
+      // });
+      // if (!sendMail.isSuccessful) {
+      //   console.log(sendMail.message);
+      //   return res.status(500).json({
+      //     response: Response.Unsuccessful({
+      //       message: " login failed",
+      //       resultCode: 500,
+      //     }),
+      //   });
+      // }
+      console.log("Login successfully and response sent");
       return res.status(200).json({
         response: Response.Successful({
           message: "Login successful",
@@ -37,8 +58,27 @@ const LoginAsync = async (req, res) => {
           },
         }),
       });
+    } else if (response.error === "unverified") {
+      return res.status(401).json({
+        response: Response.Unsuccessful({
+          message:
+            "Your account is not verified. Please verify your account before logging in.",
+          resultCode: 401,
+          error: "Unverified",
+        }),
+      });
+    } else if (response.error === "Invalid Email or Password") {
+      return res.status(401).json({
+        response: Response.Unsuccessful({
+          message: "Email or password is incorrect",
+          resultCode: 401,
+          error: "Invalid Email or Password",
+        }),
+      });
     } else {
-      return res.status(400).json({ response: response });
+      return res
+        .status(response.resultCode || 400)
+        .json({ response: response });
     }
   } catch (e) {
     return res.status(500).json({
@@ -56,8 +96,10 @@ const RefreshAccessTokenAsync = async (req, res) => {
     if (response.isSuccessful) {
       res.cookie("accessToken", response.body.accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Strict",
+        secure:
+          process.env.NODE_ENV === "production" ||
+          process.env.NODE_ENV === "development",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 

@@ -27,6 +27,7 @@ const CreateExam = () => {
       required: true,
       type: "singlechoice",
       expectedAnswer: "",
+      score: 1,
       options: [
         { id: "1-1", text: "", isCorrect: false },
         { id: "1-2", text: "", isCorrect: false },
@@ -44,6 +45,7 @@ const CreateExam = () => {
         required: true,
         type: "singlechoice",
         expectedAnswer: "",
+        score: 1,
         options: [
           { id: `${newId}-1`, text: "", isCorrect: false },
           { id: `${newId}-2`, text: "", isCorrect: false },
@@ -69,6 +71,15 @@ const CreateExam = () => {
   const updateQuestionRequired = (questionId, required) => {
     setQuestions(
       questions.map((q) => (q.id === questionId ? { ...q, required } : q))
+    );
+  };
+
+  const updateQuestionScore = (questionId, score) => {
+    const numericScore = Math.max(0, parseInt(score) || 1);
+    setQuestions(
+      questions.map((q) =>
+        q.id === questionId ? { ...q, score: numericScore } : q
+      )
     );
   };
 
@@ -202,6 +213,7 @@ const CreateExam = () => {
         required: q.required,
         type: q.type,
         expectedAnswer: q.expectedAnswer || "",
+        score: q.score || 1,
         options: q.options.map((o) => ({
           text: o.text,
           isCorrect: o.isCorrect,
@@ -419,11 +431,16 @@ const CreateExam = () => {
                 />
                 <label
                   htmlFor="isPublic"
-                  className="ml-2 block text-sm text-gray-700"
+                  className="ml-2 block text-sm text-gray-700 mb-3"
                 >
                   Make this exam public (can be discovered by subject search)
                 </label>
               </div>
+              <i className="text-xs text-pink-800">
+                For single choice questions, select exactly one correct answer.
+                For multiple choice questions, select at least one correct
+                answer from your options.
+              </i>
             </div>
           </div>
         </div>
@@ -442,13 +459,34 @@ const CreateExam = () => {
                 <h3 className="text-lg font-medium text-gray-900">
                   Question {qIndex + 1}
                 </h3>
-                <button
-                  type="button"
-                  onClick={() => removeQuestion(question.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <label
+                      htmlFor={`score-${question.id}`}
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Score:
+                    </label>
+                    <input
+                      type="number"
+                      id={`score-${question.id}`}
+                      value={question.score || 1}
+                      onChange={(e) =>
+                        updateQuestionScore(question.id, e.target.value)
+                      }
+                      min="0"
+                      step="1"
+                      className="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeQuestion(question.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -530,30 +568,20 @@ const CreateExam = () => {
                         );
                       }}
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-                      placeholder="Enter the expected answer or guidelines for grading this text question"
+                      placeholder="Enter the expected answer for grading this question"
                       rows={3}
                     />
-                    <p className="mt-1 text-xs text-gray-500">
+                    {/* <p className="mt-1 text-xs text-gray-500">
                       This will help with manual grading of text responses.
-                    </p>
+                    </p> */}
                   </div>
                 )}
 
                 {question.type !== "text" && (
                   <div className="space-y-2 options-container">
-                    <div className="flex justify-between items-center">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Options
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => addOption(question.id)}
-                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
-                      >
-                        <Plus className="mr-1 h-3 w-3" />
-                        Add Option
-                      </button>
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Options
+                    </label>
 
                     {question.options.map((option) => (
                       <div
@@ -603,7 +631,9 @@ const CreateExam = () => {
                             )
                           }
                           className="flex-1 block border border-gray-300 rounded-md shadow-sm py-1.5 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-                          placeholder="Option text"
+                          placeholder={`option ${
+                            question.options.indexOf(option) + 1
+                          }`}
                         />
                         <button
                           type="button"
@@ -614,6 +644,17 @@ const CreateExam = () => {
                         </button>
                       </div>
                     ))}
+
+                    <div className="flex justify-start mt-2">
+                      <button
+                        type="button"
+                        onClick={() => addOption(question.id)}
+                        className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                      >
+                        <Plus className="mr-1 h-3 w-3" />
+                        Add Option
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

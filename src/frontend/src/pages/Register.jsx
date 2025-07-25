@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import "../styles/auth.scss";
+import isEmail from "validator/lib/isEmail";
 
 const Register = () => {
   const [firstname, setFirstname] = useState("");
@@ -16,6 +18,14 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const passwordCriteria = {
+    length: password.length >= 7,
+    number: /\d/.test(password),
+    special: /[#?!@$%^&*-]/.test(password),
+  };
+
+  const showPasswordRequirements = password.length > 0;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,12 +34,35 @@ const Register = () => {
       return;
     }
 
+    if (!Object.values(passwordCriteria).every(Boolean)) {
+      toast.error("Password doesn't meet requirements");
+      return;
+    }
+
+    if (!isEmail(email)) {
+      toast.error("Invalid email address");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await register(firstname, lastname, email, password);
-      navigate("/");
-      toast.success("Registered successfully!");
+      let response = await register(firstname, lastname, email, password);
+
+      if (response.isSuccessful) {
+        toast.success("Registered successfully");
+        setTimeout(() => {
+          navigate("/verify");
+        }, 3000);
+      } else if (response.resultCode === 409) {
+        toast.error(`Profile with email: ${email} already exists`);
+      } else {
+        setTimeout(() => {
+          toast.error(response.message);
+        }, 3000);
+
+        return;
+      }
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to register"
@@ -43,6 +76,13 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 auth-container">
       <div className="max-w-md w-full space-y-8 auth-form">
         <div>
+          <Link
+            to="/"
+            className="absolute top-4 left-4 flex items-center text-sm text-pink-600 hover:underline hover:text-pink-700 transition"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Home Page
+          </Link>
           <h1 className="text-center text-3xl font-extrabold text-pink-600">
             Examinator
           </h1>
@@ -101,6 +141,7 @@ const Register = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div>
               <label htmlFor="password" className="sr-only">
                 Password
@@ -117,6 +158,33 @@ const Register = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
+            {showPasswordRequirements && (
+              <div className="text-sm mt-2 ml-1">
+                <p
+                  className={`${
+                    passwordCriteria.length ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  • At least 7 characters
+                </p>
+                <p
+                  className={`${
+                    passwordCriteria.number ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  • Contains at least one number
+                </p>
+                <p
+                  className={`${
+                    passwordCriteria.special ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  • Contains at least one special character
+                </p>
+              </div>
+            )}
+
             <div>
               <label htmlFor="confirm-password" className="sr-only">
                 Confirm Password
@@ -141,7 +209,7 @@ const Register = () => {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
             >
-              {isLoading ? "Registering..." : "Register"}
+              {isLoading ? "Please wait..." : "Register"}
             </button>
           </div>
 

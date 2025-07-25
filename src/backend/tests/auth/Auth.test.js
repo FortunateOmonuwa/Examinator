@@ -33,7 +33,9 @@ describe("Auth API", () => {
       expect(loginResponse.status).toBe(200);
       expect(loginResponse.body.response.isSuccessful).toBe(true);
       expect(loginResponse.body.response.body).toBeDefined();
-      expect(loginResponse.body.response.body.email).toBe(testData.email);
+      expect(loginResponse.body.response.body.email).toBe(
+        testData.email.toUpperCase()
+      );
       expect(loginResponse.body.response.body.userId).toBeDefined();
 
       // Check cookies are set
@@ -86,10 +88,10 @@ describe("Auth API", () => {
         })
         .set("Content-Type", "application/json");
 
-      expect(loginResponse.status).toBe(400);
+      expect(loginResponse.status).toBe(401);
       expect(loginResponse.body.response.isSuccessful).toBe(false);
       expect(loginResponse.body.response.message).toContain(
-        "email or password does not exist"
+        "Email or password is incorrect"
       );
     });
 
@@ -116,10 +118,10 @@ describe("Auth API", () => {
         })
         .set("Content-Type", "application/json");
 
-      expect(loginResponse.status).toBe(400);
+      expect(loginResponse.status).toBe(401);
       expect(loginResponse.body.response.isSuccessful).toBe(false);
       expect(loginResponse.body.response.message).toContain(
-        "email or password does not exist"
+        "Email or password is incorrect"
       );
     });
   });

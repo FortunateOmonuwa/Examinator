@@ -1,22 +1,45 @@
 .my-exams-page {
   .exam-item {
     transition: background-color $transition-normal;
-    
+
     &:hover {
       background-color: #f9fafb;
     }
-    
+
     .action-buttons {
-      button, a {
+      button,
+      a {
         transition: all $transition-normal;
-        
+        min-width: 40px;
+        min-height: 40px;
+
         &:hover {
           transform: scale(1.05);
         }
       }
+
+      // Mobile responsive adjustments
+      @media (max-width: 1024px) {
+        justify-content: flex-start;
+
+        button,
+        a {
+          flex: 0 0 auto;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        button,
+        a {
+          min-width: 44px;
+          min-height: 44px;
+          padding: 0.75rem;
+        }
+      }
     }
   }
-  
+
   .empty-state {
     background-color: white;
     border-radius: 0.5rem;

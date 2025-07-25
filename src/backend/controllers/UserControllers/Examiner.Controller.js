@@ -2,8 +2,9 @@ import {
   RegisterExaminer,
   GetExaminerDetails,
   DeleteExaminer,
-} from '../../imports/ServicesImports.js';
-import Response from '../../utilities/Response.js';
+} from "../../imports/ServicesImports.js";
+import Response from "../../utilities/Response.js";
+import { SendRegisterMail } from "../../imports/ServicesImports.js";
 
 const RegisterExaminerAsync = async (req, res) => {
   const { body } = req;
@@ -18,8 +19,20 @@ const RegisterExaminerAsync = async (req, res) => {
     });
 
     if (response.isSuccessful) {
+      // const sendMail = await SendRegisterMail({
+      //   to: email.toLowerCase(),
+      //   name: firstname + " " + lastname,
+      // });
+      // if (!sendMail.isSuccessful) {
+      //   console.log(sendMail.message);
+      // }
+      // console.log("Registeration mail sent successfully");
       return res.status(200).json({ response: response });
-    } else {
+    }
+    if (response.error === "conflict" || response.resultCode === 409) {
+      return res.status(409).json({ response: response });
+    } 
+    else {
       return res
         .status(response.resultCode || 400)
         .json({ response: response });

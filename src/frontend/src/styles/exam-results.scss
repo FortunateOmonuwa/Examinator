@@ -22,6 +22,23 @@
         &.incorrect {
             border-left: 4px solid $error-color;
         }
+
+        // Text question score-based styling
+        &.text-excellent {
+            border-left: 4px solid #059669; // green-600
+        }
+
+        &.text-very-good {
+            border-left: 4px solid #10b981; // green-500
+        }
+
+        &.text-satisfactory {
+            border-left: 4px solid #f59e0b; // amber-500
+        }
+
+        &.text-not-quite {
+            border-left: 4px solid #ef4444; // red-500
+        }
     }
 
     .toggle-button {

@@ -1,4 +1,4 @@
-import { database, baseUrl } from "../../imports/UtilityImports.js";
+import { database } from "../../imports/UtilityImports.js";
 import { Exam, Question, Option } from "../../imports/ModelImports.js";
 import Response from "../../utilities/Response.js";
 import { checkExaminerId } from "../User/User.Service.js";
@@ -104,6 +104,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
             required: q.required ?? false,
             type: q.type.toUpperCase(),
             expectedAnswer: q.expectedAnswer,
+            score: q.score ?? 1,
             options: {
               create: q.options.map((opt) => ({
                 text: opt.text,
@@ -115,7 +116,7 @@ const CreateExam = async ({ examinerId, exam = {} }) => {
       },
     });
 
-    const examLink = `${baseUrl}/exam/${newExam.id}`;
+    const examLink = `https://examinatorr.netlify.app/exam/${newExam.id}`;
 
     const updatedExam = await database.Exam.update({
       where: { id: newExam.id },
@@ -361,9 +362,103 @@ const CheckExamAttempts = async (examId, email) => {
   }
 };
 
+const UpdateExam = async (examId, examData) => {
+  const {
+    title,
+    description,
+    subject,
+    stipulatedTime,
+    enforceTimeLimit = false,
+    isPublic = false,
+    questions,
+  } = examData;
+
+  if (
+    !title ||
+    !description ||
+    !Array.isArray(questions) ||
+    questions.length === 0
+  ) {
+    return Response.Unsuccessful({
+      message: "Missing required fields",
+      resultCode: 400,
+    });
+  }
+
+  try {
+    const existingExam = await database.Exam.findUnique({
+      where: { id: examId },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+      },
+    });
+
+    if (!existingExam) {
+      return Response.Unsuccessful({
+        message: "Exam not found",
+        resultCode: 404,
+      });
+    }
+
+    await database.Question.deleteMany({
+      where: { examId: examId },
+    });
+
+    const updatedExam = await database.Exam.update({
+      where: { id: examId },
+      data: {
+        title,
+        description,
+        subject,
+        stipulatedTime,
+        enforceTimeLimit,
+        isPublic,
+        questions: {
+          create: questions.map((q) => ({
+            text: q.text,
+            required: q.required ?? false,
+            type: q.type?.toUpperCase() || "SINGLECHOICE",
+            expectedAnswer: q.expectedAnswer,
+            score: q.score ?? 1,
+            options: {
+              create: q.options.map((opt) => ({
+                text: opt.text,
+                isCorrect: opt.isCorrect,
+              })),
+            },
+          })),
+        },
+      },
+      include: {
+        questions: {
+          include: {
+            options: true,
+          },
+        },
+      },
+    });
+
+    return Response.Successful({
+      message: "Exam updated successfully",
+      body: updatedExam,
+    });
+  } catch (error) {
+    // console.error("Error updating exam:", error);
+    return Response.Unsuccessful({
+      message: "An internal server error occurred",
+      resultCode: 500,
+    });
+  } finally {
+    await database.$disconnect();
+  }
+};
+
 const ToggleExamPublicStatus = async (examId, examinerId) => {
   try {
-    // First check if the exam exists and belongs to the examiner
     const exam = await database.Exam.findUnique({
       where: { id: examId },
       select: { id: true, isPublic: true, creatorId: true, title: true },
@@ -383,7 +478,6 @@ const ToggleExamPublicStatus = async (examId, examinerId) => {
       });
     }
 
-    // Toggle the public status
     const updatedExam = await database.Exam.update({
       where: { id: examId },
       data: { isPublic: !exam.isPublic },
@@ -412,5 +506,6 @@ export {
   GetAllExams,
   GetPublicExams,
   CheckExamAttempts,
+  UpdateExam,
   ToggleExamPublicStatus,
 };

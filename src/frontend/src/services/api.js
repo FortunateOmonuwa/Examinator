@@ -1,13 +1,19 @@
 import axios from "axios";
+import { baseUrl } from "@shared/Config";
 
+//console.log("BASE URL:", import.meta.env.VITE_BASE_URL);
 const api = axios.create({
-  baseURL: "http://localhost:5001",
-  timeout: 10000,
+  //baseURL: import.meta.env.VITE_BASE_URL,
+  //baseURL: "http://localhost:5001",
+  baseURL: baseUrl,
+ // validateStatus: () => true.
+  timeout: 20000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
+//console.log("Axios baseURL:", api.defaults.baseURL);
 
 // api.interceptors.request.use(
 //   (config) => {
@@ -147,6 +153,21 @@ export const examAttemptService = {
         `/api/exam-attempt/examiner/${examinerId}`
       );
       return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
+};
+
+export const integrationService = {
+  calculateScore: async ({ question, answer, maxScore }) => {
+    try {
+      const response = await api.post("/api/integration/calculate-score", {
+        question,
+        answer,
+        maxScore,
+      });
+      return response.data.response.body.score;
     } catch (error) {
       throw error.response?.data || error.message;
     }

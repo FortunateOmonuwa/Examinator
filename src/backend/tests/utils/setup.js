@@ -11,6 +11,9 @@ dotenv.config();
 beforeAll(async () => {
   // console.log('Setting up test environment');
 
+  // Set test environment flag
+  process.env.NODE_ENV = "test";
+
   // Check critical environment variables
   const requiredEnvVars = ["DATABASE_URL", "JWT_SECRET", "REFRESH_TOKEN"];
   const missingVars = requiredEnvVars.filter(

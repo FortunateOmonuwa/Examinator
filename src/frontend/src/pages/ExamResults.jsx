@@ -15,17 +15,70 @@ const ExamResults = () => {
   useEffect(() => {
     const storedResults = localStorage.getItem("examResults");
     if (storedResults) {
-      const parsedResults = JSON.parse(storedResults);
-      if (parsedResults.examId === examId) {
-        setResults(parsedResults);
-        //console.log("Loaded results:", parsedResults);
-      } else {
+      try {
+        const parsedResults = JSON.parse(storedResults);
+        if (parsedResults.examId === examId) {
+          setResults(parsedResults);
+          //console.log("Loaded results:", parsedResults);
+        } else {
+          navigate("/take-exam");
+        }
+      } catch (error) {
+        // Invalid stored results, clear them
+        localStorage.removeItem("examResults");
         navigate("/take-exam");
       }
     } else {
       navigate("/take-exam");
     }
   }, [examId, navigate]);
+
+  // Prevent navigation back to exam session after submission
+  useEffect(() => {
+    // Disable browser back button completely
+    const disableBackButton = () => {
+      window.history.pushState(null, "", window.location.href);
+      window.onpopstate = () => {
+        window.history.pushState(null, "", window.location.href);
+        toast.error(
+          "Navigation blocked. Use the Home button to return to homepage."
+        );
+      };
+    };
+
+    const handleBeforeUnload = () => {
+      // Clear exam results when leaving the results page
+      localStorage.removeItem("examResults");
+    };
+
+    const handleKeyDown = (e) => {
+      // Prevent Alt+Left Arrow (back) and other navigation shortcuts
+      if (
+        (e.altKey && e.key === "ArrowLeft") ||
+        (e.key === "Backspace" &&
+          !["INPUT", "TEXTAREA"].includes(e.target.tagName))
+      ) {
+        e.preventDefault();
+        toast.error(
+          "Navigation blocked. Use the Home button to return to homepage."
+        );
+      }
+    };
+
+    // Disable back button immediately
+    disableBackButton();
+
+    // Add event listeners
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("keydown", handleKeyDown);
+      // Reset onpopstate when component unmounts
+      window.onpopstate = null;
+    };
+  }, []);
 
   const getScoreColor = (score) => {
     if (score >= 80) return "text-green-600";
@@ -41,58 +94,118 @@ const ExamResults = () => {
     return "Keep studying!";
   };
 
-  const isAnswerCorrect = (question, questionIndex, userAnswer) => {
-    // console.log(`\n=== Checking Question ${questionIndex + 1} ===`);
-    // console.log("Question type:", question.type);
-    // console.log("User answer:", userAnswer, typeof userAnswer);
-    // console.log("Question options:", question.options);
+  const calculateQuestionScore = (question, questionIndex, userAnswer) => {
+    const questionScore = question.score || 1;
+
+    // Only use stored OpenAI scores for TEXT questions
+    if (
+      question.type === "TEXT" &&
+      results.questionScores &&
+      results.questionScores[questionIndex] !== undefined
+    ) {
+      const storedScore = results.questionScores[questionIndex];
+      // Handle both old format (number) and new format (object with metadata)
+      if (
+        typeof storedScore === "object" &&
+        storedScore !== null &&
+        storedScore.score !== undefined
+      ) {
+        return storedScore.score;
+      }
+      // If it's a number, return it directly
+      if (typeof storedScore === "number") {
+        return storedScore;
+      }
+      // Fallback to question score if stored score is invalid
+      return questionScore;
+    }
 
     if (question.type === "SINGLECHOICE") {
       const correctOptionIndex = question.options.findIndex(
         (opt) => opt.isCorrect
       );
-      // console.log(
-      //   "Correct option index:",
-      //   correctOptionIndex,
-      //   typeof correctOptionIndex
-      // );
-
       const userAnswerNum = Number(userAnswer);
-      const isCorrect = userAnswerNum === correctOptionIndex;
-
-      // console.log(
-      //   "Comparison:",
-      //   `${userAnswer} (${typeof userAnswer}) -> ${userAnswerNum} === ${correctOptionIndex}`,
-      //   "->",
-      //   isCorrect
-      // );
-      // console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
-      return isCorrect;
+      return userAnswerNum === correctOptionIndex ? questionScore : 0;
     } else if (question.type === "MULTICHOICE") {
       const correctOptionIndices = question.options
         .map((opt, idx) => (opt.isCorrect ? idx : -1))
         .filter((idx) => idx !== -1);
 
-      // console.log("Correct option indices:", correctOptionIndices);
-
       const userAnswerArray = userAnswer || [];
-      //console.log("User answer array:", userAnswerArray);
-
       const userAnswerNumbers = userAnswerArray.map((ans) => Number(ans));
-      const isCorrect =
-        correctOptionIndices.length === userAnswerNumbers.length &&
-        correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx));
 
-      //console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
-      return isCorrect;
+      // For multichoice, calculate partial scoring
+      if (questionScore === 1) {
+        // Default scoring: all correct or zero
+        return correctOptionIndices.length === userAnswerNumbers.length &&
+          correctOptionIndices.every((idx) => userAnswerNumbers.includes(idx))
+          ? questionScore
+          : 0;
+      } else {
+        // Custom scoring: partial credit based on correct vs wrong selections
+        const correctSelections = userAnswerNumbers.filter((idx) =>
+          correctOptionIndices.includes(idx)
+        ).length;
+        const wrongSelections = userAnswerNumbers.filter(
+          (idx) => !correctOptionIndices.includes(idx)
+        ).length;
+
+        const partialScore = Math.max(0, correctSelections - wrongSelections);
+        const maxCorrect = correctOptionIndices.length;
+
+        return partialScore > 0
+          ? Math.round((partialScore / maxCorrect) * questionScore)
+          : 0;
+      }
     } else if (question.type === "TEXT") {
-      const isCorrect = userAnswer && userAnswer.trim();
-      //console.log("Final result:", isCorrect ? "✓ CORRECT" : "✗ INCORRECT");
-      return isCorrect;
+      return userAnswer && userAnswer.trim() ? questionScore : 0;
     }
 
-    //console.log("Unknown question type, returning false");
-    return false;
+    return 0;
+  };
+
+  // Get the performance level based on score percentage
+  const getPerformanceLevel = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 80) return "excellent";
+    if (percentage >= 70) return "very-good";
+    if (percentage >= 60) return "good";
+    if (percentage >= 50) return "average";
+    if (percentage >= 40) return "satisfactory";
+    if (percentage >= 30) return "poor";
+    return "very-poor";
+  };
+
+  // Get the appropriate icon based on performance level
+  const getPerformanceIcon = (performanceLevel) => {
+    switch (performanceLevel) {
+      case "excellent":
+      case "very-good":
+      case "good":
+        return <CheckCircle className="h-6 w-6 text-green-600" />;
+      case "average":
+        return (
+          <div className="h-6 w-6 rounded-full bg-yellow-500 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">~</span>
+          </div>
+        );
+      case "satisfactory":
+        return (
+          <div className="h-6 w-6 rounded-full bg-orange-500 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">-</span>
+          </div>
+        );
+      case "poor":
+        return (
+          <div className="h-6 w-6 rounded-full bg-red-400 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">-</span>
+          </div>
+        );
+      case "very-poor":
+      default:
+        return <XCircle className="h-6 w-6 text-red-600" />;
+    }
   };
 
   const getUserAnswerText = (question, userAnswer) => {
@@ -117,7 +230,7 @@ const ExamResults = () => {
 
   const getCorrectAnswerText = (question) => {
     if (question.type === "TEXT") {
-      return "Text answer (manual grading required)";
+      return "Text answer (AI-graded)";
     } else if (question.type === "SINGLECHOICE") {
       const correctOption = question.options.find((opt) => opt.isCorrect);
       return correctOption?.text || "No correct answer defined";
@@ -126,6 +239,69 @@ const ExamResults = () => {
       return correctOptions.map((opt) => opt.text).join(", ");
     }
     return "No correct answer defined";
+  };
+
+  const getTextQuestionFeedback = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 80) return "Excellent";
+    if (percentage >= 70) return "Very good";
+    if (percentage >= 60) return "Good";
+    if (percentage >= 50) return "Average";
+    if (percentage >= 40) return "Satisfactory";
+    return "Not quite";
+  };
+
+  // Get color class for text questions based on score
+  const getTextQuestionColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 80) return "text-green-800"; // Dark green for excellent
+    if (percentage >= 70) return "text-green-700"; // Green for very good
+    if (percentage >= 60) return "text-green-600"; // Light green for good
+    if (percentage >= 50) return "text-yellow-600"; // Yellow for average
+    if (percentage >= 40) return "text-orange-600"; // Orange for satisfactory
+    return "text-red-600"; // Red for not quite
+  };
+
+  // Get background color class for text questions based on score
+  const getTextQuestionBgColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 80) return "bg-green-200"; // Dark green background for excellent
+    if (percentage >= 70) return "bg-green-100"; // Green background for very good
+    if (percentage >= 60) return "bg-green-50"; // Light green background for good
+    if (percentage >= 50) return "bg-yellow-50"; // Yellow background for average
+    if (percentage >= 40) return "bg-orange-50"; // Orange background for satisfactory
+    return "bg-red-50"; // Red background for not quite
+  };
+
+  // Get border color class for text questions based on score
+  const getTextQuestionBorderColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+
+    if (percentage >= 80) return "border-green-300"; // Dark green border for excellent
+    if (percentage >= 70) return "border-green-200"; // Green border for very good
+    if (percentage >= 60) return "border-green-200"; // Light green border for good
+    if (percentage >= 50) return "border-yellow-200"; // Yellow border for average
+    if (percentage >= 40) return "border-orange-200"; // Orange border for satisfactory
+    return "border-red-200"; // Red border for not quite
+  };
+
+  // Check if a question requires manual grading
+  const requiresManualGrading = (questionIndex) => {
+    if (
+      results.questionScores &&
+      results.questionScores[questionIndex] !== undefined
+    ) {
+      const storedScore = results.questionScores[questionIndex];
+      return (
+        typeof storedScore === "object" &&
+        storedScore !== null &&
+        storedScore.requiresManualGrading === true
+      );
+    }
+    return false;
   };
 
   const toggleAnswers = () => {
@@ -170,7 +346,13 @@ const ExamResults = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              localStorage.removeItem("examResults");
+              // Reset onpopstate to allow normal navigation
+              window.onpopstate = null;
+              // Use window.location to ensure clean navigation
+              window.location.href = "/";
+            }}
             className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-4"
           >
             <Home className="h-4 w-4 mr-2" />
@@ -197,6 +379,13 @@ const ExamResults = () => {
               You answered {results.correctAnswers} out of{" "}
               {results.totalQuestions} questions correctly
             </p>
+            {results.totalScore !== undefined &&
+              results.maxPossibleScore !== undefined && (
+                <p className="text-gray-500 mt-1">
+                  Total Score: {Math.round(results.totalScore)} /{" "}
+                  {results.maxPossibleScore} points
+                </p>
+              )}
           </div>
 
           <div className="border-t border-gray-200 pt-6">
@@ -233,6 +422,34 @@ const ExamResults = () => {
             )}
             {showAnswers ? "Hide Answers" : "View Answers"}
           </button>
+        </div>
+
+        {/* Email Notification */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-blue-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-blue-800">
+                Results Sent to Your Email
+              </h3>
+              <div className="mt-1 text-sm text-blue-700">
+                <p>
+                  A link to your exam results has been sent to{" "}
+                  <strong>{results.studentEmail}</strong>. You can access your
+                  results anytime using the link in your email.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Debug Information
@@ -277,36 +494,120 @@ const ExamResults = () => {
             <div className="space-y-6">
               {results.questions.map((question, questionIndex) => {
                 const userAnswer = results.answers[questionIndex];
-                const isCorrect = isAnswerCorrect(
+                const questionScore = calculateQuestionScore(
                   question,
                   questionIndex,
                   userAnswer
                 );
+                const maxQuestionScore = question.score || 1;
+
+                // Dynamic styling for all questions
+                const isTextQuestion = question.type === "TEXT";
+                const needsManualGrading = requiresManualGrading(questionIndex);
+                const performanceLevel = getPerformanceLevel(
+                  questionScore,
+                  maxQuestionScore
+                );
+
+                const borderColor = isTextQuestion
+                  ? needsManualGrading
+                    ? "border-blue-200"
+                    : getTextQuestionBorderColor(
+                        questionScore,
+                        maxQuestionScore
+                      )
+                  : performanceLevel === "excellent" ||
+                      performanceLevel === "very-good" ||
+                      performanceLevel === "good"
+                    ? "border-green-200"
+                    : performanceLevel === "average"
+                      ? "border-yellow-200"
+                      : performanceLevel === "satisfactory"
+                        ? "border-orange-200"
+                        : "border-red-200";
+
+                const bgColor = isTextQuestion
+                  ? needsManualGrading
+                    ? "bg-blue-50"
+                    : getTextQuestionBgColor(questionScore, maxQuestionScore)
+                  : performanceLevel === "excellent" ||
+                      performanceLevel === "very-good" ||
+                      performanceLevel === "good"
+                    ? "bg-green-50"
+                    : performanceLevel === "average"
+                      ? "bg-yellow-50"
+                      : performanceLevel === "satisfactory"
+                        ? "bg-orange-50"
+                        : "bg-red-50";
 
                 return (
                   <div
                     key={questionIndex}
-                    className={`border rounded-lg p-6 ${
-                      isCorrect
-                        ? "border-green-200 bg-green-50"
-                        : "border-red-200 bg-red-50"
-                    }`}
+                    className={`border rounded-lg p-6 ${borderColor} ${bgColor}`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <h4 className="text-lg font-medium text-gray-900">
                         Question {questionIndex + 1}
                       </h4>
-                      <div className="flex items-center">
-                        {isCorrect ? (
-                          <CheckCircle className="h-6 w-6 text-green-600" />
-                        ) : (
-                          <XCircle className="h-6 w-6 text-red-600" />
-                        )}
-                        <span
-                          className={`ml-2 font-medium ${isCorrect ? "text-green-600" : "text-red-600"}`}
-                        >
-                          {isCorrect ? "Correct" : "Incorrect"}
-                        </span>
+                      <div className="flex items-center space-x-3">
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-gray-900">
+                            {Math.round(questionScore)} / {maxQuestionScore} pts
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {Math.round(
+                              (questionScore / maxQuestionScore) * 100
+                            )}
+                            %
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          {isTextQuestion && needsManualGrading ? (
+                            <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">
+                                ?
+                              </span>
+                            </div>
+                          ) : (
+                            getPerformanceIcon(performanceLevel)
+                          )}
+                          <span
+                            className={`ml-2 font-medium ${
+                              isTextQuestion
+                                ? needsManualGrading
+                                  ? "text-blue-600"
+                                  : getTextQuestionColor(
+                                      questionScore,
+                                      maxQuestionScore
+                                    )
+                                : performanceLevel === "excellent" ||
+                                    performanceLevel === "very-good" ||
+                                    performanceLevel === "good"
+                                  ? "text-green-600"
+                                  : performanceLevel === "average"
+                                    ? "text-yellow-600"
+                                    : performanceLevel === "satisfactory"
+                                      ? "text-orange-600"
+                                      : "text-red-600"
+                            }`}
+                          >
+                            {isTextQuestion
+                              ? needsManualGrading
+                                ? "Manual Grading Required"
+                                : getTextQuestionFeedback(
+                                    questionScore,
+                                    maxQuestionScore
+                                  )
+                              : performanceLevel === "excellent" ||
+                                  performanceLevel === "very-good" ||
+                                  performanceLevel === "good"
+                                ? "Correct"
+                                : performanceLevel === "average" ||
+                                    performanceLevel === "satisfactory"
+                                  ? "Partial"
+                                  : "Incorrect"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -319,9 +620,19 @@ const ExamResults = () => {
                         </h5>
                         <p
                           className={`p-3 rounded-md ${
-                            isCorrect
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
+                            isTextQuestion
+                              ? needsManualGrading
+                                ? "bg-blue-100 text-blue-800"
+                                : `${getTextQuestionBgColor(questionScore, maxQuestionScore)} ${getTextQuestionColor(questionScore, maxQuestionScore)}`
+                              : performanceLevel === "excellent" ||
+                                  performanceLevel === "very-good" ||
+                                  performanceLevel === "good"
+                                ? "bg-green-100 text-green-800"
+                                : performanceLevel === "average"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : performanceLevel === "satisfactory"
+                                    ? "bg-orange-100 text-orange-800"
+                                    : "bg-red-100 text-red-800"
                           }`}
                         >
                           {getUserAnswerText(question, userAnswer)}
@@ -330,10 +641,14 @@ const ExamResults = () => {
 
                       <div>
                         <h5 className="font-medium text-gray-900 mb-2">
-                          Correct Answer:
+                          {isTextQuestion ? "FeedBack:" : "Correct Answer:"}
                         </h5>
-                        <p className="p-3 bg-green-100 text-green-800 rounded-md">
-                          {getCorrectAnswerText(question)}
+                        <p className="p-3 bg-blue-100 text-blue-800 rounded-md">
+                          {isTextQuestion
+                            ? needsManualGrading
+                              ? "Text answer (manual grading required)"
+                              : `Score: ${Math.round(questionScore)}/${maxQuestionScore} - ${getTextQuestionFeedback(questionScore, maxQuestionScore)}`
+                            : getCorrectAnswerText(question)}
                         </p>
                       </div>
                     </div>
